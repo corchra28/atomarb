@@ -1,0 +1,1936 @@
+{
+ "generated_utc": "2026-09-17T13:04:09Z",
+ "note": "Primary-source provenance for every external fact used by the implementation. Details per topic in docs/sources/<topic>.md. Confidence: VERIFIED_IN_SOURCE > DOCS_ONLY > INFERRED > UNKNOWN.",
+ "topics": {
+  "flash_loans_and_prior_art": {
+   "notes_file": "docs/sources/flash_loans_prior_art.md",
+   "sources": [
+    {
+     "url": "https://github.com/Kamino-Finance/klend",
+     "ref": "a08760976f51a3a58c4a0c6ea27b4a0e565bca79 (branch master, commit 2026-08-18)",
+     "consulted_at_utc": "2026-09-17T11:47:11Z",
+     "what_it_established": "Kamino Lend program id, flash_borrow_reserve_liquidity / flash_repay_reserve_liquidity handlers, 12-account structs, sysvar-instructions CPI checks (flash_ixs.rs, ix_utils.rs), fee math (U68F60 flash_loan_fee_sf, Exclusive, min 1, referral split), seeds (b\"lma\"), BUSL-1.1 license, Anchor 0.29.0"
+    },
+    {
+     "url": "https://registry.npmjs.org/@kamino-finance/klend-sdk/-/klend-sdk-12.0.0.tgz",
+     "ref": "npm @kamino-finance/klend-sdk 12.0.0 (embedded IDL kamino_lending 1.25.0)",
+     "consulted_at_utc": "2026-09-17T11:50:00Z",
+     "what_it_established": "Discriminator bytes for flashBorrowReserveLiquidity [135,231,52,167,7,52,212,193] and flashRepayReserveLiquidity [185,117,0,203,96,245,180,186]; account order; optional referrer accounts encoded as program-id placeholder; PROGRAM_ID KLend2g3cP87fffoy8q1mQqGKjrxjC8boSyAYavgmjD"
+    },
+    {
+     "url": "https://github.com/mrgnlabs/marginfi-v2",
+     "ref": "35b5c66aa6897c43e7199bd6c598134041e89f99 (branch main, commit 2026-09-16)",
+     "consulted_at_utc": "2026-09-17T11:47:30Z",
+     "what_it_established": "marginfi mainnet id MFv2hWf31Z9kbCa1snEPYctwafyhdvnV7FZnsebVacA (id-crate), lending_account_start_flashloan(end_index)/end_flashloan, START/END_FLASHLOAN discriminators in type-crate, flag-based health-check suspension, CPI checks, bank protocol_origination_fee on borrow, Apache-2.0, Anchor 1.0.2"
+    },
+    {
+     "url": "https://github.com/solendprotocol/solana-program-library",
+     "ref": "d04ce00bbf4356c4fd32b3be38eb9760b696bb3e (default branch mainnet, commit 2025-07-02)",
+     "consulted_at_utc": "2026-09-17T11:47:45Z",
+     "what_it_established": "Solend/Save program id So1endDq2YkqhipRh3WViPa8hdiSpxWy6z3Z6tMCpAo; tag 13 FlashLoan deprecated; tag 19 FlashBorrowReserveLiquidity (7 accounts) and tag 20 FlashRepayReserveLiquidity (9 accounts); is_cpi_call; flash_loan_fee_wad + host_fee_percentage fee math; Apache-2.0; solana-program 1.16.20"
+    },
+    {
+     "url": "https://github.com/arashdm2020/titanarb-engine",
+     "ref": "eb5b64b139fe84cbb8a1cbdfbbf426cf5e10a478 (branch master, commit 2026-09-06); GitHub API license: null",
+     "consulted_at_utc": "2026-09-17T11:48:00Z",
+     "what_it_established": "Arbitrum One / Go / Aave V3 / Uniswap V3 + Camelot V3 arbitrage engine (README); no LICENSE file in repo, only SPDX MIT headers on 4 .sol files; nothing reusable for Solana"
+    },
+    {
+     "url": "https://docs.meteora.ag/developer-guides/dlmm",
+     "ref": "UNKNOWN (no last-updated shown)",
+     "consulted_at_utc": "2026-09-17T11:50:30Z",
+     "what_it_established": "Docs state lb_clmm program id LBUZKhRxPF3XUpBCjp4YzTKgLccjZhTSDM9YuVaPwxo is the same on mainnet and devnet"
+    },
+    {
+     "url": "https://docs.meteora.ag/developer-guides/damm-v2",
+     "ref": "UNKNOWN (no last-updated shown)",
+     "consulted_at_utc": "2026-09-17T11:50:30Z",
+     "what_it_established": "Docs state cp_amm program id cpamdpZCGKUy5JxQXB4dcpGPiikHawvSWAd6mEn1sGG is the same on mainnet and devnet"
+    },
+    {
+     "url": "https://docs.meteora.ag/core-products/dlmm/what-is-dlmm",
+     "ref": "UNKNOWN (no last-updated shown)",
+     "consulted_at_utc": "2026-09-17T11:51:30Z",
+     "what_it_established": "DLMM organizes liquidity into discrete price bins; bin step defines gap between bins; bin steps up to 400 bps; bin arrays of 70 bins; program LBUZKhRxPF3XUpBCjp4YzTKgLccjZhTSDM9YuVaPwxo"
+    },
+    {
+     "url": "https://docs.meteora.ag/developer-guides/dlmm/program/accounts.md",
+     "ref": "UNKNOWN (no last-updated shown)",
+     "consulted_at_utc": "2026-09-17T11:52:30Z",
+     "what_it_established": "Bin array index = floor(bin_id/70) with negative-remainder adjustment; base fee = base_factor*bin_step*10*10^base_fee_power_factor (1e9 units); no explicit bin price formula in docs"
+    },
+    {
+     "url": "https://github.com/MeteoraAg/dlmm-sdk",
+     "ref": "576919e3e4368e542c402f000b4264724f7f23ec (HEAD 2026-09-03); files idls/dlmm.json, commons/src/constants.rs, commons/src/math/price_math.rs",
+     "consulted_at_utc": "2026-09-17T11:53:30Z",
+     "what_it_established": "IDL address LBUZKhRxPF3XUpBCjp4YzTKgLccjZhTSDM9YuVaPwxo (lb_clmm 0.12.0); get_price_from_id = pow(ONE + (bin_step<<SCALE_OFFSET)/10000, active_id); BASIS_POINT_MAX=10000, MAX_BIN_PER_ARRAY=70, MAX_BIN_STEP=400, MIN/MAX_BIN_ID=+/-443636"
+    },
+    {
+     "url": "https://github.com/MeteoraAg/damm-v2",
+     "ref": "raw main/programs/cp-amm/src/lib.rs; main HEAD at fetch a85c926607433f23f0ea60f4ca7b1ae92f4156cb (2026-09-08)",
+     "consulted_at_utc": "2026-09-17T11:52:00Z",
+     "what_it_established": "declare_id!(\"cpamdpZCGKUy5JxQXB4dcpGPiikHawvSWAd6mEn1sGG\") at lib.rs:42"
+    },
+    {
+     "url": "https://docs.save.finance/developers/flash-loans",
+     "ref": "UNKNOWN (no last-updated shown)",
+     "consulted_at_utc": "2026-09-17T11:53:00Z",
+     "what_it_established": "Save docs say flash-loan functionality is limited / team working on a working flash loan program; page shows no fee, no program id, no constraints (lags the code)"
+    },
+    {
+     "url": "https://api.github.com/repos/solendprotocol/solana-program-library",
+     "ref": "queried 2026-09-17",
+     "consulted_at_utc": "2026-09-17T11:52:30Z",
+     "what_it_established": "default branch mainnet, not archived, last push 2026-02-04, license field NOASSERTION; org save-finance returns 404 (does not exist); klend license NOASSERTION (BUSL), marginfi Apache-2.0"
+    }
+   ],
+   "facts": [
+    {
+     "key": "solana.flash_loan_model",
+     "value": "No callback-style flash loans. Kamino and Solend use a top-level borrow ix + top-level repay ix in the same transaction, bound by borrow_instruction_index and verified via the Instructions sysvar; marginfi uses a start/end bracket that suspends health checks around ordinary borrow/repay. All three reject CPI: current sysvar ix program_id must be the lender AND get_stack_height() == TRANSACTION_LEVEL_STACK_HEIGHT.",
+     "confidence": "VERIFIED_IN_SOURCE",
+     "source_url": "https://github.com/Kamino-Finance/klend"
+    },
+    {
+     "key": "kamino.program_id.mainnet",
+     "value": "KLend2g3cP87fffoy8q1mQqGKjrxjC8boSyAYavgmjD (staging: SLendK7ySfcEzyaFqy93gDnD3RtrpXJcnRwb6zFHJSh)",
+     "confidence": "VERIFIED_IN_SOURCE",
+     "source_url": "https://github.com/Kamino-Finance/klend/blob/a08760976f51a3a58c4a0c6ea27b4a0e565bca79/programs/klend/src/lib.rs"
+    },
+    {
+     "key": "kamino.instructions",
+     "value": "flash_borrow_reserve_liquidity(liquidity_amount: u64); flash_repay_reserve_liquidity(liquidity_amount: u64, borrow_instruction_index: u8). Anchor 0.29.0, crate kamino_lending 1.25.0",
+     "confidence": "VERIFIED_IN_SOURCE",
+     "source_url": "https://github.com/Kamino-Finance/klend/blob/a08760976f51a3a58c4a0c6ea27b4a0e565bca79/programs/klend/src/lib.rs"
+    },
+    {
+     "key": "kamino.discriminators",
+     "value": "flash_borrow_reserve_liquidity = 87e734a70734d4c1 [135,231,52,167,7,52,212,193]; flash_repay_reserve_liquidity = b97500cb60f5b4ba [185,117,0,203,96,245,180,186]; = sha256(\"global:<name>\")[..8] (recomputed locally, matches SDK codegen). Borrow data = disc + u64 LE (16 B); repay data = disc + u64 LE + u8 (17 B)",
+     "confidence": "VERIFIED_IN_SOURCE",
+     "source_url": "https://registry.npmjs.org/@kamino-finance/klend-sdk/-/klend-sdk-12.0.0.tgz"
+    },
+    {
+     "key": "kamino.accounts",
+     "value": "12 accounts, identical order for borrow/repay and program requires identical pubkeys at every index: 0 user_transfer_authority(signer) 1 lending_market_authority(PDA [b\"lma\", lending_market]) 2 lending_market 3 reserve(mut) 4 reserve_liquidity_mint 5 reserve supply_vault(mut) 6 user token account(mut, != supply vault) 7 reserve fee_vault(mut) 8 referrer_token_state(opt,mut) 9 referrer_account(opt,mut) 10 sysvar instructions 11 token_program (Token or Token-2022). Optional None = program id placeholder.",
+     "confidence": "VERIFIED_IN_SOURCE",
+     "source_url": "https://github.com/Kamino-Finance/klend/blob/a08760976f51a3a58c4a0c6ea27b4a0e565bca79/programs/klend/src/handlers/handler_flash_borrow_reserve_liquidity.rs"
+    },
+    {
+     "key": "kamino.fee_rule",
+     "value": "Reserve.config.fees.flash_loan_fee_sf: u64 (U68F60 fixed-point rate; u64::MAX = FlashLoansDisabled). fee = round(max(amount*rate, 1)) (Exclusive); BorrowTooSmall if fee >= amount; with referrer and market referral_fee_bps>0: referral = floor(fee*bps/10000), protocol = fee - referral. Repay transfers amount+referral to supply vault and protocol fee to fee_vault, both from user source.",
+     "confidence": "VERIFIED_IN_SOURCE",
+     "source_url": "https://github.com/Kamino-Finance/klend/blob/a08760976f51a3a58c4a0c6ea27b4a0e565bca79/programs/klend/src/state/reserve.rs"
+    },
+    {
+     "key": "kamino.fee_bps_live_wsol",
+     "value": "TODO (RPC): read Reserve.config.fees.flash_loan_fee_sf for the WSOL reserve and divide by 2^60; lending_market/reserve pubkeys not fetched",
+     "confidence": "UNKNOWN",
+     "source_url": "https://github.com/Kamino-Finance/klend"
+    },
+    {
+     "key": "kamino.constraints",
+     "value": "Both ixs top-level only (FlashBorrowCpi / FlashRepayCpi); borrow scans all later ixs: exactly one repay, no second borrow (MultipleFlashBorrows / NoFlashRepayFound) => max ONE Kamino flash borrow per tx; repay must have same amount, borrow_instruction_index == borrow's index, same account count and identical pubkeys; repay re-checks borrow ix (index <= current, program id, discriminator, accounts[3]==reserve, amount); emergency_mode on market/reserve, reserve Obsolete, Token-2022 extension checks; RESTRICTED_PROGRAMS (jupr81\u2026) only enforced on repay_obligation_liquidity, not flash ixs.",
+     "confidence": "VERIFIED_IN_SOURCE",
+     "source_url": "https://github.com/Kamino-Finance/klend/blob/a08760976f51a3a58c4a0c6ea27b4a0e565bca79/programs/klend/src/lending_market/flash_ixs.rs"
+    },
+    {
+     "key": "kamino.license",
+     "value": "Business Source License 1.1, Change Date 2027-11-17 (StroudGlobal S.A.)",
+     "confidence": "VERIFIED_IN_SOURCE",
+     "source_url": "https://github.com/Kamino-Finance/klend/blob/a08760976f51a3a58c4a0c6ea27b4a0e565bca79/NOTICE"
+    },
+    {
+     "key": "marginfi.program_id.mainnet",
+     "value": "MFv2hWf31Z9kbCa1snEPYctwafyhdvnV7FZnsebVacA (feature mainnet-beta = default); devnet neetcne3Ctrrud7vLdt2ypMm21gZHGN2mCmqWaMVcBQ; staging stag8sTKds2h4KzjUw3zKTsxbqvT4XKHdaR9X9E6Rct",
+     "confidence": "VERIFIED_IN_SOURCE",
+     "source_url": "https://github.com/mrgnlabs/marginfi-v2/blob/35b5c66aa6897c43e7199bd6c598134041e89f99/id-crate/src/lib.rs"
+    },
+    {
+     "key": "marginfi.instructions",
+     "value": "lending_account_start_flashloan(end_index: u64) accounts [marginfi_account(mut), authority(signer), ixs_sysvar]; lending_account_end_flashloan() accounts [marginfi_account(mut), group, authority(signer)] + remaining_accounts (banks/oracles for health check). Anchor 1.0.2, crate marginfi 0.1.11",
+     "confidence": "VERIFIED_IN_SOURCE",
+     "source_url": "https://github.com/mrgnlabs/marginfi-v2/blob/35b5c66aa6897c43e7199bd6c598134041e89f99/programs/marginfi/src/instructions/marginfi_account/flashloan.rs"
+    },
+    {
+     "key": "marginfi.discriminators",
+     "value": "START_FLASHLOAN = 0e8321dc51bab46b [14,131,33,220,81,186,180,107]; END_FLASHLOAN = 697cc96a9902089c [105,124,201,106,153,2,8,156]; = sha256(\"global:lending_account_{start,end}_flashloan\")[..8] (recomputed, matches type-crate constants)",
+     "confidence": "VERIFIED_IN_SOURCE",
+     "source_url": "https://github.com/mrgnlabs/marginfi-v2/blob/35b5c66aa6897c43e7199bd6c598134041e89f99/type-crate/src/constants.rs"
+    },
+    {
+     "key": "marginfi.mechanism_and_fee",
+     "value": "Not a token flash loan: start sets ACCOUNT_IN_FLASHLOAN on the MarginfiAccount, check_account_init_health returns Ok early while set; end clears flag and runs initial-health check (+ price gate if liabilities). Requires an existing MarginfiAccount. No dedicated flash fee; in-bracket lending_account_borrow charges bank.config.interest_rate_config.protocol_origination_fee (live value TODO RPC).",
+     "confidence": "VERIFIED_IN_SOURCE",
+     "source_url": "https://github.com/mrgnlabs/marginfi-v2/blob/35b5c66aa6897c43e7199bd6c598134041e89f99/programs/marginfi/src/state/marginfi_account.rs"
+    },
+    {
+     "key": "marginfi.constraints",
+     "value": "start: current sysvar ix must be marginfi (NotAllowedInCPI 6091), stack height == TRANSACTION_LEVEL, current index < end_index, ix at end_index must have END_FLASHLOAN discriminator, program id marginfi, accounts[0] == same marginfi_account (IllegalFlashloan 6038); account must not be in flashloan/deleverage/receivership/disabled/frozen/order-execution. end: stack-height CPI check; flag must be set. While flagged: liquidation/health fetch/transfer/close refused (AccountInFlashloan 6037).",
+     "confidence": "VERIFIED_IN_SOURCE",
+     "source_url": "https://github.com/mrgnlabs/marginfi-v2/blob/35b5c66aa6897c43e7199bd6c598134041e89f99/programs/marginfi/src/ix_utils.rs"
+    },
+    {
+     "key": "marginfi.license",
+     "value": "Apache-2.0",
+     "confidence": "VERIFIED_IN_SOURCE",
+     "source_url": "https://github.com/mrgnlabs/marginfi-v2/blob/35b5c66aa6897c43e7199bd6c598134041e89f99/LICENSE"
+    },
+    {
+     "key": "solend.program_id.mainnet",
+     "value": "So1endDq2YkqhipRh3WViPa8hdiSpxWy6z3Z6tMCpAo (declare_id in token-lending/program/src/lib.rs:12; also token-lending/README.md). Native program (non-Anchor), solana-program 1.16.20, crate solend-program 2.0.2, SPL Token only (no Token-2022). Org solendprotocol (page titled Save); save-finance org does not exist (404).",
+     "confidence": "VERIFIED_IN_SOURCE",
+     "source_url": "https://github.com/solendprotocol/solana-program-library/blob/d04ce00bbf4356c4fd32b3be38eb9760b696bb3e/token-lending/program/src/lib.rs"
+    },
+    {
+     "key": "solend.instructions",
+     "value": "tag 13 FlashLoan{amount} DEPRECATED (processor errors); tag 19 FlashBorrowReserveLiquidity{liquidity_amount:u64} data=[19]+u64LE (9 B), 7 accounts: 0 source_liquidity(=supply,mut) 1 destination_liquidity(mut) 2 reserve(mut) 3 lending_market 4 lending_market_authority(PDA seeds [lending_market_pubkey]) 5 instructions sysvar 6 token program; tag 20 FlashRepayReserveLiquidity{liquidity_amount:u64, borrow_instruction_index:u8} data=[20]+u64LE+u8 (10 B), 9 accounts: 0 user source(mut) 1 supply(mut) 2 reserve fee_receiver(mut) 3 host_fee_receiver(mut) 4 reserve(mut) 5 lending_market 6 user_transfer_authority(signer) 7 instructions sysvar 8 token program",
+     "confidence": "VERIFIED_IN_SOURCE",
+     "source_url": "https://github.com/solendprotocol/solana-program-library/blob/d04ce00bbf4356c4fd32b3be38eb9760b696bb3e/token-lending/sdk/src/instruction.rs"
+    },
+    {
+     "key": "solend.fee_rule",
+     "value": "ReserveConfig.fees.flash_loan_fee_wad: u64 (WAD 1e18 = 100%; u64::MAX = disabled) + host_fee_percentage: u8. total = round(max(amount*rate, min)) with min = 2 if host pct>0 else 1; BorrowTooSmall if total >= amount; host_fee = max(1, round(total*host_pct/100)) if host pct>0; origination = total - host; at repay user pays amount -> supply, host_fee -> host receiver, origination -> reserve fee_receiver. Code comment example '0.3% (Aave) = 3_000_000_000_000_000' is illustrative, not the live value (TODO RPC).",
+     "confidence": "VERIFIED_IN_SOURCE",
+     "source_url": "https://github.com/solendprotocol/solana-program-library/blob/d04ce00bbf4356c4fd32b3be38eb9760b696bb3e/token-lending/sdk/src/state/reserve.rs"
+    },
+    {
+     "key": "solend.constraints",
+     "value": "is_cpi_call (program_id mismatch at current sysvar index OR stack height > TRANSACTION_LEVEL) -> FlashBorrowCpi/FlashRepayCpi; borrow scans all later ixs and unpacks every Solend ix: exactly one repay with accounts[4]==reserve, same amount, borrow_instruction_index==current index; second borrow -> MultipleFlashBorrows; none -> NoFlashRepayFound (max ONE Solend flash borrow per tx); repay checks index <= current, ix there is FlashBorrow with accounts[2]==reserve and equal amount.",
+     "confidence": "VERIFIED_IN_SOURCE",
+     "source_url": "https://github.com/solendprotocol/solana-program-library/blob/d04ce00bbf4356c4fd32b3be38eb9760b696bb3e/token-lending/program/src/processor.rs"
+    },
+    {
+     "key": "solend.docs_status",
+     "value": "docs.save.finance flash-loans page says functionality is 'limited' and the team is 'working on a working flash loan program'; shows no fee/program id/constraints \u2014 lags the code",
+     "confidence": "DOCS_ONLY",
+     "source_url": "https://docs.save.finance/developers/flash-loans"
+    },
+    {
+     "key": "solend.license",
+     "value": "Apache-2.0 (LICENSE 'Copyright 2020 Solana Foundation'; Cargo license = Apache-2.0; GitHub API reports NOASSERTION)",
+     "confidence": "VERIFIED_IN_SOURCE",
+     "source_url": "https://github.com/solendprotocol/solana-program-library/blob/d04ce00bbf4356c4fd32b3be38eb9760b696bb3e/LICENSE"
+    },
+    {
+     "key": "wsol_liquidity_all_providers",
+     "value": "TODO (RPC): available WSOL liquidity for Kamino reserve, Solend/Save reserve and marginfi SOL bank not fetched",
+     "confidence": "UNKNOWN",
+     "source_url": "https://github.com/Kamino-Finance/klend"
+    },
+    {
+     "key": "instructions_sysvar_address",
+     "value": "Code references solana_program::sysvar::instructions::ID / solana_instructions_sysvar::ID; the literal Sysvar1nstructions1111111111111111111111111 was not read in these repos",
+     "confidence": "INFERRED",
+     "source_url": "https://github.com/Kamino-Finance/klend/blob/a08760976f51a3a58c4a0c6ea27b4a0e565bca79/programs/klend/src/handlers/handler_flash_borrow_reserve_liquidity.rs"
+    },
+    {
+     "key": "titanarb.chain_and_stack",
+     "value": "Arbitrum One (chainId 42161), EVM; Go production runtime; Aave V3 flash loans (Pool 0x794a61358D6845594F94dc1DB02A252b5b4814aD, executeOperation callback); Uniswap V3 + Camelot V3/Algebra adapters; Solidity 0.8.19 via_ir contracts FlashArbitrageExecutor.sol + adapters; deployed executor 0xdc63781E4f880F3911260Ecf0f1208eB32756666; legacy Python/Polygon history",
+     "confidence": "VERIFIED_IN_SOURCE",
+     "source_url": "https://github.com/arashdm2020/titanarb-engine/blob/eb5b64b139fe84cbb8a1cbdfbbf426cf5e10a478/README.md"
+    },
+    {
+     "key": "titanarb.claims",
+     "value": "Self-described 'production-grade, live-capable'; 2/3/4-hop route search; executable-economics gating (Aave premium, DEX fees, L1 data + L2 gas, slippage, impact, liquidity, freshness, repayment); adaptive loan-size optimizer; bounded quote budgets; RouteMemory/PairScore 70/20/10 scheduling; tiered multi-provider RPC; self-reported benchmark (cycle ~16.6s -> ~2.56s, RPC/cycle ~128 -> ~15). No third-party verification.",
+     "confidence": "DOCS_ONLY",
+     "source_url": "https://github.com/arashdm2020/titanarb-engine/blob/eb5b64b139fe84cbb8a1cbdfbbf426cf5e10a478/README.md"
+    },
+    {
+     "key": "titanarb.license",
+     "value": "No LICENSE/COPYING file in the repository; GitHub API license: null; README has no license section. Only the four .sol files carry '// SPDX-License-Identifier: MIT'; Go and Python code have no license headers. Repo as a whole is unlicensed (all rights reserved by default).",
+     "confidence": "VERIFIED_IN_SOURCE",
+     "source_url": "https://api.github.com/repos/arashdm2020/titanarb-engine"
+    },
+    {
+     "key": "titanarb.reusable_for_solana",
+     "value": "None. Solidity/Aave V3 callback model, EVM JSON-RPC (Go ethclient), Uniswap/Camelot router ABIs and EVM addresses have no Solana analogue; Solana flash loans are instruction-bracket + Instructions-sysvar designs. Only abstract engineering ideas (bounded quote budgets, near-miss telemetry, economics-before-broadcast gating) are generic and must be re-derived; given the missing license no code/text should be copied.",
+     "confidence": "INFERRED",
+     "source_url": "https://github.com/arashdm2020/titanarb-engine"
+    },
+    {
+     "key": "meteora.dlmm.program_id",
+     "value": "LBUZKhRxPF3XUpBCjp4YzTKgLccjZhTSDM9YuVaPwxo (lb_clmm; IDL address in dlmm-sdk idls/dlmm.json @576919e3, IDL version 0.12.0; docs say same id on mainnet and devnet)",
+     "confidence": "VERIFIED_IN_SOURCE",
+     "source_url": "https://github.com/MeteoraAg/dlmm-sdk/blob/576919e3e4368e542c402f000b4264724f7f23ec/idls/dlmm.json"
+    },
+    {
+     "key": "meteora.damm_v2.program_id",
+     "value": "cpamdpZCGKUy5JxQXB4dcpGPiikHawvSWAd6mEn1sGG (cp_amm; declare_id! at programs/cp-amm/src/lib.rs:42 on main, HEAD a85c926607433f23f0ea60f4ca7b1ae92f4156cb at fetch; docs say same id on mainnet and devnet)",
+     "confidence": "VERIFIED_IN_SOURCE",
+     "source_url": "https://github.com/MeteoraAg/damm-v2/blob/a85c926607433f23f0ea60f4ca7b1ae92f4156cb/programs/cp-amm/src/lib.rs"
+    },
+    {
+     "key": "meteora.dlmm.bin_math",
+     "value": "DLMM needs bin math: liquidity discretized into price bins; price(bin_id) = (1 + bin_step/10000)^bin_id in fixed point via get_price_from_id(active_id, bin_step) = pow(ONE + (bin_step << SCALE_OFFSET)/BASIS_POINT_MAX, active_id); BASIS_POINT_MAX=10000, MAX_BIN_PER_ARRAY=70, MAX_BIN_STEP=400, MIN/MAX_BIN_ID = -/+443636; bin array index = floor(bin_id/70) (docs). SCALE_OFFSET/ONE values not fetched.",
+     "confidence": "VERIFIED_IN_SOURCE",
+     "source_url": "https://github.com/MeteoraAg/dlmm-sdk/blob/576919e3e4368e542c402f000b4264724f7f23ec/commons/src/math/price_math.rs"
+    },
+    {
+     "key": "deployed_bytecode_vs_repo",
+     "value": "Whether the mainnet-deployed Kamino, marginfi and Solend programs correspond to the pinned shas was not verified (no verifiable-build / on-chain hash check)",
+     "confidence": "UNKNOWN",
+     "source_url": "https://github.com/Kamino-Finance/klend"
+    }
+   ],
+   "open_questions": [
+    "Kamino: live flash_loan_fee_sf (-> bps) for the WSOL reserve(s) in the main market, plus lending_market / reserve pubkeys, market referral_fee_bps and available liquidity (needs RPC).",
+    "Solend/Save: live flash_loan_fee_wad and host_fee_percentage for the WSOL reserve; whether the deployed program at So1endDq\u2026 is at/after sha d04ce00b (docs claim flash loans are 'limited'); available liquidity (RPC + verifiable-build check).",
+    "marginfi: live protocol_origination_fee for the SOL bank; whether start + borrow + swaps + repay + end fits the 1232-byte tx / CU limits with oracle remaining_accounts (ALT needed); cost of creating a MarginfiAccount (RPC).",
+    "Deployed bytecode vs. repo HEAD for all three lending programs is unverified (no on-chain hash / verifiable-build check performed).",
+    "The literal Instructions-sysvar address was not read from these sources (code uses sysvar::instructions::ID) \u2014 INFERRED to be Sysvar1nstructions1111111111111111111111111.",
+    "DLMM SCALE_OFFSET and ONE constants (fixed-point scale of get_price_from_id) were not fetched; do not assume 64-bit scale without reading commons.",
+    "Whether one transaction may hold one Kamino flash borrow AND one Solend flash borrow simultaneously (each program only scans its own ixs) \u2014 inferred yes, untested.",
+    "Meteora docs pages show no last-updated date; DOCS_ONLY items are as of 2026-09-17.",
+    "Save docs (docs.save.finance) state flash loans are 'limited' while the mainnet-branch code implements FlashBorrow/FlashRepay \u2014 which reflects the deployed state is unknown."
+   ]
+  },
+  "token2022": {
+   "notes_file": "docs/sources/token2022.md",
+   "sources": [
+    {
+     "url": "https://github.com/solana-program/token-2022",
+     "ref": "18a80055ed7aa2d0dff4df4f613e28efee11cc1a (spl-token-2022 11.0.0, spl-token-2022-interface 3.1.1, js-legacy @solana/spl-token 0.4.15)",
+     "consulted_at_utc": "2026-09-17T11:47:12Z",
+     "what_it_established": "ExtensionType enum ids 0..28 (repr(u16), implicit; JS enum pins 18..28 explicitly), TLV layout (AccountType byte at absolute 165 for both mint and account, TLV from 166, u16 type + u16 len + value), Mint(82)/Account(165) byte layouts and COption tag encoding, AccountState 0/1/2, TransferFeeConfig fields + ceil(amount*bps/10000) capped at maximum_fee with epoch >= newer.epoch selecting newer, process_transfer check order (frozen, NonTransferable, fee, MintPaused, permanent delegate, destination frozen, hook CPI with forwarded remaining accounts), required account extensions per mint extension, instruction discriminants (Transfer=3 deprecated, TransferChecked=12, TransferFeeExtension=26/sub 1 TransferCheckedWithFee, Freeze=10, Thaw=11), program ids for Token-2022 and inline Token, Token-2022 native mint"
+    },
+    {
+     "url": "https://github.com/solana-program/token",
+     "ref": "0087ca54bd5a5b07e1df7e1b52303529047a1186 (spl-token-interface 3.0.0)",
+     "consulted_at_utc": "2026-09-17T11:52:00Z",
+     "what_it_established": "Legacy SPL Token program id TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA, native mint So111...112, identical Mint(82)/Account(165) array_refs layouts and AccountState enum"
+    },
+    {
+     "url": "https://github.com/solana-program/associated-token-account",
+     "ref": "2dc55ee1009d787eea7e1c401b8f27e6892bff4b",
+     "consulted_at_utc": "2026-09-17T11:52:00Z",
+     "what_it_established": "ATA program id ATokenGPvbdGVxr1b2hvZbsiqW5xWH25efTNsLJA8knL, ATA seeds [wallet, token_program_id, mint], ATA processor always sizes/initializes ImmutableOwner"
+    },
+    {
+     "url": "https://github.com/solana-program/transfer-hook",
+     "ref": "94dfc28d5e0b3fdd0fb855e03f8817d5d4d0facb (spl-discriminator 0.5.1 in lockfile)",
+     "consulted_at_utc": "2026-09-17T11:52:00Z",
+     "what_it_established": "ExtraAccountMetaList PDA seeds [\"extra-account-metas\", mint] under hook program id; Execute discriminator hash input \"spl-transfer-hook-interface:execute\"; onchain::invoke_execute signature (source, mint, destination, authority, additional accounts, amount)"
+    },
+    {
+     "url": "https://github.com/raydium-io/raydium-cp-swap",
+     "ref": "59fb845a9e5bb569c8b2f3415f13b0c0ebcc6b92 (anchor 1.0.2)",
+     "consulted_at_utc": "2026-09-17T11:47:12Z",
+     "what_it_established": "CPMM program ids (mainnet CPMMoo8L..., devnet DRaycpLY...); is_supported_mint allows legacy Token mints, whitelisted mints (SupportMintAssociated PDA [\"support_mint\", mint]), or Token-2022 mints whose extensions are all in {TransferFeeConfig, MetadataPointer, TokenMetadata, InterestBearingConfig, ScaledUiAmount}; else NotSupportMint; freeze authority not checked; swap_base_input nets input fee before curve, checks minimum_amount_out against amount_out minus output fee; swap_base_output uses inverse fee; transfer CPIs are plain transfer_checked with no remaining accounts (no hook forwarding)"
+    },
+    {
+     "url": "https://github.com/pump-fun/pump-public-docs",
+     "ref": "81091419e4457566469d4e2a27f64ed84d42419c (pump_amm.json metadata version 0.1.0)",
+     "consulted_at_utc": "2026-09-17T11:52:00Z",
+     "what_it_established": "PumpSwap program id pAMMBay6oceH9fJKBRHGP5D4bD4sWpmSwMn52FMfXEA; buy/sell take free base_token_program and quote_token_program accounts (either token program); Pool account has no token-program fields; errors UnsupportedBaseMint 6006 / UnsupportedQuoteMint 6007; pump.fun create_v2 coins are Token-2022 mints (decimals 6, metadata pointer); Token-2022 quote mints limited to metadata pointer/metadata, permanent delegate, initialized default account state, scaled UI amount, pausable, confidential-transfer mint, transfer hook with no program; Token-2022 native mint rejected; no AMM-level extension list documented"
+    },
+    {
+     "url": "https://solana.com/docs/tokens/extensions",
+     "ref": "UNKNOWN",
+     "consulted_at_utc": "2026-09-17T11:50:00Z",
+     "what_it_established": "Prose list of 27 extensions (omits PermissionedBurn), 'most extensions can't be added after init', claim that NonTransferable cannot combine with TransferFeeConfig (not found in source at 18a8005)"
+    },
+    {
+     "url": "https://solana.com/docs/tokens/extensions/transfer-fees",
+     "ref": "UNKNOWN",
+     "consulted_at_utc": "2026-09-17T11:53:00Z",
+     "what_it_established": "Fee withheld on destination TransferFeeAmount; recipient gets amount minus fee; SetTransferFee takes effect two epochs later; TransferChecked or TransferCheckedWithFee required"
+    },
+    {
+     "url": "https://solana.com/docs/tokens/extensions/transfer-hook",
+     "ref": "UNKNOWN",
+     "consulted_at_utc": "2026-09-17T11:50:00Z",
+     "what_it_established": "CPI into hook on every transfer; PDA seeds extra-account-metas + mint + hook program; hook failure fails the transfer"
+    },
+    {
+     "url": "https://solana.com/docs/tokens/extensions/transfer-hook-integration",
+     "ref": "UNKNOWN",
+     "consulted_at_utc": "2026-09-17T11:53:00Z",
+     "what_it_established": "Integrators resolve extra accounts off-chain (addExtraAccountMetasForExecute / resolveExtraAccountMetasForExecute) and append hook program + ExtraAccountMetaList + metas to TransferChecked; do not cache across transfers"
+    },
+    {
+     "url": "https://solana.com/docs/tokens/extensions/non-transferrable-tokens",
+     "ref": "UNKNOWN",
+     "consulted_at_utc": "2026-09-17T11:53:00Z",
+     "what_it_established": "Transfer and TransferChecked fail with TokenError::NonTransferable; burn/close still allowed; accounts get NonTransferableAccount + ImmutableOwner"
+    },
+    {
+     "url": "https://solana.com/developers/guides/token-extensions/default-account-state",
+     "ref": "UNKNOWN",
+     "consulted_at_utc": "2026-09-17T11:53:00Z",
+     "what_it_established": "New token accounts start in the default state (e.g. frozen) and cannot be used until the freeze authority thaws them"
+    },
+    {
+     "url": "https://solana.com/docs/tokens/extensions/pausable",
+     "ref": "UNKNOWN",
+     "consulted_at_utc": "2026-09-17T11:50:00Z",
+     "what_it_established": "Paused mint rejects transfers, mints and burns; PausableConfig stores authority and paused flag"
+    },
+    {
+     "url": "https://solana.com/docs/tokens/extensions/permanent-delegate",
+     "ref": "UNKNOWN",
+     "consulted_at_utc": "2026-09-17T11:50:00Z",
+     "what_it_established": "Permanent delegate can transfer/burn from any token account of the mint; owners cannot revoke it"
+    },
+    {
+     "url": "https://docs.raydium.io/algorithms/token-2022-transfer-fees",
+     "ref": "UNKNOWN",
+     "consulted_at_utc": "2026-09-17T11:52:00Z",
+     "what_it_established": "Raydium prose: input fee netted pre-swap, output sent gross; claims hook accounts are forwarded and minAmountOut checked on gross -- both contradicted by source at 59fb845; non-transferable mints rejected at CreatePool"
+    },
+    {
+     "url": "https://docs.raydium.io/user-flows/create-cpmm-pool",
+     "ref": "UNKNOWN",
+     "consulted_at_utc": "2026-09-17T11:53:00Z",
+     "what_it_established": "Raydium prose: Token-2022 supported in CPMM; transfer fee adds to user cost; hook pools depend on the hook program; non-transferable mints cannot be used"
+    }
+   ],
+   "facts": [
+    {
+     "key": "program_id.token",
+     "value": "TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA",
+     "confidence": "VERIFIED_IN_SOURCE",
+     "source_url": "https://github.com/solana-program/token/blob/0087ca54bd5a5b07e1df7e1b52303529047a1186/interface/src/lib.rs#L17"
+    },
+    {
+     "key": "program_id.token_2022",
+     "value": "TokenzQdBNbLqP5VEhdkAS6EPFLC1PHnBqCXEpPxuEb",
+     "confidence": "VERIFIED_IN_SOURCE",
+     "source_url": "https://github.com/solana-program/token-2022/blob/18a80055ed7aa2d0dff4df4f613e28efee11cc1a/interface/src/lib.rs#L29"
+    },
+    {
+     "key": "program_id.associated_token",
+     "value": "ATokenGPvbdGVxr1b2hvZbsiqW5xWH25efTNsLJA8knL; ATA = find_program_address([wallet, token_program_id, mint], ATA)",
+     "confidence": "VERIFIED_IN_SOURCE",
+     "source_url": "https://github.com/solana-program/associated-token-account/blob/2dc55ee1009d787eea7e1c401b8f27e6892bff4b/interface/src/lib.rs#L11"
+    },
+    {
+     "key": "native_mint.token / token_2022",
+     "value": "So11111111111111111111111111111111111111112 (Token) / 9pan9bMn5HatX4EJdBwg9VgCa7Uz5HL8N1m5D3NdXejP (Token-2022, decimals 9)",
+     "confidence": "VERIFIED_IN_SOURCE",
+     "source_url": "https://github.com/solana-program/token-2022/blob/18a80055ed7aa2d0dff4df4f613e28efee11cc1a/interface/src/native_mint.rs#L7"
+    },
+    {
+     "key": "layout.mint_82",
+     "value": "mint_authority COption @0 (u32 tag @0..4: 0=None,1=Some; key @4..36), supply u64 LE @36, decimals u8 @44, is_initialized u8 @45 (0/1 only), freeze_authority COption @46 (tag @46..50, key @50..82); identical in Token and Token-2022",
+     "confidence": "VERIFIED_IN_SOURCE",
+     "source_url": "https://github.com/solana-program/token-2022/blob/18a80055ed7aa2d0dff4df4f613e28efee11cc1a/interface/src/state.rs#L49-L54"
+    },
+    {
+     "key": "layout.token_account_165",
+     "value": "mint @0, owner @32, amount u64 LE @64, delegate COption @72 (tag@72,key@76), state u8 @108 (0 Uninit,1 Init,2 Frozen), is_native COption<u64> @109 (tag@109,u64@113), delegated_amount u64 @121, close_authority COption @129 (tag@129,key@133); identical in Token and Token-2022",
+     "confidence": "VERIFIED_IN_SOURCE",
+     "source_url": "https://github.com/solana-program/token-2022/blob/18a80055ed7aa2d0dff4df4f613e28efee11cc1a/interface/src/state.rs#L146-L151"
+    },
+    {
+     "key": "detect.frozen_account",
+     "value": "data[108] == 2 (AccountState::Frozen; program itself uses ACCOUNT_INITIALIZED_INDEX=108)",
+     "confidence": "VERIFIED_IN_SOURCE",
+     "source_url": "https://github.com/solana-program/token-2022/blob/18a80055ed7aa2d0dff4df4f613e28efee11cc1a/interface/src/extension/mod.rs#L338-L345"
+    },
+    {
+     "key": "detect.freeze_authority_present",
+     "value": "mint data[46..50] == [1,0,0,0]; key = data[50..82]",
+     "confidence": "VERIFIED_IN_SOURCE",
+     "source_url": "https://github.com/solana-program/token-2022/blob/18a80055ed7aa2d0dff4df4f613e28efee11cc1a/interface/src/state.rs#L286-L292"
+    },
+    {
+     "key": "tlv.layout",
+     "value": "Only Token-2022-owned accounts with len > base (82 mint / 165 account) and len != 355 carry extensions. AccountType u8 at absolute offset 165 for BOTH mint (bytes 82..165 must be zero padding) and account (1=Mint, 2=Account). TLV entries from 166: u16 LE type, u16 LE length, value[length]; iteration stops at type 0 or <2 bytes left; total len = 165+1+sum(4+len_i) (+2 if == 355)",
+     "confidence": "VERIFIED_IN_SOURCE",
+     "source_url": "https://github.com/solana-program/token-2022/blob/18a80055ed7aa2d0dff4df4f613e28efee11cc1a/interface/src/extension/mod.rs#L311-L332"
+    },
+    {
+     "key": "extension_type.ids",
+     "value": "0 Uninitialized,1 TransferFeeConfig,2 TransferFeeAmount,3 MintCloseAuthority,4 ConfidentialTransferMint,5 ConfidentialTransferAccount,6 DefaultAccountState,7 ImmutableOwner,8 MemoTransfer,9 NonTransferable,10 InterestBearingConfig,11 CpiGuard,12 PermanentDelegate,13 NonTransferableAccount,14 TransferHook,15 TransferHookAccount,16 ConfidentialTransferFeeConfig,17 ConfidentialTransferFeeAmount,18 MetadataPointer,19 TokenMetadata,20 GroupPointer,21 TokenGroup,22 GroupMemberPointer,23 TokenGroupMember,24 ConfidentialMintBurn,25 ScaledUiAmount,26 Pausable,27 PausableAccount,28 PermissionedBurn (new) -- repr(u16) implicit order; JS enum pins 18..28 explicitly",
+     "confidence": "VERIFIED_IN_SOURCE",
+     "source_url": "https://github.com/solana-program/token-2022/blob/18a80055ed7aa2d0dff4df4f613e28efee11cc1a/interface/src/extension/mod.rs#L1069-L1146"
+    },
+    {
+     "key": "extension.value_sizes",
+     "value": "TransferFeeConfig 108, TransferFeeAmount 8, MintCloseAuthority 32, DefaultAccountState 1, ImmutableOwner 0, MemoTransfer 1, NonTransferable 0, CpiGuard 1, PermanentDelegate 32, NonTransferableAccount 0, TransferHook 64 (authority@0, program_id@32), TransferHookAccount 1, MetadataPointer 64, Pausable 33 (authority@0, paused bool @32), PausableAccount 0, PermissionedBurn 32, InterestBearingConfig 52, ScaledUiAmount 56, ConfidentialTransferMint 65, ConfidentialTransferAccount 295, TokenMetadata variable",
+     "confidence": "INFERRED",
+     "source_url": "https://github.com/solana-program/token-2022/blob/18a80055ed7aa2d0dff4df4f613e28efee11cc1a/clients/js-legacy/src/extensions/extensionType.ts#L78-L130"
+    },
+    {
+     "key": "transfer_fee_config.layout",
+     "value": "value-relative: transfer_fee_config_authority @0..32, withdraw_withheld_authority @32..64, withheld_amount u64 @64, older{epoch u64 @72, maximum_fee u64 @80, bps u16 @88}, newer{epoch @90, maximum_fee @98, bps @106}; total 108 (repr(C) pod fields; JS layout same order)",
+     "confidence": "VERIFIED_IN_SOURCE",
+     "source_url": "https://github.com/solana-program/token-2022/blob/18a80055ed7aa2d0dff4df4f613e28efee11cc1a/interface/src/extension/transfer_fee/mod.rs#L34-L43"
+    },
+    {
+     "key": "transfer_fee.calculation",
+     "value": "fee = 0 if bps==0 or amount==0 else min(ceil(amount*bps/10000), maximum_fee); MAX_FEE_BASIS_POINTS=10000; epoch >= newer.epoch selects newer else older; on-chain epoch = Clock::get().epoch; recipient gets amount-fee, fee withheld in destination TransferFeeAmount",
+     "confidence": "VERIFIED_IN_SOURCE",
+     "source_url": "https://github.com/solana-program/token-2022/blob/18a80055ed7aa2d0dff4df4f613e28efee11cc1a/interface/src/extension/transfer_fee/mod.rs#L45-L70"
+    },
+    {
+     "key": "transfer_fee.inverse",
+     "value": "calculate_pre_fee_amount: bps=0 -> post; post=0 -> 0; bps=10000 -> post+max_fee; else ceil(post*10000/(10000-bps)) capped at post+max_fee; NOT an exact inverse of calculate_fee",
+     "confidence": "VERIFIED_IN_SOURCE",
+     "source_url": "https://github.com/solana-program/token-2022/blob/18a80055ed7aa2d0dff4df4f613e28efee11cc1a/interface/src/extension/transfer_fee/mod.rs#L89-L130"
+    },
+    {
+     "key": "instruction.discriminants",
+     "value": "Transfer=3 (deprecated since 4.0.0), TransferChecked=12 (data [12, amount u64 LE, decimals u8]; accounts [source w, mint, destination w, authority signer, ...hook extra accounts]), TransferFeeExtension=26 with sub 1 = TransferCheckedWithFee (data [26,1,amount,decimals,fee u64]), FreezeAccount=10, ThawAccount=11, WithdrawExcessLamports=38, UnwrapLamports=45",
+     "confidence": "VERIFIED_IN_SOURCE",
+     "source_url": "https://github.com/solana-program/token-2022/blob/18a80055ed7aa2d0dff4df4f613e28efee11cc1a/program/src/pod_instruction.rs#L61"
+    },
+    {
+     "key": "transfer.check_order",
+     "value": "source owner==T22; source frozen->AccountFrozen; insufficient funds; source NonTransferableAccount->NonTransferable; (with mint) MintMismatch/DecimalsMismatch, fee=calculate_epoch_fee, PausableConfig.paused->MintPaused, read permanent delegate + hook program; (without mint) hook/fee/pausable account ext ->MintRequiredForTransfer; CheckedWithFee fee!=calc->FeeMismatch; CpiGuard; destination frozen->AccountFrozen; hook CPI with remaining accounts (failure fails transfer)",
+     "confidence": "VERIFIED_IN_SOURCE",
+     "source_url": "https://github.com/solana-program/token-2022/blob/18a80055ed7aa2d0dff4df4f613e28efee11cc1a/program/src/processor.rs#L335-L600"
+    },
+    {
+     "key": "pausable.blocks",
+     "value": "paused==true fails transfer (MintPaused), mint_to and burn",
+     "confidence": "VERIFIED_IN_SOURCE",
+     "source_url": "https://github.com/solana-program/token-2022/blob/18a80055ed7aa2d0dff4df4f613e28efee11cc1a/program/src/processor.rs#L401-L405"
+    },
+    {
+     "key": "default_account_state.effect",
+     "value": "Frozen default requires mint freeze authority at InitializeMint (MintCannotFreeze); every new token account starts in the default state so a fresh ATA is frozen (data[108]==2) until thawed",
+     "confidence": "VERIFIED_IN_SOURCE",
+     "source_url": "https://github.com/solana-program/token-2022/blob/18a80055ed7aa2d0dff4df4f613e28efee11cc1a/program/src/processor.rs#L227-L233"
+    },
+    {
+     "key": "required_account_extensions",
+     "value": "TransferFeeConfig->TransferFeeAmount; NonTransferable->NonTransferableAccount+ImmutableOwner; TransferHook->TransferHookAccount; Pausable->PausableAccount; ATA program additionally always adds ImmutableOwner (T22 ATA min 170 bytes)",
+     "confidence": "VERIFIED_IN_SOURCE",
+     "source_url": "https://github.com/solana-program/token-2022/blob/18a80055ed7aa2d0dff4df4f613e28efee11cc1a/interface/src/extension/mod.rs#L1296-L1308"
+    },
+    {
+     "key": "transfer_hook.mechanics",
+     "value": "ExtraAccountMetaList PDA = find_program_address([\"extra-account-metas\", mint], hook_program_id); Execute discriminator hash input \"spl-transfer-hook-interface:execute\" (sha256 first 8 bytes computed = 692565c54bfb661a, INFERRED); TransferHook.program_id all-zero => no CPI",
+     "confidence": "VERIFIED_IN_SOURCE",
+     "source_url": "https://github.com/solana-program/transfer-hook/blob/94dfc28d5e0b3fdd0fb855e03f8817d5d4d0facb/interface/src/lib.rs#L27-L47"
+    },
+    {
+     "key": "swap_blockers.summary",
+     "value": "IMPOSSIBLE: NonTransferable(9). BLOCKED-while-true: Pausable(26).paused, DefaultAccountState(6)==2 for un-thawed accounts, token account state byte==2. BLOCKED/RISKY: TransferHook(14) with non-zero program_id (needs extra accounts; Raydium CPMM does not forward them). RISK: freeze_authority set, PermanentDelegate(12) non-zero. COST: TransferFeeConfig(1). NO EFFECT on raw amounts: MetadataPointer, TokenMetadata, InterestBearingConfig, ScaledUiAmount",
+     "confidence": "VERIFIED_IN_SOURCE",
+     "source_url": "https://github.com/solana-program/token-2022/blob/18a80055ed7aa2d0dff4df4f613e28efee11cc1a/program/src/processor.rs#L363-L405"
+    },
+    {
+     "key": "raydium_cpmm.program_ids",
+     "value": "mainnet CPMMoo8L3F4NbTegBCKVNunggL7H1ZpdTHKxQB5qKP1C; devnet feature DRaycpLY18LhpbydsBWbVJtxpNv9oXPgjRSfpF2bWpYb",
+     "confidence": "VERIFIED_IN_SOURCE",
+     "source_url": "https://github.com/raydium-io/raydium-cp-swap/blob/59fb845a9e5bb569c8b2f3415f13b0c0ebcc6b92/programs/cp-swap/src/lib.rs#L23-L25"
+    },
+    {
+     "key": "raydium_cpmm.is_supported_mint",
+     "value": "legacy Token mint -> ok; whitelisted via SupportMintAssociated PDA [\"support_mint\", mint] (admin-only create, mint must be T22-owned) -> ok regardless of extensions; otherwise ALL extensions must be in {TransferFeeConfig, MetadataPointer, TokenMetadata, InterestBearingConfig, ScaledUiAmount} else NotSupportMint. Freeze authority is not checked. Applies to initialize and initialize_with_permission",
+     "confidence": "VERIFIED_IN_SOURCE",
+     "source_url": "https://github.com/raydium-io/raydium-cp-swap/blob/59fb845a9e5bb569c8b2f3415f13b0c0ebcc6b92/programs/cp-swap/src/utils/token.rs"
+    },
+    {
+     "key": "raydium_cpmm.swap_transfer_fee",
+     "value": "swap_base_input: actual_in = amount_in - fee_in(amount_in); curve on actual_in; amount_out gross; require (amount_out - fee_out(amount_out)) >= minimum_amount_out (slippage on NET received); transfer_checked(amount_in) then transfer_checked(amount_out). swap_base_output: out_gross = amount_out_received + inverse_fee; curve; input_transfer = input_amount + inverse_fee(input) <= max_amount_in. get_transfer_fee returns 0 for legacy Token mints; epoch from Clock",
+     "confidence": "VERIFIED_IN_SOURCE",
+     "source_url": "https://github.com/raydium-io/raydium-cp-swap/blob/59fb845a9e5bb569c8b2f3415f13b0c0ebcc6b92/programs/cp-swap/src/instructions/swap_base_input.rs#L75-L208"
+    },
+    {
+     "key": "raydium_cpmm.no_hook_forwarding",
+     "value": "swap CPIs are token_2022::transfer_checked with only {from,to,authority,mint}; remaining_accounts never forwarded to transfers; no spl_transfer_hook_interface usage -> hook mints needing extra accounts cannot be swapped at this sha (contradicts docs.raydium.io claim)",
+     "confidence": "VERIFIED_IN_SOURCE",
+     "source_url": "https://github.com/raydium-io/raydium-cp-swap/blob/59fb845a9e5bb569c8b2f3415f13b0c0ebcc6b92/programs/cp-swap/src/utils/token.rs#L17-L70"
+    },
+    {
+     "key": "raydium_docs.claims",
+     "value": "docs.raydium.io: non-transferable rejected at CreatePool (matches source); 'swap instruction forwards the hook accounts' and 'minAmountOut checked against out_gross' (both contradicted by source at 59fb845)",
+     "confidence": "DOCS_ONLY",
+     "source_url": "https://docs.raydium.io/algorithms/token-2022-transfer-fees"
+    },
+    {
+     "key": "pumpswap.program_id",
+     "value": "pAMMBay6oceH9fJKBRHGP5D4bD4sWpmSwMn52FMfXEA (IDL metadata version 0.1.0)",
+     "confidence": "VERIFIED_IN_SOURCE",
+     "source_url": "https://github.com/pump-fun/pump-public-docs/blob/81091419e4457566469d4e2a27f64ed84d42419c/idl/pump_amm.json#L2"
+    },
+    {
+     "key": "pumpswap.token_programs",
+     "value": "buy/sell/create_pool/deposit/withdraw take base_token_program and quote_token_program as free accounts (no fixed address) -> Token or Token-2022 per mint; Pool account stores no token-program fields (derive from mint owner); errors UnsupportedBaseMint 6006, UnsupportedQuoteMint 6007, InvalidBaseMint 6008, InvalidQuoteMint 6009",
+     "confidence": "VERIFIED_IN_SOURCE",
+     "source_url": "https://github.com/pump-fun/pump-public-docs/blob/81091419e4457566469d4e2a27f64ed84d42419c/idl/pump_amm.json#L577-L760"
+    },
+    {
+     "key": "pumpfun.create_v2_token2022",
+     "value": "pump.fun create_v2 coins are Token-2022 mints (decimals 6, metadata pointer=mint); base_token_program for such coins is TokenzQd...; Token-2022 quote mints may only carry {metadata pointer/metadata, permanent delegate, initialized default account state, scaled UI amount, pausable, confidential-transfer mint, transfer hook with no program}; Token-2022 native mint rejected",
+     "confidence": "DOCS_ONLY",
+     "source_url": "https://github.com/pump-fun/pump-public-docs/blob/81091419e4457566469d4e2a27f64ed84d42419c/idl/pump.json#L4432-L4452"
+    },
+    {
+     "key": "pumpswap.amm_extension_policy",
+     "value": "Which Token-2022 extensions PumpSwap create_pool/buy/sell accept, and whether transfer fees are netted in quotes, is not documented; program is closed-source",
+     "confidence": "UNKNOWN",
+     "source_url": "https://github.com/pump-fun/pump-public-docs/blob/81091419e4457566469d4e2a27f64ed84d42419c/docs/PUMP_SWAP_README.md"
+    },
+    {
+     "key": "solana_docs.transfer_fee_epoch_delay",
+     "value": "SetTransferFee updates newer_transfer_fee which takes effect two epochs later; TransferChecked or TransferCheckedWithFee required",
+     "confidence": "DOCS_ONLY",
+     "source_url": "https://solana.com/docs/tokens/extensions/transfer-fees"
+    },
+    {
+     "key": "solana_docs.nontransferable_plus_fee",
+     "value": "Docs say NonTransferable cannot be combined with TransferFeeConfig; no such rule in check_for_invalid_mint_extension_combinations at 18a8005 (source rules: ConfidentialTransferFee/TransferFee/ConfidentialMint coupling, ConfidentialMintBurn needs ConfidentialTransferMint, ScaledUiAmount+InterestBearing invalid, NonTransferable+ConfidentialTransferMint needs ConfidentialMintBurn)",
+     "confidence": "DOCS_ONLY",
+     "source_url": "https://solana.com/docs/tokens/extensions"
+    }
+   ],
+   "open_questions": [
+    "Does the deployed mainnet Raydium CPMM binary (CPMMoo8L3F4NbTegBCKVNunggL7H1ZpdTHKxQB5qKP1C) match GitHub HEAD 59fb845? docs.raydium.io claims hook-account forwarding and gross-based slippage; the source does neither. Verify via on-chain program hash / a real hook-mint swap tx.",
+    "PumpSwap (closed-source): which Token-2022 extensions do create_pool/buy/sell accept (what triggers UnsupportedBaseMint/UnsupportedQuoteMint), and are Token-2022 transfer fees netted in buy/sell quotes? Only the bonding-curve create_v2 quote-mint extension whitelist is documented.",
+    "solana.com says NonTransferable + TransferFeeConfig is disallowed, but check_for_invalid_mint_extension_combinations at 18a8005 has no such rule; harmless for swaps (NonTransferable blocks anyway) but docs/source disagree.",
+    "Byte sizes for ConfidentialTransferFeeConfig(16)/Amount(17), TokenGroup(21), TokenGroupMember(23), ConfidentialMintBurn(24) were not derived (not needed for swap gating).",
+    "MaybeNull<Address> 'none' encoding assumed to be the all-zero pubkey (solana_nullable crate not read); relevant for TransferHook.program_id and PermanentDelegate.delegate detection.",
+    "Transfer-hook Execute discriminator bytes 692565c54bfb661a computed from the verified hash-input string assuming spl-discriminator uses sha256 first 8 bytes (crate not read).",
+    "Whether PumpSwap LP mints are Token-2022 (only a non-primary DeepWiki summary claims so)."
+   ]
+  },
+  "pumpswap": {
+   "notes_file": "docs/sources/pumpswap.md",
+   "sources": [
+    {
+     "url": "https://github.com/pump-fun/pump-public-docs",
+     "ref": "81091419e4457566469d4e2a27f64ed84d42419c (HEAD 2026-09-14T06:57:49Z); idl/pump_amm.json last changed in e0687ae9b7e064a0f54efc7297c65eecfbba3a8f (2026-09-12)",
+     "consulted_at_utc": "2026-09-17T11:47:15Z",
+     "what_it_established": "pump_amm/pump_fees/pump IDLs: program ids, account discriminators and field layouts (Pool, GlobalConfig, FeeConfig, FeeTier, Fees, volume accumulators), buy/buy_exact_quote_in/sell account lists with PDA seeds and args, error codes (incl. BOOST sell-cap and pool_v2), BuyEvent/SellEvent field order; prose docs on effective quote reserves, creator fee, fee tiers, fee recipients, cashback, holder rewards, canonical pool-authority rule"
+    },
+    {
+     "url": "https://registry.npmjs.org/@pump-fun/pump-swap-sdk/-/pump-swap-sdk-1.20.0.tgz",
+     "ref": "npm 1.20.0, integrity sha512-DuBZ5ge3OJPao6m0aZZj+GTZFzfZ/TU3ca1EgL9ejr+8QIYETlLQVMaiznS+U4uGzM9z58mpxoXn3HuVEYHCFw==, published 2026-09-10T13:25:11Z",
+     "consulted_at_utc": "2026-09-17T11:48:30Z",
+     "what_it_established": "TypeScript source (src/sdk/buy.ts, sell.ts, fees.ts, util.ts, pda.ts, offlinePumpAmm.ts, onlinePumpAmm.ts, types/sdk.ts, tests): exact buy/sell quote math and rounding, effective quote reserve usage, fee-tier selection by quote mint and market cap, isPumpPool test, pool/global/fee-config decoding with size constants (POOL_SIZE 270, GLOBAL_CONFIG_SIZE 949, FeeConfig 2512/4073/4097), remaining accounts (pool-v2, buyback recipient + ATA, cashback), track_volume encoding, PDA helpers; mainnet FeeConfig fixture"
+    },
+    {
+     "url": "https://api.mainnet-beta.solana.com",
+     "ref": "slots 447788121-447788999 (2026-09-17 ~11:50Z); raw responses saved in /home/rares/trading/sol/atomarb/.scratch/onchain/",
+     "consulted_at_utc": "2026-09-17T11:51:03Z",
+     "what_it_established": "Live bytes/lengths of GlobalConfig (949 B, lp 20/protocol 5/creator 5, buyback_basis_points 5000, boost_enabled, creator_fee_configurable, max 300), FeeConfig (4097 B: flat 25/5/0, 25 SOL tiers, 25 USDC tiers, exotic 20/5/5), Pools (300 B legacy with virtual 0; 301 B boosted pool with virtual_quote_reserves 17584505289); three live BuyEvents and two SellEvents used to confirm ceil/floor rules, pre-trade reserves in events, buyback = floor(protocol_fee/2) carved from protocol fee; one live buy instruction with 26 accounts and 25-byte data (trailing track_volume byte 0x01); all PDAs recomputed and matched"
+    }
+   ],
+   "facts": [
+    {
+     "key": "pump_amm program id",
+     "value": "pAMMBay6oceH9fJKBRHGP5D4bD4sWpmSwMn52FMfXEA",
+     "confidence": "VERIFIED_IN_SOURCE",
+     "source_url": "https://github.com/pump-fun/pump-public-docs/blob/81091419e4457566469d4e2a27f64ed84d42419c/idl/pump_amm.json"
+    },
+    {
+     "key": "pump fee program id",
+     "value": "pfeeUxB6jkeY1Hxd7CsFCAjcbHA9rWtchMGdZ6VojVZ (fixed fee_program account in buy/sell; owner of FeeConfig)",
+     "confidence": "VERIFIED_IN_SOURCE",
+     "source_url": "https://github.com/pump-fun/pump-public-docs/blob/81091419e4457566469d4e2a27f64ed84d42419c/idl/pump_fees.json"
+    },
+    {
+     "key": "GlobalConfig PDA",
+     "value": "seeds [\"global_config\"] under pump_amm -> ADyA8hdefvWN2dbGGWFotbzWxrAvLW83WG6QCVXvJKqw (bump 255), live 949 bytes",
+     "confidence": "VERIFIED_IN_SOURCE",
+     "source_url": "https://github.com/pump-fun/pump-public-docs/blob/81091419e4457566469d4e2a27f64ed84d42419c/idl/pump_amm.json"
+    },
+    {
+     "key": "FeeConfig PDA (AMM)",
+     "value": "seeds [\"fee_config\", pAMMBay6...(32 bytes)] under fee program -> 5PHirr8joyTMp9JMm6nW7hNDVyEYdkzDqazxPD7RaTjx (bump 255), live 4097 bytes",
+     "confidence": "VERIFIED_IN_SOURCE",
+     "source_url": "https://github.com/pump-fun/pump-public-docs/blob/81091419e4457566469d4e2a27f64ed84d42419c/idl/pump_amm.json"
+    },
+    {
+     "key": "Pool discriminator",
+     "value": "f19a6d0411b16dbc ([241,154,109,4,17,177,109,188])",
+     "confidence": "VERIFIED_IN_SOURCE",
+     "source_url": "https://github.com/pump-fun/pump-public-docs/blob/81091419e4457566469d4e2a27f64ed84d42419c/idl/pump_amm.json"
+    },
+    {
+     "key": "Pool layout (offsets)",
+     "value": "8 pool_bump u8; 9 index u16; 11 creator; 43 base_mint; 75 quote_mint; 107 lp_mint; 139 pool_base_token_account; 171 pool_quote_token_account; 203 lp_supply u64; 211 coin_creator; 243 is_mayhem_mode bool; 244 is_cashback_coin bool; 245 virtual_quote_reserves i128 LE signed; 261 creator_fee_bps u64; 269 can_edit_creator_fee bool; 270 is_holder_reward bool; total 271. Older pools shorter (211/243/244/245/261) -> read missing as 0/false; extend_account grows to >=300",
+     "confidence": "VERIFIED_IN_SOURCE",
+     "source_url": "https://github.com/pump-fun/pump-public-docs/blob/81091419e4457566469d4e2a27f64ed84d42419c/idl/pump_amm.json"
+    },
+    {
+     "key": "SDK vs docs IDL drift",
+     "value": "SDK 1.20.0 IDL lacks Pool.is_holder_reward (POOL_SIZE=270) and has admin_set_coin_creator/admin_set_coin_creator_fee_editable/set_coin_creator_fee_bps instead of admin_cto_pool; buy/sell definitions identical",
+     "confidence": "VERIFIED_IN_SOURCE",
+     "source_url": "https://registry.npmjs.org/@pump-fun/pump-swap-sdk/-/pump-swap-sdk-1.20.0.tgz"
+    },
+    {
+     "key": "GlobalConfig discriminator + layout",
+     "value": "95089ccaa0fcb0d9; 8 admin; 40 lp_fee_bps u64; 48 protocol_fee_bps u64; 56 disable_flags u8; 57 protocol_fee_recipients[8]; 313 coin_creator_fee_bps u64; 321 admin_set_coin_creator_authority; 353 whitelist_pda; 385 reserved_fee_recipient; 417 mayhem_mode_enabled; 418 reserved_fee_recipients[7]; 642 is_cashback_enabled; 643 buyback_fee_recipients[8]; 899 buyback_basis_points u64; 907 boost_authority; 939 boost_enabled; 940 creator_fee_configurable; 941 max_configurable_creator_fee_bps u64; end 949",
+     "confidence": "VERIFIED_IN_SOURCE",
+     "source_url": "https://github.com/pump-fun/pump-public-docs/blob/81091419e4457566469d4e2a27f64ed84d42419c/idl/pump_amm.json"
+    },
+    {
+     "key": "GlobalConfig live values 2026-09-17",
+     "value": "lp 20, protocol 5, coin_creator 5 (fallback only), disable_flags 0, mayhem_mode_enabled 1, is_cashback_enabled 1, buyback_basis_points 5000, boost_enabled 1, creator_fee_configurable 1, max_configurable_creator_fee_bps 300, admin FFWtrEQ4B4PKQoVuHYzZq8FabGkVatYzDpEVHsK5rrhF",
+     "confidence": "VERIFIED_IN_SOURCE",
+     "source_url": "https://api.mainnet-beta.solana.com"
+    },
+    {
+     "key": "disable_flags bits",
+     "value": "bit0 disable create_pool, bit1 deposit, bit2 withdraw, bit3 buy, bit4 sell (errors 6017-6021)",
+     "confidence": "VERIFIED_IN_SOURCE",
+     "source_url": "https://github.com/pump-fun/pump-public-docs/blob/81091419e4457566469d4e2a27f64ed84d42419c/idl/pump_amm.json"
+    },
+    {
+     "key": "FeeConfig discriminator + layout",
+     "value": "8f3492bbdb7b4c9b; 8 bump u8; 9 admin; 41 flat_fees {lp,protocol,creator u64}; 65 fee_tiers Vec<FeeTier> (u32 len + 40 B each: u128 market_cap_lamports_threshold + Fees); then stable_fee_tiers Vec<FeeTier>; then exotic_flat_fees Fees. Version by account length: 2512 pre-stable, 4073 post-stable, 4097 post-exotic; shorter => trailing fields empty/zero",
+     "confidence": "VERIFIED_IN_SOURCE",
+     "source_url": "https://registry.npmjs.org/@pump-fun/pump-swap-sdk/-/pump-swap-sdk-1.20.0.tgz"
+    },
+    {
+     "key": "FeeConfig live values 2026-09-17",
+     "value": "len 4097; flat_fees (25,5,0); 25 SOL tiers: [0 SOL: 2/93/30], [420 SOL: 20/5/95], 1470: 90, 2460: 85, 3440: 80, 4420: 75, 9820: 70, 14740: 65, 19650: 60, 24560: 55, 29470: 50, 34380: 45, 39300: 40, 44210: 35, 49120: 30, 54030: 28, 58940: 25, 63860: 23, 68770: 20, 73681: 18, 78590: 15, 83500: 13, 88400: 10, 93330: 8, [>=98240 SOL: 20/5/5]; 25 USDC tiers same fees at thresholds 0, 59k, 300k, 500k, 700k, 900k, 2M..20M USDC; exotic_flat_fees (20,5,5)",
+     "confidence": "VERIFIED_IN_SOURCE",
+     "source_url": "https://api.mainnet-beta.solana.com"
+    },
+    {
+     "key": "fee tier selection rule",
+     "value": "isPumpPool = pumpPoolAuthorityPda(base_mint) == pool.creator. Non-pump pool -> flat_fees. Pump pool: SOL-like quote (default/WSOL/T22 native) -> fee_tiers; USDC -> stable_fee_tiers (fallback fee_tiers if empty); other quote -> exotic_flat_fees (fallback flat_fees if all-zero). calculateFeeTier: if mcap < tiers[0].threshold -> tiers[0]; else scan tiers reversed, first with mcap >= threshold. marketCap = effectiveQuoteReserve * circulatingSupply / baseReserve (floor); circulatingSupply = mayhem ? 1e15 : base_mint.supply. tradeSize unused. If creator_fee_configurable && pool.creator_fee_bps>0, creator bps replaced by pool value. creator fee = 0 when coin_creator == default",
+     "confidence": "VERIFIED_IN_SOURCE",
+     "source_url": "https://registry.npmjs.org/@pump-fun/pump-swap-sdk/-/pump-swap-sdk-1.20.0.tgz"
+    },
+    {
+     "key": "effective quote reserves / virtual liquidity",
+     "value": "Pricing uses effQ = pool_quote_token_account.amount + Pool.virtual_quote_reserves (i128) for buy and sell; base side raw vault only. Docs claim virtual is 0 on all pools today, but live boosted pools have virtual_quote_reserves = 17584505289 (~17.58 SOL) with can_boost=true; three live BuyEvents only reproduce with virtual included",
+     "confidence": "VERIFIED_IN_SOURCE",
+     "source_url": "https://api.mainnet-beta.solana.com"
+    },
+    {
+     "key": "buy math (base-exact)",
+     "value": "quote_in = ceil(effQ*base_out/(B-base_out)); lp=ceil(quote_in*lp_bps/1e4); protocol=ceil(quote_in*p_bps/1e4); creator=ceil(quote_in*c_bps/1e4) (0 if coin_creator default); user pays quote_in+lp+protocol+creator; requires base_out<B. Event reserves are pre-trade. Verified on 3 live BuyEvents",
+     "confidence": "VERIFIED_IN_SOURCE",
+     "source_url": "https://registry.npmjs.org/@pump-fun/pump-swap-sdk/-/pump-swap-sdk-1.20.0.tgz"
+    },
+    {
+     "key": "buy math (quote-exact, SDK buyQuoteInput)",
+     "value": "effectiveQuote = floor(quote*1e4/(1e4+totalFeeBps)); fees ceil on effectiveQuote; if sum>quote reduce effectiveQuote by excess; base_out = floor(B*(effectiveQuote-1)/(effQ+effectiveQuote-1)). SDK test asserts on-chain buy_exact_quote_in gives base_amount_out == this and user_quote_amount_in == effectiveQuote",
+     "confidence": "VERIFIED_IN_SOURCE",
+     "source_url": "https://registry.npmjs.org/@pump-fun/pump-swap-sdk/-/pump-swap-sdk-1.20.0.tgz"
+    },
+    {
+     "key": "sell math",
+     "value": "quote_out = floor(effQ*base_in/(B+base_in)); lp/protocol/creator = ceil(quote_out*bps/1e4); user receives quote_out-lp-protocol-creator; BOOST cap: real quote vault must be >= quote_out - lp_fee (SDK throws; on-chain error 6063 'payout is capped at real_vault'). Verified on 2 live SellEvents (floor for CP, ceil for fees)",
+     "confidence": "VERIFIED_IN_SOURCE",
+     "source_url": "https://registry.npmjs.org/@pump-fun/pump-swap-sdk/-/pump-swap-sdk-1.20.0.tgz"
+    },
+    {
+     "key": "buyback fee",
+     "value": "buyback_fee_basis_points 5000 in events; buyback_fee = floor(protocol_fee*5000/1e4), carved out of protocol fee (user_quote_amount_in = quote_in+lp+protocol+creator exactly). Not an extra cost to the trader",
+     "confidence": "VERIFIED_IN_SOURCE",
+     "source_url": "https://api.mainnet-beta.solana.com"
+    },
+    {
+     "key": "buy instruction",
+     "value": "disc 66063d1201daebea; args base_amount_out u64, max_quote_amount_in u64, track_volume OptionBool (1 trailing byte; live data 25 bytes ending 0x01). Accounts: [0]pool w,[1]user w+s,[2]global_config,[3]base_mint,[4]quote_mint,[5]user_base_token_account w,[6]user_quote_token_account w,[7]pool_base_token_account w,[8]pool_quote_token_account w,[9]protocol_fee_recipient,[10]protocol_fee_recipient_token_account w (ATA quote),[11]base_token_program,[12]quote_token_program,[13]system_program,[14]associated_token_program,[15]event_authority,[16]program,[17]coin_creator_vault_ata w,[18]coin_creator_vault_authority [\"creator_vault\",pool.coin_creator],[19]global_volume_accumulator,[20]user_volume_accumulator w [\"user_volume_accumulator\",user],[21]fee_config,[22]fee_program. Remaining (SDK+live): [cashback: UVA quote ATA w], [coin_creator!=default: pool-v2 PDA [\"pool-v2\",base_mint] ro], buyback_fee_recipient ro, buyback recipient quote ATA w -> 26 accounts non-cashback",
+     "confidence": "VERIFIED_IN_SOURCE",
+     "source_url": "https://github.com/pump-fun/pump-public-docs/blob/81091419e4457566469d4e2a27f64ed84d42419c/idl/pump_amm.json"
+    },
+    {
+     "key": "buy_exact_quote_in instruction",
+     "value": "disc c62e1552b4d9e870; args spendable_quote_in u64, min_base_amount_out u64, track_volume OptionBool; account list identical to buy (23 named + same remaining); fees deducted from spendable_quote_in; payer must cover rent for protocol_fee_recipient_token_account / coin_creator_vault_ata / user_volume_accumulator if missing. SDK 1.20.0 has no builder (only a test that swaps ix data)",
+     "confidence": "VERIFIED_IN_SOURCE",
+     "source_url": "https://github.com/pump-fun/pump-public-docs/blob/81091419e4457566469d4e2a27f64ed84d42419c/idl/pump_amm.json"
+    },
+    {
+     "key": "sell instruction",
+     "value": "disc 33e685a4017f83ad; args base_amount_in u64, min_quote_amount_out u64 (no track_volume). Accounts [0..18] same as buy, [19]fee_config, [20]fee_program. Remaining (SDK): [cashback: UVA quote ATA w, user_volume_accumulator w], [coin_creator!=default: pool-v2 ro], buyback_fee_recipient ro, buyback ATA w -> 24 accounts non-cashback",
+     "confidence": "VERIFIED_IN_SOURCE",
+     "source_url": "https://github.com/pump-fun/pump-public-docs/blob/81091419e4457566469d4e2a27f64ed84d42419c/idl/pump_amm.json"
+    },
+    {
+     "key": "pool PDA + canonical pool rule",
+     "value": "seeds [\"pool\", index u16 LE, creator, base_mint, quote_mint] under pump_amm. Canonical (migrated) pool: index 0, creator = find_program_address([\"pool-authority\", base_mint], 6EF8rrecthR5Dkzon8Nwu78hRvfCKubJ14M5uBEwF6P), quote = WSOL (SOL curves) or curve quote mint (migrate_v2/USDC). lp_mint PDA [\"pool_lp_mint\", pool] (Token-2022). Recomputed for docs example GseMAnN... (bump 254) and live FruHjS1...",
+     "confidence": "VERIFIED_IN_SOURCE",
+     "source_url": "https://github.com/pump-fun/pump-public-docs/blob/81091419e4457566469d4e2a27f64ed84d42419c/idl/pump.json"
+    },
+    {
+     "key": "token programs supported",
+     "value": "base_token_program and quote_token_program are separate caller-supplied accounts; SPL Token and Token-2022 both used (live canonical pool base mint DRWUnUkF...pump is Token-2022, quote WSOL is SPL Token); LP mint is Token-2022. Program supports arbitrary (base, quote) via create_pool; canonical pools are (pump token, WSOL|USDC)",
+     "confidence": "VERIFIED_IN_SOURCE",
+     "source_url": "https://api.mainnet-beta.solana.com"
+    },
+    {
+     "key": "protocol fee recipient choice",
+     "value": "non-mayhem pools: any of GlobalConfig.protocol_fee_recipients[8]; mayhem pools: reserved_fee_recipient or reserved_fee_recipients[7]; buyback: any of buyback_fee_recipients[8]; recipient token account = ATA(recipient, quote_mint, quote_token_program). SDK picks randomly",
+     "confidence": "VERIFIED_IN_SOURCE",
+     "source_url": "https://registry.npmjs.org/@pump-fun/pump-swap-sdk/-/pump-swap-sdk-1.20.0.tgz"
+    },
+    {
+     "key": "BuyEvent/SellEvent discriminators",
+     "value": "BuyEvent 67f4521f2cf57777, SellEvent 3e2f370aa503dc2a, CreatePoolEvent b1310cd2a076a774; emitted as 'Program data:' base64 logs; field order recorded in note section 9; pool_*_token_reserves fields are pre-trade raw vault balances; virtual_quote_reserves i128 and base_supply included",
+     "confidence": "VERIFIED_IN_SOURCE",
+     "source_url": "https://github.com/pump-fun/pump-public-docs/blob/81091419e4457566469d4e2a27f64ed84d42419c/idl/pump_amm.json"
+    },
+    {
+     "key": "user_volume_accumulator rent cost",
+     "value": "init_if_needed on buy; live account 137 bytes, 1,844,400 lamports (~0.00184 SOL) charged on a wallet's first AMM buy",
+     "confidence": "VERIFIED_IN_SOURCE",
+     "source_url": "https://api.mainnet-beta.solana.com"
+    },
+    {
+     "key": "pool-v2 remaining account",
+     "value": "PDA [\"pool-v2\", base_mint] under pump_amm; SDK passes it readonly when coin_creator != default; live tx includes it; error 6062 InvalidPoolV2 validates it; the account does NOT exist on mainnet (NULL); purpose unknown",
+     "confidence": "UNKNOWN",
+     "source_url": "https://registry.npmjs.org/@pump-fun/pump-swap-sdk/-/pump-swap-sdk-1.20.0.tgz"
+    },
+    {
+     "key": "boost mechanics (how virtual_quote_reserves is set)",
+     "value": "init_boost / boost_buy_and_burn / toggle_boost exist (boost_vault = ATA of [\"boost_vault\", pool]); deposit/withdraw disabled on boost pools (6064); no docs on how virtual reserves are assigned or evolve",
+     "confidence": "UNKNOWN",
+     "source_url": "https://github.com/pump-fun/pump-public-docs/blob/81091419e4457566469d4e2a27f64ed84d42419c/idl/pump_amm.json"
+    }
+   ],
+   "open_questions": [
+    "Purpose/contents of the pool-v2 remaining account ([\"pool-v2\", base_mint]): validated by error 6062 but NULL on mainnet; whether omitting it fails when coin_creator != default was not tested.",
+    "Exact on-chain rounding of buy_exact_quote_in (fee back-out, base_out floor, the SDK's '-1' and excess correction); only the SDK inverse buyQuoteInput and its localnet test exist as evidence.",
+    "How virtual_quote_reserves is assigned/changes on boost pools (observed constant 17,584,505,289 lamports on three pools) and whether the sell payout cap is exactly quote_out - lp_fee <= real vault as the SDK checks (on-chain evidence is only the error text of 6063).",
+    "Whether the trailing track_volume OptionBool byte may be omitted on the AMM buy (data length 24) \u2014 only described for pump bonding-curve trailing OptionBool args.",
+    "Rules behind UnsupportedBaseMint/UnsupportedQuoteMint (6006/6007) and whether Token-2022 quote mints with transfer hooks/fees are accepted.",
+    "On-chain Pool::market_cap() basis for tiering (SDK uses effective quote reserves and live base-mint supply, or 1e15 for mayhem) \u2014 Rust source not public; only SDK mirror plus consistent live tier assignment.",
+    "Whether fee_config/fee_program can ever be omitted (IDL marks them non-optional; SDK says pump-fees is mandatory) \u2014 treated as required.",
+    "Recommended compute-unit budget for PumpSwap buy/sell (docs give only bonding-curve figures)."
+   ]
+  },
+  "raydium_cpmm": {
+   "notes_file": "docs/sources/raydium_cpmm.md",
+   "sources": [
+    {
+     "url": "https://github.com/raydium-io/raydium-cp-swap",
+     "ref": "59fb845a9e5bb569c8b2f3415f13b0c0ebcc6b92 (master, 2026-09-10T06:36:22Z, crate raydium-cp-swap 0.2.0, anchor-lang =1.0.2)",
+     "consulted_at_utc": "2026-09-17T11:47:12Z",
+     "what_it_established": "Program IDs (mainnet/devnet), PoolState/AmmConfig/ObservationState struct declarations and LEN, status bit semantics, open_time gate, full swap_base_input/swap_base_output math (fees.rs, calculator.rs, constant_product.rs), Token-2022 transfer-fee handling (utils/token.rs get_transfer_fee / get_transfer_inverse_fee), vault_amount_without_fee reserve derivation, Swap accounts struct with constraints, PDA seeds, initialize sets enable_creator_fee=false; no IDL JSON committed"
+    },
+    {
+     "url": "https://github.com/raydium-io/raydium-sdk-V2",
+     "ref": "c2897835f71873471f4160fa57bd1865b7903d55 (2026-09-15); npm @raydium-io/raydium-sdk-v2 0.2.70-alpha (latest, modified 2026-09-15T08:17:53Z)",
+     "consulted_at_utc": "2026-09-17T11:47:12Z",
+     "what_it_established": "Hard-coded Anchor ix discriminators (anchorDataBuf) matching sha256 convention, CpmmPoolInfoLayout and CpmmConfigInfoLayout field order, makeSwapCpmmBaseInInstruction account order/is_signer/is_writable, getRpcPoolInfos reserve = vault - protocolFees - fundFees - creatorFees, API v3 URLs (list-v2, info/ids, key/ids), program-id constants incl. devnet, dependencies (@solana/web3.js ^1.95.3, no peerDependencies, no anchor dep), commits 45a7577/1703c72 adding creatorFeeShareRate"
+    },
+    {
+     "url": "https://api.mainnet-beta.solana.com (getAccountInfo of D4FPEruKEHrG5TenZ2mpDGEfu1iUvTiqBxvpU8HLBvC2, 47hq28mcL7q5GhBg7epyGF2dnuJd4MKFt8QhT7CzYUp4, its vaults/observation, CPMMoo8... program + programdata DMawCQzbgNTmbzaESc7o6pvL1KAeetY8zA7jNpzntHhU)",
+     "ref": "live mainnet state at ~2026-09-17T11:55Z; program last deployed slot 445763504 (2026-09-10T01:54:31Z)",
+     "consulted_at_utc": "2026-09-17T11:55:00Z",
+     "what_it_established": "Live account discriminators (PoolState f7ede3f5d7c3de46, AmmConfig daf42168cbcb2b6f, ObservationState 7aaec5358109a584), lengths 637/236/4075, every PoolState/AmmConfig field decodes at computed offsets, all PDA derivations match, config idx0 fee values, upgrade authority FytDrVz..., deployed ELF contains no creator_fee_share strings (master lineage deployed)"
+    },
+    {
+     "url": "https://api-v3.raydium.io (/pools/info/mint, /pools/info/list-v2, /pools/info/ids, /pools/key/ids, /main/cpmm-config, /main/version)",
+     "ref": "API version V3.0.1",
+     "consulted_at_utc": "2026-09-17T11:53:00Z",
+     "what_it_established": "pools/info/mint requires lowercase poolType (standard/all; 'Standard' -> HTTP 500 'query poolType type error'); list-v2 accepts Standard; type 'Standard' includes AMM v4 and CPMM so filter by programId; response shapes; pool keys match on-chain; cpmm-config list of fee tiers"
+    },
+    {
+     "url": "https://docs.raydium.io/reference/program-addresses",
+     "ref": "UNKNOWN (no last-updated shown; fetched 2026-09-17)",
+     "consulted_at_utc": "2026-09-17T11:56:00Z",
+     "what_it_established": "Program-id table (CPMM mainnet CPMMoo8..., devnet DRaycpLY...), admin authority, upgrade authority FytDrVz..., fee receiver, default config idx0, fee-owner wallets"
+    },
+    {
+     "url": "https://docs.raydium.io/api-reference/api-v3/overview",
+     "ref": "UNKNOWN (fetched 2026-09-17)",
+     "consulted_at_utc": "2026-09-17T11:56:00Z",
+     "what_it_established": "Base URLs, poolType enum (all, concentrated, standard, allFarm, concentratedFarm, standardFarm), poolSortField values, pageSize/size cap 1000; no rate-limit statement"
+    },
+    {
+     "url": "https://docs.raydium.io/",
+     "ref": "UNKNOWN (fetched 2026-09-17)",
+     "consulted_at_utc": "2026-09-17T11:58:00Z",
+     "what_it_established": "Site states 'Community-maintained. PRs welcome.'"
+    },
+    {
+     "url": "https://api.github.com/repos/raydium-io/raydium-cp-swap (branches, pulls, compare master...feat/creator-fee-share, commits) + raw files at bdeee23fc064",
+     "ref": "feat/creator-fee-share bdeee23fc064 (2026-09-15T06:00:05Z); chore/upgrade-anchor 3b9325ba1707 (2026-09-07)",
+     "consulted_at_utc": "2026-09-17T11:57:00Z",
+     "what_it_established": "Unmerged branch adds AmmConfig.creator_fee_share_rate at offset 116 and CreatorFeeShare PDA; swap math unchanged; explains SDK's extra fields"
+    },
+    {
+     "url": "https://github.com/raydium-io/raydium-docs-v1/issues/7",
+     "ref": "opened 2026-09-14, open/unanswered",
+     "consulted_at_utc": "2026-09-17T11:57:00Z",
+     "what_it_established": "Third party asked for build provenance of CPMM deployment slot 445763504; no Raydium answer; exact deployed commit unpublished"
+    }
+   ],
+   "facts": [
+    {
+     "key": "program_id_mainnet",
+     "value": "CPMMoo8L3F4NbTegBCKVNunggL7H1ZpdTHKxQB5qKP1C",
+     "confidence": "VERIFIED_IN_SOURCE",
+     "source_url": "https://github.com/raydium-io/raydium-cp-swap/blob/59fb845a9e5bb569c8b2f3415f13b0c0ebcc6b92/programs/cp-swap/src/lib.rs"
+    },
+    {
+     "key": "program_id_devnet",
+     "value": "DRaycpLY18LhpbydsBWbVJtxpNv9oXPgjRSfpF2bWpYb (differs from mainnet; cfg feature devnet)",
+     "confidence": "VERIFIED_IN_SOURCE",
+     "source_url": "https://github.com/raydium-io/raydium-cp-swap/blob/59fb845a9e5bb569c8b2f3415f13b0c0ebcc6b92/programs/cp-swap/src/lib.rs"
+    },
+    {
+     "key": "authority_pda",
+     "value": "seeds [b\"vault_and_lp_mint_auth_seed\"] -> GpMZbSM2GgvTKHJirzeGfMFoaZ8UR2X7F4v8vHTvxFbL, bump 253 (mainnet)",
+     "confidence": "VERIFIED_IN_SOURCE",
+     "source_url": "https://github.com/raydium-io/raydium-cp-swap/blob/59fb845a9e5bb569c8b2f3415f13b0c0ebcc6b92/programs/cp-swap/src/lib.rs"
+    },
+    {
+     "key": "mainnet_last_deploy",
+     "value": "slot 445763504 = 2026-09-10T01:54:31Z; programdata DMawCQzbgNTmbzaESc7o6pvL1KAeetY8zA7jNpzntHhU; upgrade authority FytDrVzDybM1TwFQPGb8qaxZR7dBCzNeqT3vtQsceZQK; deployed ELF has 0 occurrences of 'creator_fee_share' -> master lineage, not feat/creator-fee-share",
+     "confidence": "VERIFIED_IN_SOURCE",
+     "source_url": "https://api.mainnet-beta.solana.com"
+    },
+    {
+     "key": "idl_availability",
+     "value": "No IDL JSON in repo; no on-chain Anchor IDL account (3HD1FNEKoNh5aYfvw3VrNWy6WwrEtS6JYx1RmFTE7DMC absent). Discriminators derived from sha256 convention and cross-checked vs SDK bytes and live accounts",
+     "confidence": "VERIFIED_IN_SOURCE",
+     "source_url": "https://api.mainnet-beta.solana.com"
+    },
+    {
+     "key": "PoolState.discriminator",
+     "value": "f7 ed e3 f5 d7 c3 de 46 (sha256('account:PoolState')[..8]; equals first 8 bytes of live pool 47hq28mcL7q5GhBg7epyGF2dnuJd4MKFt8QhT7CzYUp4)",
+     "confidence": "VERIFIED_IN_SOURCE",
+     "source_url": "https://api.mainnet-beta.solana.com"
+    },
+    {
+     "key": "PoolState.len",
+     "value": "637 bytes; repr(C, packed), zero_copy; LEN = 8 + 10*32 + 5 + 8*7 + 2 + 6 + 2*8 + 8*28",
+     "confidence": "VERIFIED_IN_SOURCE",
+     "source_url": "https://github.com/raydium-io/raydium-cp-swap/blob/59fb845a9e5bb569c8b2f3415f13b0c0ebcc6b92/programs/cp-swap/src/states/pool.rs"
+    },
+    {
+     "key": "PoolState.offsets",
+     "value": "8 amm_config; 40 pool_creator; 72 token_0_vault; 104 token_1_vault; 136 lp_mint; 168 token_0_mint; 200 token_1_mint; 232 token_0_program; 264 token_1_program; 296 observation_key; 328 auth_bump u8; 329 status u8; 330 lp_mint_decimals; 331 mint_0_decimals; 332 mint_1_decimals; 333 lp_supply u64; 341 protocol_fees_token_0; 349 protocol_fees_token_1; 357 fund_fees_token_0; 365 fund_fees_token_1; 373 open_time; 381 recent_epoch; 389 creator_fee_on u8; 390 enable_creator_fee bool; 391 padding1 [u8;6]; 397 creator_fees_token_0; 405 creator_fees_token_1; 413 padding [u64;28]; end 637 (all LE)",
+     "confidence": "VERIFIED_IN_SOURCE",
+     "source_url": "https://github.com/raydium-io/raydium-cp-swap/blob/59fb845a9e5bb569c8b2f3415f13b0c0ebcc6b92/programs/cp-swap/src/states/pool.rs"
+    },
+    {
+     "key": "AmmConfig.discriminator",
+     "value": "da f4 21 68 cb cb 2b 6f (sha256('account:AmmConfig')[..8]; equals live D4FPEruKEHrG5TenZ2mpDGEfu1iUvTiqBxvpU8HLBvC2)",
+     "confidence": "VERIFIED_IN_SOURCE",
+     "source_url": "https://api.mainnet-beta.solana.com"
+    },
+    {
+     "key": "AmmConfig.offsets",
+     "value": "len 236; 8 bump u8; 9 disable_create_pool bool; 10 index u16 LE; 12 trade_fee_rate u64; 20 protocol_fee_rate; 28 fund_fee_rate; 36 create_pool_fee; 44 protocol_owner; 76 fund_owner; 108 creator_fee_rate; 116 padding [u64;15] (SDK 0.2.70 labels 116..124 creatorFeeShareRate from unmerged branch; live value 0). PDA seeds [b\"amm_config\", index u16 big-endian]",
+     "confidence": "VERIFIED_IN_SOURCE",
+     "source_url": "https://github.com/raydium-io/raydium-cp-swap/blob/59fb845a9e5bb569c8b2f3415f13b0c0ebcc6b92/programs/cp-swap/src/states/config.rs"
+    },
+    {
+     "key": "AmmConfig.index0_live_values",
+     "value": "trade_fee_rate 2500, protocol_fee_rate 120000, fund_fee_rate 40000, create_pool_fee 150000000, creator_fee_rate 500, protocol_owner ProCXqRcXJjoUd1RNoo28bSizAA6EEqt9wURZYPDc5u, fund_owner FUNDduJTA7XcckKHKfAoEnnhuSud2JUCUZv6opWEjrBU; other configs idx5=3000, idx4=5000, idx1=10000, idx6=15000, idx2=20000, idx7=25000",
+     "confidence": "VERIFIED_IN_SOURCE",
+     "source_url": "https://api-v3.raydium.io/main/cpmm-config"
+    },
+    {
+     "key": "FEE_RATE_DENOMINATOR_VALUE",
+     "value": "1_000_000 (u64)",
+     "confidence": "VERIFIED_IN_SOURCE",
+     "source_url": "https://github.com/raydium-io/raydium-cp-swap/blob/59fb845a9e5bb569c8b2f3415f13b0c0ebcc6b92/programs/cp-swap/src/curve/fees.rs"
+    },
+    {
+     "key": "status_bits",
+     "value": "bit0 (1) disable deposit, bit1 (2) disable withdraw, bit2 (4) disable swap; enabled iff (status & bit)==0; admin update_pool_status writes raw u8",
+     "confidence": "VERIFIED_IN_SOURCE",
+     "source_url": "https://github.com/raydium-io/raydium-cp-swap/blob/59fb845a9e5bb569c8b2f3415f13b0c0ebcc6b92/programs/cp-swap/src/states/pool.rs"
+    },
+    {
+     "key": "open_time_semantics",
+     "value": "swap allowed iff (status & 4)==0 && clock.unix_timestamp >= open_time else ErrorCode::NotApproved; initialize forces open_time >= block_timestamp+1",
+     "confidence": "VERIFIED_IN_SOURCE",
+     "source_url": "https://github.com/raydium-io/raydium-cp-swap/blob/59fb845a9e5bb569c8b2f3415f13b0c0ebcc6b92/programs/cp-swap/src/instructions/swap_base_input.rs"
+    },
+    {
+     "key": "reserves_for_pricing",
+     "value": "vault_amount_without_fee: reserve_i = vault_i.amount - (protocol_fees_token_i + fund_fees_token_i + creator_fees_token_i); InsufficientVault on underflow; SDK getRpcPoolInfos does the same",
+     "confidence": "VERIFIED_IN_SOURCE",
+     "source_url": "https://github.com/raydium-io/raydium-cp-swap/blob/59fb845a9e5bb569c8b2f3415f13b0c0ebcc6b92/programs/cp-swap/src/states/pool.rs"
+    },
+    {
+     "key": "swap_base_input_fee_math",
+     "value": "actual_in = amount_in - token2022_transfer_fee; creator_rate = enable_creator_fee ? cfg.creator_fee_rate : 0; if creator fee on input: total=ceil(actual_in*(trade+creator)/1e6), creator=floor(total*creator/(trade+creator)), trade=total-creator, in_less=actual_in-total; else trade=ceil(actual_in*trade/1e6), in_less=actual_in-trade; protocol=floor(trade*protocol_rate/1e6), fund=floor(trade*fund_rate/1e6) (both carved out of trade fee; LP remainder stays in vault); out=floor(in_less*R_out/(R_in+in_less)) in u128; if creator fee on output: creator=ceil(out*creator/1e6), out-=creator; then output token2022 fee; require received>0 and >= minimum_amount_out (ExceededSlippage); require K_after>=K_before",
+     "confidence": "VERIFIED_IN_SOURCE",
+     "source_url": "https://github.com/raydium-io/raydium-cp-swap/blob/59fb845a9e5bb569c8b2f3415f13b0c0ebcc6b92/programs/cp-swap/src/curve/calculator.rs"
+    },
+    {
+     "key": "fee_taken_in_which_token",
+     "value": "trade/protocol/fund fees are taken from the INPUT token; creator fee from input if creator_fee_on==0 (BothToken) or (==1 OnlyToken0 && ZeroForOne) or (==2 OnlyToken1 && OneForZero), otherwise from output (ceil on output_amount_swapped)",
+     "confidence": "VERIFIED_IN_SOURCE",
+     "source_url": "https://github.com/raydium-io/raydium-cp-swap/blob/59fb845a9e5bb569c8b2f3415f13b0c0ebcc6b92/programs/cp-swap/src/states/pool.rs"
+    },
+    {
+     "key": "creator_fee_applicability",
+     "value": "initialize (permissionless) hard-codes CreatorFeeOn::BothToken + enable_creator_fee=false; only initialize_with_permission (Permission PDA) sets enable_creator_fee=true; read offsets 389/390 per pool",
+     "confidence": "VERIFIED_IN_SOURCE",
+     "source_url": "https://github.com/raydium-io/raydium-cp-swap/blob/59fb845a9e5bb569c8b2f3415f13b0c0ebcc6b92/programs/cp-swap/src/instructions/initialize.rs"
+    },
+    {
+     "key": "token2022_transfer_fee_handling",
+     "value": "get_transfer_fee(mint, amount): 0 if mint owner == legacy Token; else TransferFeeConfig.calculate_epoch_fee(epoch, amount) (0 if extension absent). get_transfer_inverse_fee (swap_base_output): calculate_inverse_epoch_fee with re-check; fee=maximum_fee if bps==10000. Input fee applied before pricing, output fee after; transfers use transfer_checked",
+     "confidence": "VERIFIED_IN_SOURCE",
+     "source_url": "https://github.com/raydium-io/raydium-cp-swap/blob/59fb845a9e5bb569c8b2f3415f13b0c0ebcc6b92/programs/cp-swap/src/utils/token.rs"
+    },
+    {
+     "key": "swap_base_output_math",
+     "value": "out_wtf = amount_out + inverse_transfer_fee(output); if creator on output: actual_out = ceil(out_wtf*1e6/(1e6-creator)); in_swapped = ceil(R_in*actual_out/(R_out-actual_out)); in_with_fee = ceil(in_swapped*1e6/(1e6-(trade[+creator]))); require in_with_fee + inverse_transfer_fee(input) <= max_amount_in; discriminator 37 d9 62 56 a3 4a b4 ad; args (max_amount_in u64, amount_out u64)",
+     "confidence": "VERIFIED_IN_SOURCE",
+     "source_url": "https://github.com/raydium-io/raydium-cp-swap/blob/59fb845a9e5bb569c8b2f3415f13b0c0ebcc6b92/programs/cp-swap/src/instructions/swap_base_output.rs"
+    },
+    {
+     "key": "swap_base_input.discriminator_and_args",
+     "value": "8f be 5a da c4 1e 33 de (= SDK anchorDataBuf.swapBaseInput [143,190,90,218,196,30,51,222]) ; data = disc || amount_in u64 LE || minimum_amount_out u64 LE (24 bytes)",
+     "confidence": "VERIFIED_IN_SOURCE",
+     "source_url": "https://github.com/raydium-io/raydium-sdk-V2/blob/c2897835f71873471f4160fa57bd1865b7903d55/src/raydium/cpmm/instruction.ts"
+    },
+    {
+     "key": "swap_accounts_order",
+     "value": "0 payer (signer, ro); 1 authority PDA (ro); 2 amm_config (ro, == pool.amm_config); 3 pool_state (w); 4 input_token_account (w); 5 output_token_account (w); 6 input_vault (w, must be token_0_vault or token_1_vault); 7 output_vault (w); 8 input_token_program (ro); 9 output_token_program (ro); 10 input_token_mint (ro, == input_vault.mint); 11 output_token_mint (ro); 12 observation_state (w, == pool.observation_key). No remaining_accounts for swap",
+     "confidence": "VERIFIED_IN_SOURCE",
+     "source_url": "https://github.com/raydium-io/raydium-cp-swap/blob/59fb845a9e5bb569c8b2f3415f13b0c0ebcc6b92/programs/cp-swap/src/instructions/swap_base_input.rs"
+    },
+    {
+     "key": "swap_direction",
+     "value": "Determined by vaults: input_vault==token_0_vault && output_vault==token_1_vault -> ZeroForOne; input==token_1_vault && output==token_0_vault -> OneForZero; else InvalidVault. Mints constrained to vault.mint so mint matching is equivalent",
+     "confidence": "VERIFIED_IN_SOURCE",
+     "source_url": "https://github.com/raydium-io/raydium-cp-swap/blob/59fb845a9e5bb569c8b2f3415f13b0c0ebcc6b92/programs/cp-swap/src/states/pool.rs"
+    },
+    {
+     "key": "pda_seeds",
+     "value": "pool: [b\"pool\", amm_config, token_0_mint, token_1_mint] (mint0<mint1; but pool may also be a non-PDA account signed at init); vault: [b\"pool_vault\", pool, mint]; lp_mint: [b\"pool_lp_mint\", pool]; observation: [b\"observation\", pool]; permission: [b\"permission\", authority]; support_mint: [b\"support_mint\", mint]; all live-verified",
+     "confidence": "VERIFIED_IN_SOURCE",
+     "source_url": "https://github.com/raydium-io/raydium-cp-swap/blob/59fb845a9e5bb569c8b2f3415f13b0c0ebcc6b92/programs/cp-swap/src/instructions/initialize.rs"
+    },
+    {
+     "key": "ObservationState",
+     "value": "disc 7a ae c5 35 81 09 a5 84; len 4075; 8 initialized u8; 9 observation_index u16; 11 pool_id; 43 observations[100] x {block_timestamp u64, cumulative_token_0_price_x32 u128, cumulative_token_1_price_x32 u128}; 4043 last_update_timestamp; 4051 padding[u64;3]; prices Q32.32 from fee-less reserves, updated with pre-swap price",
+     "confidence": "VERIFIED_IN_SOURCE",
+     "source_url": "https://github.com/raydium-io/raydium-cp-swap/blob/59fb845a9e5bb569c8b2f3415f13b0c0ebcc6b92/programs/cp-swap/src/states/oracle.rs"
+    },
+    {
+     "key": "SwapEvent",
+     "value": "emit! (program log 'Program data:'), fields pool_id, input_vault_before, output_vault_before, input_amount, output_amount, input_transfer_fee, output_transfer_fee, base_input, input_mint, output_mint, trade_fee, creator_fee, creator_fee_on_input; discriminator sha256('event:SwapEvent')[..8] = 40 c6 cd e8 26 08 71 e2 (convention only, not cross-checked against a log)",
+     "confidence": "INFERRED",
+     "source_url": "https://github.com/raydium-io/raydium-cp-swap/blob/59fb845a9e5bb569c8b2f3415f13b0c0ebcc6b92/programs/cp-swap/src/states/events.rs"
+    },
+    {
+     "key": "api_v3_pools_by_mint",
+     "value": "GET https://api-v3.raydium.io/pools/info/mint?mint1=&mint2=&poolType=standard|all&poolSortField=default&sortType=desc&pageSize=N&page=1 -> {success,data:{count,hasNextPage,data:[...]}}; poolType MUST be lowercase here ('Standard' -> HTTP 500 'query poolType type error'). SDK 0.2.70 fetchPoolByMints uses /pools/info/list-v2?size=&mint1=&mint2=&poolType=Standard&sortField=&sortType=&nextPageId= -> {data:{data:[...]}}",
+     "confidence": "VERIFIED_IN_SOURCE",
+     "source_url": "https://api-v3.raydium.io/pools/info/mint"
+    },
+    {
+     "key": "api_v3_cpmm_filter",
+     "value": "type 'Standard' covers both AMM v4 (programId 675kPX9MHTjS2zt1qfr1NYHuzeLXfQM9H24wFSUt1Mp8) and CPMM; filter items by programId == CPMMoo8L3F4NbTegBCKVNunggL7H1ZpdTHKxQB5qKP1C. Items carry config{id,index,tradeFeeRate,protocolFeeRate,fundFeeRate,createPoolFee,creatorFeeRate}, feeOn, openTime, mintAmountA/B, feeRate (fraction). /pools/key/ids gives vault A/B, authority, observationId (live-verified == on-chain)",
+     "confidence": "VERIFIED_IN_SOURCE",
+     "source_url": "https://api-v3.raydium.io/pools/info/list-v2"
+    },
+    {
+     "key": "api_v3_page_caps",
+     "value": "/pools/info/list and /pools/info/mint cap pageSize at 1000; /pools/info/list-v2 caps size at 1000 (docs); API version V3.0.1",
+     "confidence": "DOCS_ONLY",
+     "source_url": "https://docs.raydium.io/api-reference/api-v3/overview"
+    },
+    {
+     "key": "api_v3_rate_limits",
+     "value": "Not documented on pages fetched (docs only advise caching /main/info and /mint/list with 1h TTL)",
+     "confidence": "UNKNOWN",
+     "source_url": "https://docs.raydium.io/api-reference/api-v3/overview"
+    },
+    {
+     "key": "docs_maintenance",
+     "value": "docs.raydium.io states 'Community-maintained. PRs welcome.'",
+     "confidence": "DOCS_ONLY",
+     "source_url": "https://docs.raydium.io/"
+    },
+    {
+     "key": "sdk_npm_version_and_deps",
+     "value": "@raydium-io/raydium-sdk-v2 0.2.70-alpha (latest); no peerDependencies; dependencies: @solana/web3.js ^1.95.3 (1.x), @solana/spl-token ^0.4.8, @solana/buffer-layout ^4.0.1, bn.js ^5.2.1; NO anchor dependency (hand-encoded ix). Program repo: anchor-lang =1.0.2, tests @anchor-lang/core 1.0.2, solana 3.1.10",
+     "confidence": "VERIFIED_IN_SOURCE",
+     "source_url": "https://github.com/raydium-io/raydium-sdk-V2/blob/c2897835f71873471f4160fa57bd1865b7903d55/package.json"
+    },
+    {
+     "key": "sdk_math_deviations",
+     "value": "SDK CurveCalculator.swapBaseInput ceils trade and creator fees separately (program: ceil total then floor split; can differ by 1 unit); cpmm.ts computeSwapAmount sets isCreatorFeeOnInput = feeOn==BothToken||feeOn==OnlyTokenB regardless of direction (program rule is direction-dependent). Port the Rust math, do not reuse SDK math",
+     "confidence": "INFERRED",
+     "source_url": "https://github.com/raydium-io/raydium-sdk-V2/blob/c2897835f71873471f4160fa57bd1865b7903d55/src/raydium/cpmm/curve/calculator.ts"
+    },
+    {
+     "key": "unmerged_creator_fee_share",
+     "value": "Branch feat/creator-fee-share (bdeee23fc064, 2026-09-15) adds AmmConfig.creator_fee_share_rate at offset 116 (LEN stays 236), CreatorFeeShare PDA [b\"creator_fee_share\", creator, amm_config], ixs create/close_creator_fee_share; swap math unchanged; NOT deployed (ELF grep) but SDK 0.2.70 already models it and passes an extra account to collect_creator_fee ixs",
+     "confidence": "VERIFIED_IN_SOURCE",
+     "source_url": "https://api.github.com/repos/raydium-io/raydium-cp-swap/compare/master...feat/creator-fee-share"
+    },
+    {
+     "key": "error_codes",
+     "value": "Anchor custom errors from 6000: NotApproved 6000, InvalidOwner, EmptySupply, InvalidInput, IncorrectLpMint, ExceededSlippage 6005, ZeroTradingTokens 6006, NotSupportMint, InvalidVault 6008, InitLpAmountTooLess, TransferFeeCalculateNotMatch, MathOverflow 6011, InsufficientVault 6012, InvalidFeeModel, NoFeeCollect, LamportsCalculateError",
+     "confidence": "VERIFIED_IN_SOURCE",
+     "source_url": "https://github.com/raydium-io/raydium-cp-swap/blob/59fb845a9e5bb569c8b2f3415f13b0c0ebcc6b92/programs/cp-swap/src/error.rs"
+    }
+   ],
+   "open_questions": [
+    "Exact source commit of the mainnet deployment at slot 445763504 (2026-09-10T01:54:31Z) is unpublished (raydium-docs-v1 issue #7 unanswered); ELF strings show master lineage (#76/#77 content) and no creator_fee_share, but commit-level provenance is unverified.",
+    "Raydium API v3 rate limits / quotas are not documented on the pages fetched; only a caching recommendation exists.",
+    "Event discriminators (SwapEvent 40c6cde8260871e2, LpChangeEvent 79a3cdc939da753c) are computed from the Anchor convention only and were not cross-checked against a real transaction log.",
+    "Pagination semantics beyond the first page differ between /pools/info/mint (page/pageSize + hasNextPage) and /pools/info/list-v2 (size + nextPageId) and were not exercised.",
+    "SDK math deviations (separate ceil of trade/creator fee; direction-independent isCreatorFeeOnInput) are from reading the TypeScript, not from executing it against the program; irrelevant if the Rust math is ported directly.",
+    "No on-chain Anchor IDL account exists for CPMMoo8...; account/instruction discriminators rest on the sha256 convention cross-checked against SDK bytes and live account prefixes (strong, but not an IDL)."
+   ]
+  },
+  "solana_rpc_tx_fees": {
+   "notes_file": "docs/sources/solana_rpc_tx_fees.md",
+   "sources": [
+    {
+     "url": "https://github.com/anza-xyz/agave",
+     "ref": "22f1fca4bcfee3cf7217b8e6f345de568c59e250 (master, committed 2026-09-17T10:38:47Z, workspace 4.4.0-alpha.4)",
+     "consulted_at_utc": "2026-09-17T11:48:00Z",
+     "what_it_established": "MAX_MULTIPLE_ACCOUNTS=100; minContextSlot floor semantics (MinContextSlotNotReached); context.slot=bank.slot(); simulateTransaction params/handler incl. 'sigVerify may not be used with replaceRecentBlockhash', accounts.addresses <= tx account keys, base58 accounts encoding rejected, frozen-bank assertion, blockhash age 150-6; RpcSimulateTransactionResult fields; getFeeForMessage uses solana_fee::calculate_fee with priority_fee_lamports; prioritization fee ceil formula; MAX_COMPUTE_UNIT_LIMIT 1.4M, DEFAULT 200k, builtin 3k, 64 MiB loaded data; default CU computation; duplicate CB ix error; account lock limit 64 vs 128 feature-gated; feature ids for increase_tx_account_lock_limit / enable_tx_v1 / static_instruction_limit; pubsub accountSubscribe ignores minContextSlot, default encoding binary; notification context slot per commitment, change detection via get_account_modified_slot, payload UiAccount/RpcKeyedAccount without signature/writeVersion, apiVersion None; MAX_BASE58_BYTES=128; transaction-context limits (256 accounts/tx, 64 trace length, 10 MiB data)."
+    },
+    {
+     "url": "https://github.com/anza-xyz/solana-sdk",
+     "ref": "8e8e679ad3072748887d23a678ce2e6a6fb5e41b (master, committed 2026-09-17T10:29:54Z)",
+     "consulted_at_utc": "2026-09-17T11:48:00Z",
+     "what_it_established": "PACKET_DATA_SIZE=1232 (1280-40-8); ComputeBudgetInstruction enum + discriminators 1..4 with LE payloads, no accounts, test vectors; ALT LOOKUP_TABLE_MAX_ADDRESSES=256, META_SIZE=56, extension 1-slot cooldown (current_slot > last_extended_slot), deactivation cooldown via SlotHashes MAX_ENTRIES=512, PDA seeds [authority, recent_slot LE]; v0 sanitize rules (<=256 keys, program ids must be static, payer not program), is_signer only static keys; MESSAGE_VERSION_PREFIX 0x80, v1 prefix 0x81, v1 MAX_TRANSACTION_SIZE 4096, MAX_ADDRESSES 64; MAX_TX_ACCOUNT_LOCKS=128 constant; lamports_per_signature 5000; DEFAULT_BURN_PERCENT 50; MAX_RECENT_BLOCKHASHES 300, MAX_PROCESSING_AGE 150, MAX_TRANSACTION_FORWARDING_DELAY 6; program ids ComputeBudget111... and AddressLookupTab1e... in sdk-ids."
+    },
+    {
+     "url": "https://solana.com/docs/rpc/http/getmultipleaccounts",
+     "ref": "UNKNOWN (undated; page cites agave v3.1.8) \u2014 fetched verbatim as .md",
+     "consulted_at_utc": "2026-09-17T11:52:00Z",
+     "what_it_established": "Docs text: up to 100 pubkeys; encodings; dataSlice restriction; commitment level definitions; default finalized; minContextSlot wording."
+    },
+    {
+     "url": "https://solana.com/docs/rpc/http/simulatetransaction",
+     "ref": "UNKNOWN (undated; cites agave v3.1.8) \u2014 fetched verbatim as .md",
+     "consulted_at_utc": "2026-09-17T11:52:00Z",
+     "what_it_established": "Docs text for all params (sigVerify/replaceRecentBlockhash conflict, accounts.addresses <= tx keys, accounts.encoding base58/binary unsupported, base58 tx encoding capped at 1232 bytes) and full response field table incl. fee, pre/postBalances, token balances, loadedAddresses."
+    },
+    {
+     "url": "https://solana.com/docs/rpc/http/getfeeformessage",
+     "ref": "UNKNOWN (undated; cites agave v3.1.8) \u2014 fetched verbatim as .md",
+     "consulted_at_utc": "2026-09-17T11:52:00Z",
+     "what_it_established": "Params (base64 message legacy/v0, commitment, minContextSlot), value u64|null 'Returns null if the blockhash is no longer valid'; docs are silent on prioritization-fee inclusion."
+    },
+    {
+     "url": "https://solana.com/docs/core/fees",
+     "ref": "UNKNOWN (undated; cites agave v3.1.8) \u2014 .md, plus /docs/core/fees/fee-structure.md and /docs/core/fees/compute-budget.md",
+     "consulted_at_utc": "2026-09-17T11:58:00Z",
+     "what_it_established": "5,000 lamports/signature, 50% burned; prioritization fee ceil(price*limit/1e6), 100% to validator; default 200k CU/ix, 3k builtin, 1.4M max; CB instruction table with discriminators 1-4; constraints; v1 priority fee is absolute lamports and CB ixs are no-ops in v1."
+    },
+    {
+     "url": "https://solana.com/docs/core/transactions",
+     "ref": "UNKNOWN (undated; cites agave v3.1.8) \u2014 .md, plus /docs/core/transactions/transaction-structure.md and /docs/core/transactions/versioned-transactions.md",
+     "consulted_at_utc": "2026-09-17T11:58:00Z",
+     "what_it_established": "1,232-byte limit derivation; 64 accounts (128 when increase_tx_account_lock_limit active, 'currently inactive'); 150-slot blockhash expiry; legacy/v0/v1 wire layouts; v1 active on mainnet; ALT-resolved accounts cannot be signers; v1 has no ALTs, 4096 bytes."
+    },
+    {
+     "url": "https://solana.com/docs/advanced/lookup-tables",
+     "ref": "UNKNOWN (undated) \u2014 fetched verbatim as .md",
+     "consulted_at_utc": "2026-09-17T11:52:00Z",
+     "what_it_established": "ALT holds up to 256 addresses; v0 only; runtime loads at most 64 accounts/tx; ~20 addresses per extend tx; no explicit cooldown text (source used instead)."
+    },
+    {
+     "url": "https://solana.com/docs/rpc/websocket/accountsubscribe",
+     "ref": "UNKNOWN (undated; cites agave v3.1.8) \u2014 .md, plus /docs/rpc/websocket/programsubscribe.md",
+     "consulted_at_utc": "2026-09-17T11:52:00Z",
+     "what_it_established": "Params, defaults (finalized, binary), notification format {context:{slot}, value}, apiVersion omitted, minContextSlot/withContext/sortResults ignored by PubSub, up to 4 filters."
+    },
+    {
+     "url": "https://solana.com/docs/core/accounts",
+     "ref": "UNKNOWN (undated; cites agave v3.1.8) \u2014 fetched verbatim as .md",
+     "consulted_at_utc": "2026-09-17T11:52:00Z",
+     "what_it_established": "Five account fields; 10 MiB max data; 10 KiB growth/ix; 20 MiB growth/tx; ownership rules; rent-exempt formula."
+    },
+    {
+     "url": "https://solana.com/docs/references/clusters",
+     "ref": "UNKNOWN (undated) \u2014 fetched verbatim as .md",
+     "consulted_at_utc": "2026-09-17T11:52:00Z",
+     "what_it_established": "Public endpoints now listed as api.mainnet.solana.com (mainnet-beta hostname still resolves); rate limits 100 req/10s/IP, 40 req/10s/IP single RPC, 40 concurrent, 40 conn/10s, 100 MB/30s; 'not intended for production'; 403/429 semantics; no getProgramAccounts restriction stated."
+    },
+    {
+     "url": "https://docs.jito.wtf/lowlatencytxnsend/",
+     "ref": "UNKNOWN (undated readthedocs page)",
+     "consulted_at_utc": "2026-09-17T11:50:00Z",
+     "what_it_established": "Bundles: up to 5 txs, sequential, atomic within one slot, all-or-nothing; sendBundle endpoint(s) and regions; bundle_id = SHA-256 of signatures and is receipt-only, use getBundleStatuses/getInflightBundleStatuses (<=5 ids); tip may be any top-level or CPI SOL transfer to one of 8 tip accounts (no last-tx rule), min 1000 lamports, don't put tip accounts in ALTs; default rate limit 1 req/s/IP/region; sendTransaction proxy forces skip_preflight; x-jito-auth optional; uncled-block caveat."
+    },
+    {
+     "url": "https://developers.jup.ag/docs/swap",
+     "ref": "Swap API V2 OpenAPI version 2.0.0 (undated pages fetched as .md; also /docs/swap/build, /docs/api-reference/swap/build, /docs/api-reference/swap/quote, /docs/api-reference/swap/swap-instructions, /docs/swap/migration/metis-to-build, /docs/transaction/submit, /docs/swap/get-quote, /docs/swap/build-swap-transaction)",
+     "consulted_at_utc": "2026-09-17T11:55:00Z",
+     "what_it_established": "Current API is Swap V2 at https://api.jup.ag/swap/v2 (/order+/execute meta-aggregator, /build router); Metis v1 (/swap/v1/quote,/swap,/swap-instructions) superseded but documented; x-api-key required; /build returns raw instructions + routePlan[].swapInfo.ammKey (required) with bps and percent, addressesByLookupTableAddress, blockhashWithMetadata; v1 /swap-instructions returns computeBudgetInstructions/setupInstructions/swapInstruction/cleanupInstruction/otherInstructions/addressLookupTableAddresses; JupiterZ RFQ transactions cannot be modified after return (must use Router for CPI/custom ixs); tx.jup.ag requires >=0.001 SOL tip."
+    },
+    {
+     "url": "https://api.mainnet-beta.solana.com",
+     "ref": "solana-core 4.3.0-rc.0, feature-set 2409014235, slots 447788557-447788734",
+     "consulted_at_utc": "2026-09-17T11:55:30Z",
+     "what_it_established": "Read-only probes: enable_tx_v1 activated at slot 447120000; static_instruction_limit activated at 404352000; increase_tx_account_lock_limit NOT activated (0-byte System-owned stub) => 64-account lock limit on mainnet; getFeeForMessage returns 5000 base + prioritization fee (105000 for limit 100k x 1 lamport/CU; 8000 for price-only with 1 builtin ix; 5001 for 0.1-lamport rounding-up case)."
+    },
+    {
+     "url": "https://registry.npmjs.org",
+     "ref": "@solana/web3.js 1.99.0; @solana/kit 8.3.0; @solana-program/compute-budget 0.18.1",
+     "consulted_at_utc": "2026-09-17T11:56:08Z",
+     "what_it_established": "Current client library versions at consult time (no install performed)."
+    }
+   ],
+   "facts": [
+    {
+     "key": "getMultipleAccounts.max_pubkeys",
+     "value": "100 (MAX_MULTIPLE_ACCOUNTS; node-overridable via config.max_multiple_accounts; error 'Too many inputs provided; max N')",
+     "confidence": "VERIFIED_IN_SOURCE",
+     "source_url": "https://github.com/anza-xyz/agave/blob/22f1fca4bcfee3cf7217b8e6f345de568c59e250/rpc-client-types/src/request.rs#L156"
+    },
+    {
+     "key": "getMultipleAccounts.encodings_and_default",
+     "value": "base58 | base64 | base64+zstd | binary(legacy) | jsonParsed; handler default base64; base58/binary return 'error: data too large for bs58 encoding' when data > 128 bytes",
+     "confidence": "VERIFIED_IN_SOURCE",
+     "source_url": "https://github.com/anza-xyz/agave/blob/22f1fca4bcfee3cf7217b8e6f345de568c59e250/rpc/src/rpc.rs#L580"
+    },
+    {
+     "key": "getMultipleAccounts.context_slot",
+     "value": "context.slot = slot of the bank selected by commitment (bank.slot()); all accounts in the batch come from that one bank; apiVersion populated",
+     "confidence": "VERIFIED_IN_SOURCE",
+     "source_url": "https://github.com/anza-xyz/agave/blob/22f1fca4bcfee3cf7217b8e6f345de568c59e250/rpc/src/rpc.rs#L145-L150"
+    },
+    {
+     "key": "rpc.minContextSlot_semantics",
+     "value": "Floor, not exact: if bank.slot() < minContextSlot the node errors MinContextSlotNotReached{context_slot}; otherwise served at the (possibly higher) commitment bank slot",
+     "confidence": "VERIFIED_IN_SOURCE",
+     "source_url": "https://github.com/anza-xyz/agave/blob/22f1fca4bcfee3cf7217b8e6f345de568c59e250/rpc/src/rpc.rs#L274-L289"
+    },
+    {
+     "key": "rpc.commitment_default",
+     "value": "processed | confirmed | finalized; default finalized for getMultipleAccounts, simulateTransaction, getFeeForMessage, accountSubscribe, programSubscribe",
+     "confidence": "DOCS_ONLY",
+     "source_url": "https://solana.com/docs/rpc/http/getmultipleaccounts"
+    },
+    {
+     "key": "simulateTransaction.params",
+     "value": "transaction (base58 default | base64), config: sigVerify(bool,false), replaceRecentBlockhash(bool,false), commitment, minContextSlot, encoding, innerInstructions(bool,false), accounts{addresses[], encoding}",
+     "confidence": "VERIFIED_IN_SOURCE",
+     "source_url": "https://github.com/anza-xyz/agave/blob/22f1fca4bcfee3cf7217b8e6f345de568c59e250/rpc-client-types/src/config.rs#L35-L54"
+    },
+    {
+     "key": "simulateTransaction.sigVerify_replaceRecentBlockhash_exclusive",
+     "value": "replaceRecentBlockhash=true with sigVerify=true -> invalid_params 'sigVerify may not be used with replaceRecentBlockhash'",
+     "confidence": "VERIFIED_IN_SOURCE",
+     "source_url": "https://github.com/anza-xyz/agave/blob/22f1fca4bcfee3cf7217b8e6f345de568c59e250/rpc/src/rpc.rs#L4108-L4113"
+    },
+    {
+     "key": "simulateTransaction.accounts_limits",
+     "value": "accounts.addresses.len() must be <= number of account keys in the (ALT-resolved) transaction ('Too many accounts provided; max N'); accounts.encoding default base64, base58/binary rejected ('base58 encoding not supported'); on failed simulation the accounts array is all null",
+     "confidence": "VERIFIED_IN_SOURCE",
+     "source_url": "https://github.com/anza-xyz/agave/blob/22f1fca4bcfee3cf7217b8e6f345de568c59e250/rpc/src/rpc.rs#L4144-L4163"
+    },
+    {
+     "key": "simulateTransaction.response_fields",
+     "value": "err, logs, accounts, unitsConsumed, loadedAccountsDataSize, returnData, innerInstructions, replacementBlockhash{blockhash,lastValidBlockHeight}, fee (fee_details.total_fee incl. priority), preBalances, postBalances, preTokenBalances, postTokenBalances, loadedAddresses",
+     "confidence": "VERIFIED_IN_SOURCE",
+     "source_url": "https://github.com/anza-xyz/agave/blob/22f1fca4bcfee3cf7217b8e6f345de568c59e250/rpc-client-types/src/response.rs#L447-L462"
+    },
+    {
+     "key": "simulateTransaction.blockhash_age",
+     "value": "Simulation runs on a frozen bank with max age = MAX_PROCESSING_AGE(150) - MAX_TRANSACTION_FORWARDING_DELAY(6) = 144 slots; SlotHistory sysvar is overridden with a fresh copy",
+     "confidence": "VERIFIED_IN_SOURCE",
+     "source_url": "https://github.com/anza-xyz/agave/blob/22f1fca4bcfee3cf7217b8e6f345de568c59e250/runtime/src/bank.rs#L3950-L4001"
+    },
+    {
+     "key": "getFeeForMessage.includes_prioritization_fee",
+     "value": "YES: Bank::get_fee_for_message -> solana_fee::calculate_fee(message, lamports_per_signature, priority_fee_lamports from the message's ComputeBudget ixs). Live mainnet probe: no CB ix 5000; limit 100k + price 1,000,000 ulam -> 105000; price only (1 builtin ix => 3000 CU default) -> 8000; limit 100k + price 1 -> 5001 (rounded up). Returns null if blockhash not in queue and not a valid durable nonce.",
+     "confidence": "VERIFIED_IN_SOURCE",
+     "source_url": "https://github.com/anza-xyz/agave/blob/22f1fca4bcfee3cf7217b8e6f345de568c59e250/runtime/src/bank.rs#L3479-L3500"
+    },
+    {
+     "key": "getFeeForMessage.params",
+     "value": "message: base64 VersionedMessage (legacy or v0); config {commitment, minContextSlot}; result RpcResponse<u64|null>",
+     "confidence": "VERIFIED_IN_SOURCE",
+     "source_url": "https://github.com/anza-xyz/agave/blob/22f1fca4bcfee3cf7217b8e6f345de568c59e250/rpc/src/rpc.rs#L4390-L4414"
+    },
+    {
+     "key": "fee.base_per_signature",
+     "value": "5000 lamports per signature (FeeStructure default lamports_per_signature); counts tx signatures + ed25519/secp256k1/secp256r1 precompile signatures",
+     "confidence": "VERIFIED_IN_SOURCE",
+     "source_url": "https://github.com/anza-xyz/solana-sdk/blob/8e8e679ad3072748887d23a678ce2e6a6fb5e41b/fee-structure/src/lib.rs#L123-L131"
+    },
+    {
+     "key": "fee.burn",
+     "value": "DEFAULT_BURN_PERCENT = 50 of the base (signature) fee is burned; prioritization fee 100% to validator (docs, SIMD-0096)",
+     "confidence": "VERIFIED_IN_SOURCE",
+     "source_url": "https://github.com/anza-xyz/solana-sdk/blob/8e8e679ad3072748887d23a678ce2e6a6fb5e41b/fee-calculator/src/lib.rs#L73-L74"
+    },
+    {
+     "key": "fee.prioritization_formula",
+     "value": "ceil(compute_unit_price_microlamports * compute_unit_limit / 1_000_000) lamports (u128 math, saturating; test get_prioritization_fee(200,100_000)==20)",
+     "confidence": "VERIFIED_IN_SOURCE",
+     "source_url": "https://github.com/anza-xyz/agave/blob/22f1fca4bcfee3cf7217b8e6f345de568c59e250/compute-budget/src/compute_budget_limits.rs#L61-L69"
+    },
+    {
+     "key": "compute.limits",
+     "value": "DEFAULT_INSTRUCTION_COMPUTE_UNIT_LIMIT=200_000 per non-builtin ix; MAX_BUILTIN_ALLOCATION_COMPUTE_UNIT_LIMIT=3_000 per builtin ix; MAX_COMPUTE_UNIT_LIMIT=1_400_000 per tx (requested limit clamped); MAX_LOADED_ACCOUNTS_DATA_SIZE_BYTES=64 MiB; heap 32 KiB..256 KiB multiple of 1024; MAX_INSTRUCTION_STACK_DEPTH 5 (9 w/ SIMD-0268); MAX_CALL_DEPTH 64",
+     "confidence": "VERIFIED_IN_SOURCE",
+     "source_url": "https://github.com/anza-xyz/agave/blob/22f1fca4bcfee3cf7217b8e6f345de568c59e250/program-runtime/src/execution_budget.rs#L26-L41"
+    },
+    {
+     "key": "compute.default_cu_limit_formula",
+     "value": "(non_migratable_builtin + not_migrated_builtin)*3000 + (non_builtin + migrated_builtin)*200000, then min(1_400_000)",
+     "confidence": "VERIFIED_IN_SOURCE",
+     "source_url": "https://github.com/anza-xyz/agave/blob/22f1fca4bcfee3cf7217b8e6f345de568c59e250/compute-budget-instruction/src/compute_budget_instruction_details.rs#L196-L219"
+    },
+    {
+     "key": "compute_budget.instruction_encoding",
+     "value": "Program ComputeBudget111111111111111111111111111111, no accounts, data = [disc][LE value]: RequestHeapFrame=0x01 u32 (5 bytes); SetComputeUnitLimit=0x02 u32 (5 bytes, e.g. 257 -> 02 01 01 00 00); SetComputeUnitPrice=0x03 u64 micro-lamports (9 bytes); SetLoadedAccountsDataSizeLimit=0x04 u32 (5 bytes); variant 0 Unused/reserved; duplicates -> DuplicateInstruction(index); unknown -> InvalidInstructionData",
+     "confidence": "VERIFIED_IN_SOURCE",
+     "source_url": "https://github.com/anza-xyz/solana-sdk/blob/8e8e679ad3072748887d23a678ce2e6a6fb5e41b/compute-budget-interface/src/lib.rs#L24-L92"
+    },
+    {
+     "key": "tx.max_serialized_size",
+     "value": "PACKET_DATA_SIZE = 1280 - 40 - 8 = 1232 bytes for legacy and v0 (signatures + message); v1 MAX_TRANSACTION_SIZE = 4096",
+     "confidence": "VERIFIED_IN_SOURCE",
+     "source_url": "https://github.com/anza-xyz/solana-sdk/blob/8e8e679ad3072748887d23a678ce2e6a6fb5e41b/packet/src/lib.rs#L37-L42"
+    },
+    {
+     "key": "tx.version_prefix",
+     "value": "MESSAGE_VERSION_PREFIX=0x80; first message byte with high bit set => versioned, version = byte & 0x7f (v0=0x80, v1=0x81); legacy first byte = num_required_signatures. v0 = legacy fields + address_table_lookups[{account_key, writable_indexes short_vec<u8>, readonly_indexes short_vec<u8>}]",
+     "confidence": "VERIFIED_IN_SOURCE",
+     "source_url": "https://github.com/anza-xyz/solana-sdk/blob/8e8e679ad3072748887d23a678ce2e6a6fb5e41b/message/src/versions/mod.rs#L40"
+    },
+    {
+     "key": "tx.max_accounts",
+     "value": "Lock limit 64 accounts/tx on mainnet (Bank::get_transaction_account_lock_limit) \u2014 128 (MAX_TX_ACCOUNT_LOCKS) only if feature increase_tx_account_lock_limit 9LZdXeKGeBV6hRLdxS1rHbHoEUsKqesCC2ZAPTPKJAbK is active, which it is NOT on mainnet (live read: 0-byte System-owned stub). Separate sanitize cap: static + ALT keys <= 256 (u8 indices). v1: MAX_ADDRESSES 64 inline.",
+     "confidence": "VERIFIED_IN_SOURCE",
+     "source_url": "https://github.com/anza-xyz/agave/blob/22f1fca4bcfee3cf7217b8e6f345de568c59e250/runtime/src/bank.rs#L3793-L3801"
+    },
+    {
+     "key": "tx.blockhash_validity",
+     "value": "MAX_RECENT_BLOCKHASHES=300, MAX_PROCESSING_AGE=150 slots, MAX_TRANSACTION_FORWARDING_DELAY=6",
+     "confidence": "VERIFIED_IN_SOURCE",
+     "source_url": "https://github.com/anza-xyz/solana-sdk/blob/8e8e679ad3072748887d23a678ce2e6a6fb5e41b/clock/src/lib.rs#L150-L162"
+    },
+    {
+     "key": "tx.v1_status",
+     "value": "enable_tx_v1 (txv1aq4pp281K9um3tnPgkfX8UqtFT6wcVW3hNezGLL) activated on mainnet at slot 447120000; v1: 4096 bytes, no ALTs, limits in message config (priority fee = absolute lamports, CU limit u32, loaded-data-size u32, heap u32; unset CU/data limits default to 0), ComputeBudget ixs are no-ops (150 CU); static_instruction_limit (SIMD-0160) active since slot 404352000",
+     "confidence": "VERIFIED_IN_SOURCE",
+     "source_url": "https://github.com/anza-xyz/agave/blob/22f1fca4bcfee3cf7217b8e6f345de568c59e250/feature-set/src/lib.rs#L1480-L1482"
+    },
+    {
+     "key": "alt.rules",
+     "value": "ALT program AddressLookupTab1e1111111111111111111111111; max 256 addresses/table, meta 56 bytes then 32-byte addresses; ALT-loaded addresses cannot be signers (is_signer = idx < num_required_signatures over static keys) and cannot be program ids (program_id_index must be static; index 0/payer cannot be a program); each lookup must load >=1 address; addresses extended in slot S usable only when current_slot > last_extended_slot (1-slot cooldown); after deactivation the table stays usable until deactivation_slot leaves SlotHashes (MAX_ENTRIES=512 slots), then lookups fail LookupTableAccountNotFound; PDA seeds [authority, recent_slot u64 LE]",
+     "confidence": "VERIFIED_IN_SOURCE",
+     "source_url": "https://github.com/anza-xyz/solana-sdk/blob/8e8e679ad3072748887d23a678ce2e6a6fb5e41b/address-lookup-table-interface/src/state.rs#L33-L191"
+    },
+    {
+     "key": "accounts.limits",
+     "value": "MAX_PERMITTED_DATA_LENGTH / MAX_ACCOUNT_DATA_LEN = 10 MiB (10,485,760); growth per tx 20 MiB; per ix 10 KiB (docs); MAX_ACCOUNTS_PER_TRANSACTION 256, MAX_ACCOUNTS_PER_INSTRUCTION 255, MAX_INSTRUCTION_TRACE_LENGTH 64",
+     "confidence": "VERIFIED_IN_SOURCE",
+     "source_url": "https://github.com/anza-xyz/agave/blob/22f1fca4bcfee3cf7217b8e6f345de568c59e250/transaction-context/src/lib.rs#L14-L26"
+    },
+    {
+     "key": "accountSubscribe.params_and_defaults",
+     "value": "pubkey + RpcAccountInfoConfig{encoding (default binary/legacy base58, 128-byte cap), dataSlice, commitment (default finalized), minContextSlot (explicitly ignored: 'min_context_slot: _, // ignored')}; result = subscription id; notification method accountNotification",
+     "confidence": "VERIFIED_IN_SOURCE",
+     "source_url": "https://github.com/anza-xyz/agave/blob/22f1fca4bcfee3cf7217b8e6f345de568c59e250/rpc/src/rpc_pubsub.rs#L440-L458"
+    },
+    {
+     "key": "programSubscribe.params",
+     "value": "program pubkey + RpcProgramAccountsConfig{filters (<=4: memcmp/dataSize), encoding, dataSlice, commitment, withContext, sortResults, minContextSlot}; withContext/sortResults/minContextSlot accepted but do not change behaviour; notification programNotification value {pubkey, account}",
+     "confidence": "VERIFIED_IN_SOURCE",
+     "source_url": "https://github.com/anza-xyz/agave/blob/22f1fca4bcfee3cf7217b8e6f345de568c59e250/rpc-client-types/src/config.rs#L169-L175"
+    },
+    {
+     "key": "pubsub.notification_payload",
+     "value": "{context:{slot}, value: UiAccount{lamports,data,owner,executable,rentEpoch,space}} (account) / {context:{slot}, value:{pubkey, account:UiAccount}} (program). apiVersion is None. NO writeVersion and NO transaction signature are carried.",
+     "confidence": "VERIFIED_IN_SOURCE",
+     "source_url": "https://github.com/anza-xyz/agave/blob/22f1fca4bcfee3cf7217b8e6f345de568c59e250/rpc/src/rpc_subscriptions.rs#L160-L190"
+    },
+    {
+     "key": "pubsub.slot_semantics",
+     "value": "context.slot is the slot at which the commitment check ran: processed -> commitment_slots.slot (each newly frozen bank), confirmed -> highest_confirmed_slot (optimistic/gossip), finalized -> highest_super_majority_root. A notification fires iff bank.get_account_modified_slot(pubkey) != last_notified_slot (also fires on fork reversion; missing account reported once). Multiple writes in one slot collapse into one notification (inferred).",
+     "confidence": "VERIFIED_IN_SOURCE",
+     "source_url": "https://github.com/anza-xyz/agave/blob/22f1fca4bcfee3cf7217b8e6f345de568c59e250/rpc/src/rpc_subscriptions.rs#L943-L953"
+    },
+    {
+     "key": "public_rpc.rate_limits",
+     "value": "Mainnet/Devnet/Testnet (verbatim): max 100 requests per 10 s per IP; max 40 requests per 10 s per IP for a single RPC; max 40 concurrent connections per IP; max connection rate 40 per 10 s per IP; max 100 MB data per 30 s. 'not intended for production applications'; 403 = blocked, 429 = rate limited (honor Retry-After). Docs now list https://api.mainnet.solana.com (api.mainnet-beta.solana.com still answers).",
+     "confidence": "DOCS_ONLY",
+     "source_url": "https://solana.com/docs/references/clusters"
+    },
+    {
+     "key": "public_rpc.getProgramAccounts_restriction",
+     "value": "Not documented on the clusters page or the getProgramAccounts page; unknown whether disabled/throttled on the public endpoint",
+     "confidence": "UNKNOWN",
+     "source_url": "https://solana.com/docs/references/clusters"
+    },
+    {
+     "key": "public_rpc.live_version",
+     "value": "api.mainnet-beta.solana.com getVersion: solana-core 4.3.0-rc.0, feature-set 2409014235 (slot ~447788557)",
+     "confidence": "VERIFIED_IN_SOURCE",
+     "source_url": "https://api.mainnet-beta.solana.com"
+    },
+    {
+     "key": "jito.bundle_semantics",
+     "value": "Up to 5 fully-signed txs; execute sequentially, atomically within one slot, all-or-nothing; tip required as any top-level or CPI SOL transfer to one of 8 tip accounts in any tx of the bundle (no last-tx rule stated; recommended in same tx as strategy); min tip 1000 lamports; do not put tip accounts in ALTs; sendBundle returns bundle_id (SHA-256 of signatures) = receipt only, 'does not guarantee the bundle will be processed or land on-chain' -> getBundleStatuses (<=5 ids, null if not landed; fields bundle_id, transactions, slot, confirmation_status, err) / getInflightBundleStatuses (5-min window)",
+     "confidence": "DOCS_ONLY",
+     "source_url": "https://docs.jito.wtf/lowlatencytxnsend/"
+    },
+    {
+     "key": "jito.endpoints_rate_limits",
+     "value": "sendBundle POST https://mainnet.block-engine.jito.wtf:443/api/v1/bundles (regional: amsterdam, dublin, frankfurt, london, ny, slc, singapore, tokyo .mainnet.block-engine.jito.wtf); sendTransaction /api/v1/transactions (skip_preflight forced true, ?bundleOnly=true); encoding default base58 (base64 recommended); default rate limit 1 request per second per IP per region, 429 on excess; optional x-jito-auth: <uuid> header or ?uuid=; tip accounts: 96gYZGLnJYVFmbjzopPSU6QiEV5fGqZNyN9nmNhvrZU5, HFqU5x63VTqvQss8hp11i4wVV8bD44PvwucfZ2bU7gRe, Cw8CFyM9FkoMi7K7Crf6HNQqf4uEMzpKw6QNghXLvLkY, ADaUMid9yfUytqMBgopwjb2DTLSokTSzL1zt6iGPaS49, DfXygSm4jCyNCybVYYK6DwvWqjKee8pbDmJGcLWNDXjh, ADuUkR4vqLUMWXxW9gh6D6L8pMSawimctcNZ5pGwDcEt, DttWaMuVvTiduZRnguLF7jNxTgiMBZ1hyAumKUiL2KRL, 3AVi9Tg9Uo68tJfuvoKvqKNWKkC5wPdSSdeBnizKZ6jT",
+     "confidence": "DOCS_ONLY",
+     "source_url": "https://docs.jito.wtf/lowlatencytxnsend/"
+    },
+    {
+     "key": "jupiter.api_versions",
+     "value": "Current: Swap API V2 at https://api.jup.ag/swap/v2 \u2014 Meta-Aggregator GET /order + POST /execute (Metis+JupiterZ+Dflow+OKX, assembled tx, no modification) and Router GET /build (Metis only, raw instructions, full control; /execute not available). Metis v1 (/swap/v1/quote, /swap, /swap-instructions) 'no longer actively maintained'. 'Ultra' only referenced as migration source. All endpoints need x-api-key. Landing option POST https://tx.jup.ag sendTransaction with >=1,000,000-lamport tip.",
+     "confidence": "VERIFIED_IN_SOURCE",
+     "source_url": "https://developers.jup.ag/docs/api-reference/swap/build"
+    },
+    {
+     "key": "jupiter.swap_instructions_shape",
+     "value": "v1 /swap/v1/swap-instructions -> tokenLedgerInstruction?, computeBudgetInstructions[], setupInstructions[], swapInstruction, cleanupInstruction, otherInstructions[] (Jito tip ix), addressLookupTableAddresses[]; v2 /swap/v2/build -> quote fields + routePlan[] + computeBudgetInstructions[], setupInstructions[], swapInstruction, cleanupInstruction|null, otherInstructions[], tipInstruction|null, addressesByLookupTableAddress{alt:[addrs]}|null, blockhashWithMetadata{blockhash:number[], lastValidBlockHeight}; Instruction = {programId, accounts[{pubkey,isSigner,isWritable}], data base64}; params taker(required), slippageBps(50), maxAccounts(1-64, default 64), dexes/excludeDexes, mode=fast, payer, forJitoBundle, tipAmount",
+     "confidence": "VERIFIED_IN_SOURCE",
+     "source_url": "https://developers.jup.ag/docs/api-reference/swap/swap-instructions"
+    },
+    {
+     "key": "jupiter.routePlan_ammKey",
+     "value": "Yes: routePlan[].swapInfo.ammKey is a required field (with label, inputMint, outputMint, inAmount, outAmount; v1 also feeAmount, feeMint) plus percent (v1) / bps and percent (v2, bps canonical, 10000=100%); mostReliableAmmsQuoteReport.info maps AMM addresses to quoted amounts; /program-id-to-label maps program ids to labels",
+     "confidence": "VERIFIED_IN_SOURCE",
+     "source_url": "https://developers.jup.ag/docs/api-reference/swap/quote"
+    },
+    {
+     "key": "jupiter.rfq_not_modifiable",
+     "value": "Verbatim: 'Transactions routed through JupiterZ cannot be modified after they are returned, so use cases that require CPI, custom instructions, or any transaction modification must use the Router path.' JupiterZ (RFQ) is Meta-Aggregator only.",
+     "confidence": "DOCS_ONLY",
+     "source_url": "https://developers.jup.ag/docs/swap"
+    },
+    {
+     "key": "client_versions",
+     "value": "@solana/web3.js 1.99.0; @solana/kit 8.3.0; @solana-program/compute-budget 0.18.1 (npm view, 2026-09-17T11:56Z)",
+     "confidence": "VERIFIED_IN_SOURCE",
+     "source_url": "https://registry.npmjs.org/@solana/kit"
+    }
+   ],
+   "open_questions": [
+    "Is getProgramAccounts disabled or specially throttled on the public api.mainnet(-beta).solana.com endpoint? Not stated on the clusters page or the method page.",
+    "Do api.mainnet-beta.solana.com and api.mainnet.solana.com share one rate-limit bucket? Both answer; docs only list the latter.",
+    "Jupiter Swap API per-key rate limits / Portal tiers are not on the fetched pages.",
+    "Jito: any per-method limits beyond '1 request per second per IP per region', and whether getBundleStatuses/getInflightBundleStatuses count against it; availability/semantics of simulateBundle on Jito-Solana RPC.",
+    "Fee distribution code (agave runtime/src/bank/fee_distribution.rs) was not read; the 100%-to-validator priority-fee rule is docs-only (SIMD-0096), the 50% burn constant is from solana-sdk fee-calculator.",
+    "v1 transaction config bitmask layout (bits 0-1 priority fee u64, 2 CU limit u32, 3 loaded-data u32, 4 heap u32) is docs-only; solana-sdk message/src/versions/v1/config.rs was not read.",
+    "Which builtins are currently migrated to SBF on mainnet (affects whether a builtin instruction contributes 3,000 or 200,000 CU to the default limit) was not checked.",
+    "The runtime's per-transaction 64-account lock limit is enforced in banking/SVM loading; the exact error path (TooManyAccountLocks) was not traced in this pass."
+   ]
+  },
+  "libs_toolchain": {
+   "notes_file": "docs/sources/libs_toolchain.md",
+   "sources": [
+    {
+     "url": "https://registry.npmjs.org/@solana/web3.js",
+     "ref": "1.99.0 (npm latest; GitHub tag v1.99.0 = 0b600488afc85bb1f4d41827c7b800fb31c034f5); 3.0.0-rc.3 also present",
+     "consulted_at_utc": "2026-09-17T11:48:00Z",
+     "what_it_established": "1.99.0 is latest 1.x (2026-09-08), no engines/gitHead; 3.0.0-rc.3 is a kit-8 compat layer (RC). Tarball unpacked: VersionedTransaction zero-fills signatures, serialize() has no signature options; simulateTransaction forwards config without forcing sigVerify."
+    },
+    {
+     "url": "https://api.github.com/repos/solana-foundation/solana-web3.js/releases/tags/v1.99.0",
+     "ref": "v1.99.0 (2026-09-08T16:19:37Z)",
+     "consulted_at_utc": "2026-09-17T11:56:00Z",
+     "what_it_established": "Only change in 1.99.0: 'Add v1 Transaction read support #3866'."
+    },
+    {
+     "url": "https://registry.npmjs.org/@solana/kit",
+     "ref": "8.3.0 (tag v8.3.0 = 7dfaf8827c217105d47aa1940893d301ad9f63c0 in anza-xyz/kit)",
+     "consulted_at_utc": "2026-09-17T11:49:00Z",
+     "what_it_established": "kit latest 8.3.0, engines node>=20.18.0; enters the tree only as litesvm's dependency."
+    },
+    {
+     "url": "https://registry.npmjs.org/@raydium-io/raydium-sdk-v2",
+     "ref": "0.2.70-alpha (dist-tag latest, 2026-09-15T08:17:53Z); no gitHead in npm metadata",
+     "consulted_at_utc": "2026-09-17T11:49:00Z",
+     "what_it_established": "deps: @solana/web3.js ^1.95.3, @solana/spl-token ^0.4.8, bn.js ^5.2.1, decimal.js ^10.4.2, decimal.js-light, bs58 ^6, buffer-layout ^4.0.1; NO @coral-xyz/anchor; no peerDependencies. Stale semver-higher 2.0.x-rc.* versions from 2024 exist. Tarball ships lib/ and src/."
+    },
+    {
+     "url": "https://github.com/raydium-io/raydium-sdk-V2",
+     "ref": "c2897835f71873471f4160fa57bd1865b7903d55 (2026-09-15T16:13:06+08:00)",
+     "consulted_at_utc": "2026-09-17T11:49:00Z",
+     "what_it_established": "package.json version 0.2.70-alpha; src/raydium/cpmm/ byte-identical to the npm tarball; CurveCalculator.swapBaseInput/swapBaseOutput, CpmmModule methods (getRpcPoolInfos, computeSwapAmount, swap), layouts, PDAs, swap instruction account order and discriminators, CPMM program id."
+    },
+    {
+     "url": "https://registry.npmjs.org/@pump-fun/pump-swap-sdk",
+     "ref": "1.20.0 (2026-09-10T13:25:11Z), gitHead 0e7ebefd5ce7fbc504ab6198f0642480f8a25446; GitHub repo pump-fun/pump-swap-sdk not publicly reachable",
+     "consulted_at_utc": "2026-09-17T11:49:00Z",
+     "what_it_established": "deps: @solana/web3.js ^1.98.2, @coral-xyz/anchor ^0.31.1, @solana/spl-token ^0.4.9, bn.js ^5.2.2, bs58 ^6; engines node>=16. Tarball includes src/ and src/idl/pump_amm.json (address pAMMBay6oceH9fJKBRHGP5D4bD4sWpmSwMn52FMfXEA). Exported PumpAmmSdk/OnlinePumpAmmSdk, buyQuoteInput/sellBaseInput signatures, PDA seeds, Pool struct + discriminators."
+    },
+    {
+     "url": "https://registry.npmjs.org/@coral-xyz/anchor",
+     "ref": "0.31.1 (resolved) / 0.32.1 latest (2025-10-10)",
+     "consulted_at_utc": "2026-09-17T11:50:00Z",
+     "what_it_established": "anchor 0.31.x depends on @solana/web3.js ^1.69.0 and bn.js ^5.1.2 \u2192 compatible with web3.js 1.99.0."
+    },
+    {
+     "url": "https://registry.npmjs.org/@solana/spl-token",
+     "ref": "0.4.15 (2026-07-09)",
+     "consulted_at_utc": "2026-09-17T11:50:00Z",
+     "what_it_established": "peerDependency @solana/web3.js ^1.95.5 \u2192 compatible with 1.99.0."
+    },
+    {
+     "url": "https://registry.npmjs.org/litesvm",
+     "ref": "1.4.1 (2026-08-24T18:42:04Z), gitHead bee0fd29642ee1b6a2f16792d1827fcf91471287 = tag node-v1.4.1",
+     "consulted_at_utc": "2026-09-17T11:50:00Z",
+     "what_it_established": "engines node>=20; deps @solana/kit ^8.0.0, @solana-program/system ^0.14.0, @solana-program/token ^0.16.0; optionalDependencies litesvm-linux-x64-gnu/musl, linux-arm64-gnu/musl, darwin-x64/arm64 (no win32). No exports map. dist/index.d.ts full API (addProgramFromFile, addProgram, setAccount, sendTransaction, simulateTransaction, logs, computeUnitsConsumed); dist/internal.d.ts napi API taking raw bytes (sendVersionedTransaction, simulateVersionedTransaction, setAccount(bytes, Account))."
+    },
+    {
+     "url": "https://registry.npmjs.org/litesvm-linux-x64-gnu",
+     "ref": "1.4.1",
+     "consulted_at_utc": "2026-09-17T11:52:00Z",
+     "what_it_established": "os linux, cpu x64, libc glibc, engines node>=20; ships litesvm.linux-x64-gnu.node (12,609,840 B, ELF x86-64, stripped). Installed and loaded on this host under Node 24.14."
+    },
+    {
+     "url": "https://github.com/LiteSVM/litesvm",
+     "ref": "d49db92a3d084a015fffc29609d57888c22b949b (2026-09-15T09:38:37+07:00)",
+     "consulted_at_utc": "2026-09-17T11:50:00Z",
+     "what_it_established": "crates/litesvm/src/lib.rs add_program_internal builds programdata = 45-byte header {slot, authority None} + ELF and Program{programdata_address} at PDA [program_id]; add_program_from_file = fs::read + add_program; unsupported loaders error. Workspace litesvm 0.16.0, rust-version 1.89.0, agave 4.2.1 crates. Node tests addProgramViaSetAccount.test.ts, sigVerify.test.ts, computeLimit.test.ts."
+    },
+    {
+     "url": "https://raw.githubusercontent.com/anza-xyz/solana-sdk/master/loader-v3-interface/src/state.rs",
+     "ref": "anza-xyz/solana-sdk master 8e8e679ad3072748887d23a678ce2e6a6fb5e41b",
+     "consulted_at_utc": "2026-09-17T11:53:00Z",
+     "what_it_established": "UpgradeableLoaderState::size_of_programdata_metadata() == 45, size_of_buffer_metadata() == 37; ProgramData { slot: u64, upgrade_authority_address: Option<Pubkey> }."
+    },
+    {
+     "url": "https://raw.githubusercontent.com/anza-xyz/agave/master/cli/src/program.rs",
+     "ref": "anza-xyz/agave master 22f1fca4bcfee3cf7217b8e6f345de568c59e250",
+     "consulted_at_utc": "2026-09-17T11:56:00Z",
+     "what_it_established": "process_dump writes programdata_account.data[size_of_programdata_metadata()..] \u2192 `solana program dump` output == raw ELF == what litesvm add_program expects."
+    },
+    {
+     "url": "https://api.mainnet-beta.solana.com (getAccountInfo, read-only)",
+     "ref": "live mainnet state 2026-09-17 ~11:57Z; programdata slot 446462733",
+     "consulted_at_utc": "2026-09-17T11:57:00Z",
+     "what_it_established": "Executed: pump AMM program account tag=2 + programdata address (== PDA); programdata tag=3, slot u64@4, Option tag@12 =1, authority@13..45 = 7gZufwwAo17y5kg8FMyJy2phgpvv9RSdzWtdXiWHjFr8, ELF magic 7f454c46 at offset 45; litesvm addProgram/addProgramFromFile of data[45..] (10,485,715 B) \u2192 executable program account + programdata account created."
+    },
+    {
+     "url": "https://release.anza.xyz/stable/install",
+     "ref": "script 4,881 B; resolves GH releases/latest \u2192 v4.2.2 (2026-08-28)",
+     "consulted_at_utc": "2026-09-17T11:53:00Z",
+     "what_it_established": "stable channel resolves via https://api.github.com/repos/anza-xyz/agave/releases/latest; downloads agave-install-init-$TARGET from release.anza.xyz; flags --no-modify-path, -d/--data-dir."
+    },
+    {
+     "url": "https://docs.anza.xyz/cli/install",
+     "ref": "page as of 2026-09-17 (shows v4.3.0-rc.1 in the command)",
+     "consulted_at_utc": "2026-09-17T11:55:00Z",
+     "what_it_established": "Install command sh -c \"$(curl -sSfL https://release.anza.xyz/<tag|stable|beta|edge>/install)\"; Linux source-build deps apt list; agave-install update; no size info."
+    },
+    {
+     "url": "https://github.com/anza-xyz/agave/releases/download/v4.2.2/solana-release-x86_64-unknown-linux-gnu.tar.bz2",
+     "ref": "v4.2.2, version.yml commit c9c6f3287e26f24e3476e13e751aebe710191e89",
+     "consulted_at_utc": "2026-09-17T11:59:00Z",
+     "what_it_established": "Downloaded (86,382,236 B) and extracted (250 MB): bin/ contains agave-install, agave-install-init, agave-ledger-tool, cargo-build-sbf, cargo-test-sbf, solana, solana-keygen, solana-stake-accounts, solana-test-validator, solana-tokens, spl-token."
+    },
+    {
+     "url": "https://api.github.com/repos/anza-xyz/agave/releases/latest",
+     "ref": "v4.2.2 (2026-08-28T18:47:41Z)",
+     "consulted_at_utc": "2026-09-17T11:53:00Z",
+     "what_it_established": "Asset sizes: agave-install-init-x86_64-unknown-linux-gnu 10,372,552 B; solana-release-x86_64-unknown-linux-gnu.tar.bz2 86,382,236 B."
+    },
+    {
+     "url": "https://raw.githubusercontent.com/anza-xyz/agave/master/scripts/agave-build-lists.sh",
+     "ref": "anza-xyz/agave master 22f1fca4bcfee3cf7217b8e6f345de568c59e250",
+     "consulted_at_utc": "2026-09-17T11:56:00Z",
+     "what_it_established": "AGAVE_BINS_DEV=(solana-test-validator); END_USER=(agave-install solana solana-keygen); cargo-install-all.sh additionally `cargo install --locked cargo-build-sbf` (installs cargo-build-sbf + cargo-test-sbf) and spl-token-cli."
+    },
+    {
+     "url": "https://github.com/anza-xyz/cargo-build-sbf",
+     "ref": "master 3cdec0e0092c3708ef40744ac30b212df46b788e; workspace version 4.3.0; crates.io max 4.3.0 (2026-09-03)",
+     "consulted_at_utc": "2026-09-17T11:58:00Z",
+     "what_it_established": "cargo-build-sbf/src/toolchain.rs: DEFAULT_PLATFORM_TOOLS_VERSION=\"v1.57\", DEFAULT_RUST_VERSION=\"1.95.0\", cache ~/.cache/solana/<ver>/platform-tools, download URL github.com/anza-xyz/platform-tools/releases/download/{ver}/platform-tools-linux-{arch}.tar.bz2, uses `rustup toolchain list/link/uninstall`. README: SBPFv3 migration, SIMD-500 scheduled for Agave v4.3, --tools-version override."
+    },
+    {
+     "url": "https://api.github.com/repos/anza-xyz/platform-tools/releases/latest",
+     "ref": "v1.57 (2026-08-21T03:11:23Z)",
+     "consulted_at_utc": "2026-09-17T11:53:00Z",
+     "what_it_established": "platform-tools-linux-x86_64.tar.bz2 = 531,380,716 B."
+    },
+    {
+     "url": "https://sh.rustup.rs and https://rustup.rs",
+     "ref": "rustup-init 1.29.1 (3f5811cec 2026-08-12)",
+     "consulted_at_utc": "2026-09-17T11:53:00Z",
+     "what_it_established": "Verbatim install: curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh; rustup-init x86_64 linux binary 21,113,232 B."
+    },
+    {
+     "url": "https://static.rust-lang.org/dist/channel-rust-stable.toml (+ HEAD on component tarballs)",
+     "ref": "rust 1.98.1 (48a229cea 2026-09-01)",
+     "consulted_at_utc": "2026-09-17T11:54:00Z",
+     "what_it_established": "x86_64-unknown-linux-gnu .tar.xz sizes: rustc 79,727,616; rust-std 30,715,684; cargo 11,662,108; rust-docs 24,072,528; clippy 5,400,924; rustfmt 2,486,356."
+    },
+    {
+     "url": "https://rust-lang.github.io/rustup/concepts/profiles.html",
+     "ref": "UNKNOWN (page date not shown)",
+     "consulted_at_utc": "2026-09-17T11:59:00Z",
+     "what_it_established": "minimal = rustc, rust-std, cargo; default adds rust-docs, rustfmt, clippy; select with --profile=minimal; no disk figures."
+    },
+    {
+     "url": "https://github.com/txtx/surfpool",
+     "ref": "HEAD 42e7d7b8a2564d7fbcb3ead0e061cc125a5dff26 (2026-09-16); latest release v1.5.0 (2026-07-13)",
+     "consulted_at_utc": "2026-09-17T12:00:00Z",
+     "what_it_established": "Built on litesvm 0.16.0; DEFAULT_RPC_PORT 8899, DEFAULT_WS_PORT 8900, slot 400 ms; `surfpool start --rpc-url/--network/--offline/--no-tui`; remote accounts fetched on demand; 31 surfnet_* cheatcodes incl. surfnet_setAccount, surfnet_setTokenAccount, surfnet_cloneProgramAccount, surfnet_writeProgram, surfnet_profileTransaction, surfnet_timeTravel; linux-x64 tar.gz 34,170,467 B; not on npm (404)."
+    },
+    {
+     "url": "https://solana.com/docs/tools/surfpool (redirect target of docs.surfpool.run) and /toolchain/getting-started",
+     "ref": "UNKNOWN (page date not shown)",
+     "consulted_at_utc": "2026-09-17T12:00:00Z",
+     "what_it_established": "'Mainnet accounts fetched just in time'; install `curl -sL https://run.surfpool.run/ | bash` or `cargo surfpool-install`; cheatcode page is a React component (method list taken from source instead)."
+    },
+    {
+     "url": "https://docs.anza.xyz/cli/examples/test-validator",
+     "ref": "UNKNOWN (page date not shown)",
+     "consulted_at_utc": "2026-09-17T11:55:00Z",
+     "what_it_established": "solana-test-validator: full single-node cluster, RPC http://127.0.0.1:8899, ledger dir test-ledger, --clone from cluster, --bpf-program, --limit-ledger-size."
+    },
+    {
+     "url": "https://registry.npmjs.org/vitest",
+     "ref": "5.0.1 (2026-09-15T08:49:35Z)",
+     "consulted_at_utc": "2026-09-17T11:50:00Z",
+     "what_it_established": "engines node ^22.12.0 || ^24.0.0 || >=26.0.0; peer vite ^6.4.0 || ^7 || ^8; ran a .test.ts on Node 24.14 importing litesvm/web3.js/kit/raydium/pump \u2192 2 passed."
+    },
+    {
+     "url": "https://vitest.dev/guide/",
+     "ref": "v5.0.1 docs",
+     "consulted_at_utc": "2026-09-17T11:59:00Z",
+     "what_it_established": "Vite >= 6.4.0, Node >= 22.12.0; reads vite.config by default."
+    },
+    {
+     "url": "https://registry.npmjs.org/tsx and https://registry.npmjs.org/ts-node",
+     "ref": "tsx 4.23.13 (2026-08-30); ts-node 10.9.2 (2025-10-13)",
+     "consulted_at_utc": "2026-09-17T11:50:00Z",
+     "what_it_established": "tsx engines >=18, verified running .ts/.mts with the libs; ts-node stale."
+    },
+    {
+     "url": "https://registry.npmjs.org/typescript",
+     "ref": "latest 7.0.2 (2026-07-08); 6.0.3; last 5.x = 5.9.3 (2025-09-30)",
+     "consulted_at_utc": "2026-09-17T11:55:00Z",
+     "what_it_established": "7.x is Go-native with @typescript/typescript-<platform> binaries; 5.9.3 engines >=14.17; `tsc -p` 5.9.3 strict/NodeNext passes over code importing all chosen libs."
+    },
+    {
+     "url": "https://nodejs.org/docs/latest-v24.x/api/sqlite.html (+ local execution on Node 24.14.0)",
+     "ref": "Node v24.14.0 local; docs mention v24.15.0 = Stability 1.2",
+     "consulted_at_utc": "2026-09-17T11:50:00Z",
+     "what_it_established": "node:sqlite built-in without flags (unflagged since v23.4/v22.13), exports DatabaseSync/StatementSync/Session/constants/backup, SQLite 3.51.2; ExperimentalWarning printed on 24.14; process.features.typescript === 'strip'."
+    },
+    {
+     "url": "https://registry.npmjs.org/better-sqlite3",
+     "ref": "13.0.3 (2026-08-05)",
+     "consulted_at_utc": "2026-09-17T11:52:00Z",
+     "what_it_established": "engines node>=22; tarball ships prebuilds/linux-x64.node (and others); no install script \u2192 no native build needed."
+    },
+    {
+     "url": "https://registry.npmjs.org/ws",
+     "ref": "8.21.3 (2026-08-07)",
+     "consulted_at_utc": "2026-09-17T11:50:00Z",
+     "what_it_established": "engines node>=10; optional peers bufferutil ^4.0.1, utf-8-validate >=5.0.2."
+    },
+    {
+     "url": "file:///home/rares/trading/sol/atomarb/.scratch/interop/ (local npm install + scripts)",
+     "ref": "npm 11.9.0 lockfile resolution 2026-09-17; interop_test.cjs, dump_test.cjs, t/smoke.test.ts",
+     "consulted_at_utc": "2026-09-17T11:56:00Z",
+     "what_it_established": "npm ls: single @solana/web3.js@1.99.0 (deduped for anchor/spl-token/raydium/pump), bn.js@5.2.5, decimal.js@10.6.0, anchor@0.31.1, spl-token@0.4.15, kit@8.3.0 under litesvm. Unsigned web3.js v0 tx bytes simulate/send in litesvm via inner.simulateVersionedTransaction and via getTransactionDecoder \u2192 wrapper; setAccount roundtrip; SDK-computed layout offsets (CpmmPoolInfoLayout span 637, CpmmConfigInfoLayout span 236, pump pool.size 270)."
+    }
+   ],
+   "facts": [
+    {
+     "key": "host_toolchain_state",
+     "value": "Node v24.14.0, npm 11.9.0, linux x86_64; `which rustup cargo solana rustc solana-test-validator cargo-build-sbf` \u2192 none installed; no ~/.cargo or ~/.local/share/solana; 305 GB free",
+     "confidence": "VERIFIED_IN_SOURCE",
+     "source_url": "local shell 2026-09-17T11:47:13Z"
+    },
+    {
+     "key": "recommended_family",
+     "value": "@solana/web3.js 1.x (NOT @solana/kit). Both DEX SDKs are 1.x-typed; web3.js 3.0.0-rc.3 is a kit-8 compat shim still in RC; 1.99.0 shipped 2026-09-08 so 1.x is maintained",
+     "confidence": "VERIFIED_IN_SOURCE",
+     "source_url": "https://registry.npmjs.org/@solana/web3.js"
+    },
+    {
+     "key": "pins",
+     "value": "@solana/web3.js 1.99.0; @raydium-io/raydium-sdk-v2 0.2.70-alpha; @pump-fun/pump-swap-sdk 1.20.0; (transitive) @coral-xyz/anchor 0.31.1, @solana/spl-token 0.4.15, bn.js 5.2.5, decimal.js 10.6.0; litesvm 1.4.1 (+@solana/kit 8.3.0 transitive); ws 8.21.3; vitest 5.0.1; tsx 4.23.13; typescript 5.9.3; @types/node 24",
+     "confidence": "VERIFIED_IN_SOURCE",
+     "source_url": "file:///home/rares/trading/sol/atomarb/.scratch/interop/package-lock.json"
+    },
+    {
+     "key": "single_web3js_copy",
+     "value": "npm ls after installing all pins: exactly one @solana/web3.js@1.99.0, every consumer 'deduped'; bs58 splits 4.0.1 (web3.js/anchor) vs 6.0.0 (raydium/pump) harmlessly",
+     "confidence": "VERIFIED_IN_SOURCE",
+     "source_url": "file:///home/rares/trading/sol/atomarb/.scratch/interop/"
+    },
+    {
+     "key": "web3js_latest_1x",
+     "value": "1.99.0 (2026-09-08T16:22:13Z), tag v1.99.0 = 0b600488afc85bb1f4d41827c7b800fb31c034f5; no engines field; only change vs 1.98.4: v1 Transaction read support (#3866); 1.99.0-beta.0 2026-09-01",
+     "confidence": "VERIFIED_IN_SOURCE",
+     "source_url": "https://registry.npmjs.org/@solana/web3.js"
+    },
+    {
+     "key": "web3js_3_rc",
+     "value": "@solana/web3.js 3.0.0-rc.3 (2026-09-02) depends on @solana/kit ^8.2.0 + @solana-program/* ; engines node>=20.18.0 \u2014 compat layer, not GA",
+     "confidence": "VERIFIED_IN_SOURCE",
+     "source_url": "https://registry.npmjs.org/@solana/web3.js"
+    },
+    {
+     "key": "kit_latest",
+     "value": "@solana/kit 8.3.0 (2026-09-09), engines node>=20.18.0, tag v8.3.0 = 7dfaf8827c217105d47aa1940893d301ad9f63c0",
+     "confidence": "VERIFIED_IN_SOURCE",
+     "source_url": "https://registry.npmjs.org/@solana/kit"
+    },
+    {
+     "key": "raydium_sdk_v2_latest",
+     "value": "0.2.70-alpha (dist-tag latest, 2026-09-15). deps @solana/web3.js ^1.95.3, @solana/spl-token ^0.4.8, bn.js ^5.2.1, decimal.js ^10.4.2, decimal.js-light ^2.5.1, bs58 ^6.0.0, @solana/buffer-layout ^4.0.1; NO @coral-xyz/anchor; no peerDependencies; no gitHead. Stale 2.0.0-rc.0..rc.20 / 2.0.1-rc.0 (2024) sort higher by semver \u2014 never use ^2",
+     "confidence": "VERIFIED_IN_SOURCE",
+     "source_url": "https://registry.npmjs.org/@raydium-io/raydium-sdk-v2"
+    },
+    {
+     "key": "raydium_repo_sha",
+     "value": "raydium-io/raydium-sdk-V2 HEAD c2897835f71873471f4160fa57bd1865b7903d55 (2026-09-15) has package.json 0.2.70-alpha; src/raydium/cpmm/ byte-identical to npm tarball src/",
+     "confidence": "VERIFIED_IN_SOURCE",
+     "source_url": "https://github.com/raydium-io/raydium-sdk-V2"
+    },
+    {
+     "key": "pump_swap_sdk_latest",
+     "value": "1.20.0 (2026-09-10), gitHead 0e7ebefd5ce7fbc504ab6198f0642480f8a25446; deps @solana/web3.js ^1.98.2, @coral-xyz/anchor ^0.31.1, @solana/spl-token ^0.4.9, bn.js ^5.2.2, bs58 ^6.0.0; engines node>=16; tarball ships dist/ (cjs+esm) + src/ + src/idl/pump_amm.json; GitHub repo not publicly reachable",
+     "confidence": "VERIFIED_IN_SOURCE",
+     "source_url": "https://registry.npmjs.org/@pump-fun/pump-swap-sdk"
+    },
+    {
+     "key": "anchor_spl_token_ranges",
+     "value": "@coral-xyz/anchor 0.31.1 \u2192 @solana/web3.js ^1.69.0, bn.js ^5.1.2 (latest anchor 0.32.1); @solana/spl-token 0.4.15 peer @solana/web3.js ^1.95.5 \u2014 all satisfied by 1.99.0",
+     "confidence": "VERIFIED_IN_SOURCE",
+     "source_url": "https://registry.npmjs.org/@coral-xyz/anchor"
+    },
+    {
+     "key": "web3js_versioned_tx_unsigned_serialize",
+     "value": "VersionedTransaction constructor fills numRequiredSignatures \u00d7 64 zero bytes; serialize() takes no requireAllSignatures/verifySignatures (those exist only on legacy Transaction.serialize). Unsigned v0 tx serialized to 257 bytes with byte[0]=1",
+     "confidence": "VERIFIED_IN_SOURCE",
+     "source_url": "tarballs/solana-web3.js-1.99.0/package/lib/index.cjs.js:2219"
+    },
+    {
+     "key": "web3js_simulate_no_sigverify",
+     "value": "Connection.simulateTransaction(VersionedTransaction, config) base64-encodes serialize() and forwards config {sigVerify?, replaceRecentBlockhash?, accounts?, innerInstructions?, minContextSlot?, commitment}; sigVerify is not forced (only the legacy-Transaction branch sets sigVerify=true when signers are passed) \u2192 fee payer public key only is sufficient",
+     "confidence": "VERIFIED_IN_SOURCE",
+     "source_url": "tarballs/solana-web3.js-1.99.0/package/lib/index.cjs.js:8192"
+    },
+    {
+     "key": "litesvm_npm",
+     "value": "litesvm 1.4.1 (2026-08-24), gitHead bee0fd29642ee1b6a2f16792d1827fcf91471287 = tag node-v1.4.1; engines node>=20; deps @solana/kit ^8.0.0, @solana-program/system ^0.14.0, @solana-program/token ^0.16.0; no exports map (deep require of dist/internal works)",
+     "confidence": "VERIFIED_IN_SOURCE",
+     "source_url": "https://registry.npmjs.org/litesvm"
+    },
+    {
+     "key": "litesvm_prebuilt_linux_x64",
+     "value": "optionalDependencies litesvm-linux-x64-gnu/-musl, linux-arm64-gnu/-musl, darwin-x64/-arm64 @1.4.1 (no win32). litesvm-linux-x64-gnu: os linux, cpu x64, libc glibc, ships litesvm.linux-x64-gnu.node 12,609,840 B ELF x86-64 stripped; loaded fine on Node 24.14 here",
+     "confidence": "VERIFIED_IN_SOURCE",
+     "source_url": "https://registry.npmjs.org/litesvm-linux-x64-gnu"
+    },
+    {
+     "key": "litesvm_api_surface",
+     "value": "LiteSVM: withSigverify(bool), withBlockhashCheck(bool), withComputeBudget, withFeatureSet, withLogBytesLimit; getAccount(Address):MaybeEncodedAccount; setAccount(EncodedAccount{address,lamports,data,executable,programAddress,space}); addProgramFromFile(programId,path); addProgram(programId,bytes); addProgramWithLoader; sendTransaction(kit Transaction); simulateTransaction(tx)\u2192SimulatedTransactionInfo{meta(),postAccounts()}|FailedTransactionMetadata{err(),meta()}; TransactionMetadata.logs(), computeUnitsConsumed(): bigint, innerInstructions(), returnData(), prettyLogs()",
+     "confidence": "VERIFIED_IN_SOURCE",
+     "source_url": "tarballs/litesvm-1.4.1/package/dist/index.d.ts"
+    },
+    {
+     "key": "litesvm_bytes_boundary",
+     "value": "napi class LiteSvm (dist/internal.d.ts:276-350) takes raw bytes: sendVersionedTransaction(txBytes), simulateVersionedTransaction(txBytes), sendLegacyTransaction, simulateLegacyTransaction, setAccount(pubkeyBytes, Account), getAccount(pubkeyBytes), addProgram(programIdBytes, bytes). Wrapper reachable as svm.inner (TS-private, JS-public). Executed: web3.js VersionedTransaction.serialize() \u2192 inner.simulateVersionedTransaction \u2192 CU 300n, logs, 2 postAccounts; also via kit getTransactionDecoder().decode(bytes) \u2192 svm.simulateTransaction/sendTransaction OK (sigverify off, blockhash check off)",
+     "confidence": "VERIFIED_IN_SOURCE",
+     "source_url": "file:///home/rares/trading/sol/atomarb/.scratch/interop/interop_test.cjs"
+    },
+    {
+     "key": "litesvm_setAccount_from_web3js",
+     "value": "PublicKey.toBase58() is accepted as kit Address at runtime; setAccount({address, lamports:12345n, data, executable:false, programAddress, space}) round-trips; inner.setAccount(pk.toBytes(), new internal.Account(lamports, data, ownerBytes, false, 0n)) also works; rentEpoch fixed 0 by wrapper",
+     "confidence": "VERIFIED_IN_SOURCE",
+     "source_url": "file:///home/rares/trading/sol/atomarb/.scratch/interop/interop_test.cjs"
+    },
+    {
+     "key": "litesvm_rent_enforced",
+     "value": "Transfer of 1 lamport to a fresh account fails with InsufficientFundsForRent { account_index: 1 } (fee 5000); fund fee payer via airdrop and keep destinations rent-exempt",
+     "confidence": "VERIFIED_IN_SOURCE",
+     "source_url": "file:///home/rares/trading/sol/atomarb/.scratch/interop/t/smoke.test.ts"
+    },
+    {
+     "key": "upgradeable_loader_programdata_header",
+     "value": "UpgradeableLoaderState::size_of_programdata_metadata() == 45 (buffer 37): u32 LE enum tag @0..4 (3=ProgramData), slot u64 LE @4..12, Option<Pubkey> tag @12, authority @13..45, ELF @45. Program account: tag 2 @0..4, programdata_address @4..36 (== PDA [program_id] under loader)",
+     "confidence": "VERIFIED_IN_SOURCE",
+     "source_url": "https://raw.githubusercontent.com/anza-xyz/solana-sdk/master/loader-v3-interface/src/state.rs"
+    },
+    {
+     "key": "solana_program_dump_strips_header",
+     "value": "agave cli process_dump writes programdata_account.data[size_of_programdata_metadata()..] (and buffer data[37..]) \u2192 dump output is the raw ELF, identical to what litesvm add_program expects",
+     "confidence": "VERIFIED_IN_SOURCE",
+     "source_url": "https://raw.githubusercontent.com/anza-xyz/agave/master/cli/src/program.rs"
+    },
+    {
+     "key": "litesvm_add_program_internal",
+     "value": "crates/litesvm/src/lib.rs add_program_internal: for bpf_loader_upgradeable builds programdata = 45-byte header {slot: current clock slot, upgrade_authority_address: None} + program bytes at PDA find_program_address([program_id], loader), and program account = Program{programdata_address}, executable=true, both via add_account_no_checks; bpf_loader/deprecated store raw ELF; other loaders \u2192 InvalidLoader. add_program_from_file = fs::read + add_program",
+     "confidence": "VERIFIED_IN_SOURCE",
+     "source_url": "https://github.com/LiteSVM/litesvm/blob/d49db92a3d084a015fffc29609d57888c22b949b/crates/litesvm/src/lib.rs#L1045"
+    },
+    {
+     "key": "mainnet_dump_into_litesvm_executed",
+     "value": "pAMMBay6oceH9fJKBRHGP5D4bD4sWpmSwMn52FMfXEA: program acct len 36 tag 2 \u2192 programdata 6naEzKeUuFh1Jeeu51NXQgr5qkXgXtc9WKNct4xynVJc (== PDA); programdata len 10,485,760, tag 3, slot 446462733, Option tag 1, authority 7gZufwwAo17y5kg8FMyJy2phgpvv9RSdzWtdXiWHjFr8, bytes[45..49]=7f454c46. svm.addProgram(id, data.subarray(45)) and addProgramFromFile(.so) \u2192 executable program account + programdata account (header 03000000 + slot + 00)",
+     "confidence": "VERIFIED_IN_SOURCE",
+     "source_url": "file:///home/rares/trading/sol/atomarb/.scratch/interop/dump_test.cjs"
+    },
+    {
+     "key": "litesvm_rust_versions",
+     "value": "litesvm repo HEAD d49db92a3d084a015fffc29609d57888c22b949b (2026-09-15 'update mainnet active features'); workspace litesvm 0.16.0, rust-version 1.89.0, agave-feature-set/solana-program-runtime 4.2.1, solana-account 4.3.0; node crate litesvm-node 1.4.1 (napi)",
+     "confidence": "VERIFIED_IN_SOURCE",
+     "source_url": "https://github.com/LiteSVM/litesvm/blob/d49db92a3d084a015fffc29609d57888c22b949b/Cargo.toml"
+    },
+    {
+     "key": "surfpool",
+     "value": "txtx/surfpool HEAD 42e7d7b8a2564d7fbcb3ead0e061cc125a5dff26; release v1.5.0 (2026-07-13) surfpool-linux-x64.tar.gz 34,170,467 B; not on npm; built on litesvm 0.16.0; DEFAULT_RPC_PORT 8899, DEFAULT_WS_PORT 8900, 400 ms slots; `surfpool start [--rpc-url URL|--network devnet|--offline|--no-tui|--airdrop PK|--snapshot f]`; remote accounts fetched on demand; cheatcodes surfnet_setAccount, surfnet_setTokenAccount, surfnet_cloneProgramAccount, surfnet_writeProgram, surfnet_profileTransaction, surfnet_getTransactionProfile, surfnet_timeTravel, surfnet_pauseClock/resumeClock, surfnet_exportSnapshot, surfnet_resetNetwork (+21 more); install `curl -sL https://run.surfpool.run/ | bash`",
+     "confidence": "VERIFIED_IN_SOURCE",
+     "source_url": "https://github.com/txtx/surfpool"
+    },
+    {
+     "key": "solana_test_validator_docs",
+     "value": "Full single-node cluster; RPC http://127.0.0.1:8899; ledger dir test-ledger; --clone accounts/programs from a cluster; --bpf-program; --limit-ledger-size; bundled in Agave release bin/",
+     "confidence": "DOCS_ONLY",
+     "source_url": "https://docs.anza.xyz/cli/examples/test-validator"
+    },
+    {
+     "key": "rustup_install",
+     "value": "curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh (rustup-init 1.29.1, 3f5811cec 2026-08-12); rustup-init x86_64 linux binary 21,113,232 B; --profile=minimal = rustc+rust-std+cargo",
+     "confidence": "VERIFIED_IN_SOURCE",
+     "source_url": "https://rustup.rs"
+    },
+    {
+     "key": "rust_stable_sizes",
+     "value": "stable = rust 1.98.1 (48a229cea 2026-09-01). x86_64-unknown-linux-gnu .tar.xz: rustc 79,727,616; rust-std 30,715,684; cargo 11,662,108 (minimal \u2248122 MB compressed); rust-docs 24,072,528; clippy 5,400,924; rustfmt 2,486,356. Installed footprint not measured (INFERRED ~0.6\u20131.5 GB)",
+     "confidence": "VERIFIED_IN_SOURCE",
+     "source_url": "https://static.rust-lang.org/dist/channel-rust-stable.toml"
+    },
+    {
+     "key": "agave_cli_install",
+     "value": "Docs: sh -c \"$(curl -sSfL https://release.anza.xyz/v4.3.0-rc.1/install)\" (stable/beta/edge channels accepted). stable script resolves https://api.github.com/repos/anza-xyz/agave/releases/latest \u2192 v4.2.2 (2026-08-28), downloads agave-install-init-x86_64-unknown-linux-gnu (10,372,552 B), flags --no-modify-path, --data-dir. Source-build apt deps: build-essential pkg-config libudev-dev llvm libclang-dev protobuf-compiler",
+     "confidence": "VERIFIED_IN_SOURCE",
+     "source_url": "https://release.anza.xyz/stable/install"
+    },
+    {
+     "key": "agave_release_contents",
+     "value": "solana-release-x86_64-unknown-linux-gnu.tar.bz2 v4.2.2 = 86,382,236 B, extracts to 250 MB (commit c9c6f3287e26f24e3476e13e751aebe710191e89); bin/: agave-install, agave-install-init, agave-ledger-tool, cargo-build-sbf, cargo-test-sbf, deps/, solana, solana-keygen, solana-stake-accounts, solana-test-validator, solana-tokens, spl-token \u2192 solana-test-validator and cargo-build-sbf included",
+     "confidence": "VERIFIED_IN_SOURCE",
+     "source_url": "https://github.com/anza-xyz/agave/releases/download/v4.2.2/solana-release-x86_64-unknown-linux-gnu.tar.bz2"
+    },
+    {
+     "key": "cargo_build_sbf_platform_tools",
+     "value": "cargo-build-sbf is its own repo/crate (anza-xyz/cargo-build-sbf master 3cdec0e0092c3708ef40744ac30b212df46b788e, 4.3.0; `cargo install cargo-build-sbf` gives cargo-build-sbf + cargo-test-sbf). toolchain.rs: DEFAULT_PLATFORM_TOOLS_VERSION=\"v1.57\", DEFAULT_RUST_VERSION=\"1.95.0\", cache ~/.cache/solana/<ver>/platform-tools, downloads github.com/anza-xyz/platform-tools/releases/download/{ver}/platform-tools-linux-x86_64.tar.bz2 on first build, shells out to `rustup toolchain list/link` (rustup required). v1.57 linux x86_64 tarball = 531,380,716 B (2026-08-21). README: SIMD-500 (blocks SBPF v0\u2013v2 deploys) scheduled for Agave v4.3; override --tools-version",
+     "confidence": "VERIFIED_IN_SOURCE",
+     "source_url": "https://github.com/anza-xyz/cargo-build-sbf/blob/master/cargo-build-sbf/src/toolchain.rs"
+    },
+    {
+     "key": "rust_toolchain_estimates",
+     "value": "Downloads \u2248 21 MB rustup-init + 122\u2013154 MB rust + 86 MB agave + 531 MB platform-tools \u2248 0.8 GB; disk after extraction \u2248 3\u20135 GB (rust 0.6\u20131.5 GB + agave 250 MB measured + platform-tools ~1.5\u20132 GB + target/ 0.5\u20131 GB); wall time ~10\u201325 min. Local-only: cargo build-sbf \u2192 target/deploy/<name>.so \u2192 litesvm addProgramFromFile; no deployment needed",
+     "confidence": "INFERRED",
+     "source_url": "https://api.github.com/repos/anza-xyz/platform-tools/releases/latest"
+    },
+    {
+     "key": "vitest",
+     "value": "5.0.1 (2026-09-15); engines node ^22.12.0 || ^24.0.0 || >=26.0.0; peer vite ^6.4.0 || ^7 || ^8, @types/node ^22 || >=24; V4 tag 4.1.11. Ran .test.ts importing litesvm/web3.js/kit/raydium/pump on Node 24.14 \u2192 2 passed in ~1 s, no config",
+     "confidence": "VERIFIED_IN_SOURCE",
+     "source_url": "https://registry.npmjs.org/vitest"
+    },
+    {
+     "key": "ts_runners",
+     "value": "tsx 4.23.13 (engines >=18) runs .ts/.mts with all libs; ts-node 10.9.2 stale (2025-10-13); Node 24 native strip-types (process.features.typescript='strip') runs .mts without flags but a .ts with `import` in a CJS package fails (needs .mts or \"type\":\"module\"; erasable syntax only)",
+     "confidence": "VERIFIED_IN_SOURCE",
+     "source_url": "https://registry.npmjs.org/tsx"
+    },
+    {
+     "key": "typescript_versions",
+     "value": "npm latest = 7.0.2 (2026-07-08, Go-native with @typescript/typescript-linux-x64 binaries); 6.0.3 exists; last 5.x = 5.9.3 (2025-09-30, engines >=14.17). tsc 5.9.3 strict + NodeNext + skipLibCheck passes over code importing web3.js 1.99.0, kit 8.3.0 types, litesvm, raydium, pump",
+     "confidence": "VERIFIED_IN_SOURCE",
+     "source_url": "https://registry.npmjs.org/typescript"
+    },
+    {
+     "key": "node_sqlite",
+     "value": "Node 24.14.0: node:sqlite built-in, no flag; exports DatabaseSync, StatementSync, Session, constants, backup; SQLite 3.51.2; prints ExperimentalWarning 'SQLite is an experimental feature and might change at any time' (silence via --disable-warning=ExperimentalWarning). Docs: unflagged since v23.4.0/v22.13.0; Stability 1.2 Release candidate from v24.15.0",
+     "confidence": "VERIFIED_IN_SOURCE",
+     "source_url": "https://nodejs.org/docs/latest-v24.x/api/sqlite.html"
+    },
+    {
+     "key": "better_sqlite3",
+     "value": "13.0.3 (2026-08-05), engines node>=22, tarball ships prebuilds/linux-x64.node (+darwin/arm64/musl/win32), no install script \u2192 no native compile on this host",
+     "confidence": "VERIFIED_IN_SOURCE",
+     "source_url": "https://registry.npmjs.org/better-sqlite3"
+    },
+    {
+     "key": "ws",
+     "value": "8.21.3 (2026-08-07), engines node>=10, optional peers bufferutil ^4.0.1 / utf-8-validate >=5.0.2; web3.js 1.x subscriptions use rpc-websockets ^9.0.2",
+     "confidence": "VERIFIED_IN_SOURCE",
+     "source_url": "https://registry.npmjs.org/ws"
+    },
+    {
+     "key": "raydium_cpmm_helpers",
+     "value": "tarball lib/raydium/cpmm/curve/calculator.d.ts: CurveCalculator.swapBaseInput(inputAmount, inputVaultAmount, outputVaultAmount, tradeFeeRate, creatorFeeRate, protocolFeeRate, fundFeeRate, isCreatorFeeOnInput): SwapResult{newInputVaultAmount,newOutputVaultAmount,inputAmount,outputAmount,tradeFee,protocolFee,fundFee,creatorFee}, swapBaseOutput(...); curve/constantProduct.d.ts ConstantProductCurve.swapBaseInputWithoutFees; curve/fee.d.ts CpmmFee; src/raydium/cpmm/cpmm.ts CpmmModule.getRpcPoolInfo(s), getPoolInfoFromRpc, computeSwapAmount({pool, amountIn, outputMint, slippage, swapBaseIn}) (isCreatorFeeOnInput = feeOn \u2208 {BothToken, OnlyTokenB}), swap; all re-exported from package root (lib/index.d.ts:48-54). Program CPMMoo8L3F4NbTegBCKVNunggL7H1ZpdTHKxQB5qKP1C",
+     "confidence": "VERIFIED_IN_SOURCE",
+     "source_url": "https://github.com/raydium-io/raydium-sdk-V2/blob/c2897835f71873471f4160fa57bd1865b7903d55/src/raydium/cpmm/curve/calculator.ts"
+    },
+    {
+     "key": "raydium_cpmm_layouts_offsets",
+     "value": "CpmmPoolInfoLayout span 637: configId@8 poolCreator@40 vaultA@72 vaultB@104 mintLp@136 mintA@168 mintB@200 mintProgramA@232 mintProgramB@264 observationId@296 bump@328 status@329 lpDecimals@330 mintDecimalA@331 mintDecimalB@332 lpAmount@333 protocolFeesMintA@341 protocolFeesMintB@349 fundFeesMintA@357 fundFeesMintB@365 openTime@373 epoch@381 feeOn@389 enableCreatorFee@390 creatorFeesMintA@397 creatorFeesMintB@405 (+28\u00d7u64). CpmmConfigInfoLayout span 236: bump@8 disableCreatePool@9 index@10 u16 tradeFeeRate@12 protocolFeeRate@20 fundFeeRate@28 createPoolFee@36 protocolOwner@44 fundOwner@76 creatorFeeRate@108 creatorFeeShareRate@116 (+14\u00d7u64). Reserves not in pool state \u2014 SDK reads vaultA/vaultB token accounts",
+     "confidence": "VERIFIED_IN_SOURCE",
+     "source_url": "https://github.com/raydium-io/raydium-sdk-V2/blob/c2897835f71873471f4160fa57bd1865b7903d55/src/raydium/cpmm/layout.ts"
+    },
+    {
+     "key": "raydium_cpmm_swap_ix",
+     "value": "makeSwapCpmmBaseInInstruction(programId, payer, authority, configId, poolId, userInputAccount, userOutputAccount, inputVault, outputVault, inputTokenProgram, outputTokenProgram, inputMint, outputMint, observationId, amountIn, amounOutMin): 13 accounts in that order (payer signer; pool, user accts, vaults, observation writable); data = disc \u2016 u64 amountIn \u2016 u64 amounOutMin; discriminators swapBaseInput 8fbe5adac41e33de, swapBaseOutput 37d96256a34ab4ad; PDAs getPdaPoolAuthority, getCpmmPdaPoolId, getPdaVault, getPdaObservationId in pda.ts",
+     "confidence": "VERIFIED_IN_SOURCE",
+     "source_url": "https://github.com/raydium-io/raydium-sdk-V2/blob/c2897835f71873471f4160fa57bd1865b7903d55/src/raydium/cpmm/instruction.ts"
+    },
+    {
+     "key": "pumpswap_helpers",
+     "value": "src/sdk/buy.ts buyQuoteInput({quote, slippage, baseReserve, quoteReserve, virtualQuoteReserves?, globalConfig, baseMintAccount: RawMint, baseMint, coinCreator, creator, feeConfig|null, quoteMint?, isMayhemMode?, creatorFeeBps?}) / buyBaseInput; src/sdk/sell.ts sellBaseInput / sellQuoteInput (same shape, base); src/sdk/offlinePumpAmm.ts class PumpAmmSdk (PUMP_AMM_SDK): decodePool(AccountInfo<Buffer>) (pads to anchor pool.size 270), decodeGlobalConfig, decodeFeeConfig, buyQuoteInput(swapSolanaState, quote, slippage)\u2192ix[], buyInstructions, sellInstructions, sellBaseInput; POOL_SIZE 270, POOL_ACCOUNT_NEW_SIZE 300, GLOBAL_CONFIG_SIZE 949; src/sdk/onlinePumpAmm.ts class OnlinePumpAmmSdk(connection): fetchPool, fetchGlobalConfigAccount, fetchFeeConfigAccount, swapSolanaState(poolKey, user, userBaseAta?, userQuoteAta?); src/sdk/util.ts getPumpAmmProgram(connection) (anchor); src/sdk/fees.ts computeFeesBps etc.",
+     "confidence": "VERIFIED_IN_SOURCE",
+     "source_url": "tarballs/pump-fun-pump-swap-sdk-1.20.0/package/src/sdk/"
+    },
+    {
+     "key": "pumpswap_pdas",
+     "value": "PUMP_AMM_PROGRAM_ID pAMMBay6oceH9fJKBRHGP5D4bD4sWpmSwMn52FMfXEA; PUMP_FEE_PROGRAM_ID pfeeUxB6jkeY1Hxd7CsFCAjcbHA9rWtchMGdZ6VojVZ; GLOBAL_CONFIG_PDA = pda(['global_config']) = ADyA8hdefvWN2dbGGWFotbzWxrAvLW83WG6QCVXvJKqw; EVENT_AUTHORITY = pda(['__event_authority']) = GS4CU59F31iL7aR2Q8zVS8DRrcRnXX1yjQ66TqNVQnaR; PUMP_AMM_FEE_CONFIG_PDA = feeProgramPda(['fee_config', PUMP_AMM_PROGRAM_ID]) = 5PHirr8joyTMp9JMm6nW7hNDVyEYdkzDqazxPD7RaTjx; poolPda(index,owner,baseMint,quoteMint) seeds ['pool', u16 LE index, owner, baseMint, quoteMint]; canonicalPumpPoolPda(mint, quoteMint=WSOL) = poolPda(0, pumpPoolAuthorityPda(mint), mint, quoteMint)",
+     "confidence": "VERIFIED_IN_SOURCE",
+     "source_url": "tarballs/pump-fun-pump-swap-sdk-1.20.0/package/src/sdk/pda.ts"
+    },
+    {
+     "key": "pumpswap_idl_pool_and_swap",
+     "value": "IDL pump_amm 0.1.0, 34 instructions. Pool account disc f19a6d0411b16dbc; fields: pool_bump u8, index u16, creator, base_mint, quote_mint, lp_mint, pool_base_token_account, pool_quote_token_account (pubkeys), lp_supply u64, coin_creator pubkey, is_mayhem_mode bool, is_cashback_coin bool, virtual_quote_reserves i128, creator_fee_bps u64, can_edit_creator_fee bool (=270 B). buy disc 66063d1201daebea args base_amount_out u64, max_quote_amount_in u64, track_volume OptionBool; 23 accounts: pool,user,global_config,base_mint,quote_mint,user_base_token_account,user_quote_token_account,pool_base_token_account,pool_quote_token_account,protocol_fee_recipient,protocol_fee_recipient_token_account,base_token_program,quote_token_program,system_program,associated_token_program,event_authority,program,coin_creator_vault_ata,coin_creator_vault_authority,global_volume_accumulator,user_volume_accumulator,fee_config,fee_program. sell disc 33e685a4017f83ad, 21 accounts (no volume accumulators)",
+     "confidence": "VERIFIED_IN_SOURCE",
+     "source_url": "tarballs/pump-fun-pump-swap-sdk-1.20.0/package/src/idl/pump_amm.json"
+    }
+   ],
+   "open_questions": [
+    "Does litesvm 1.4.1 (Rust litesvm 0.16.0 on agave 4.2.1 crates, mainnet feature set) accept SBPFv3 ELFs emitted by platform-tools v1.57 (cargo-build-sbf 4.3.0 default)? Not verified \u2014 no toolchain installed, no local program built. If not, pin `--tools-version v1.53`/older or set litesvm feature set accordingly.",
+    "@pump-fun/pump-swap-sdk GitHub repo is not publicly reachable; gitHead 0e7ebefd5ce7fbc504ab6198f0642480f8a25446 cannot be cross-checked \u2014 the npm tarball (with src/ and IDL) is the only primary source.",
+    "Raydium npm metadata has no gitHead; only src/raydium/cpmm/ was diffed against repo HEAD c2897835 (identical) \u2014 the rest of the tree was not compared.",
+    "Agave docs install page shows v4.3.0-rc.1 while the `stable` script resolves to v4.2.2; which to pin for local `cargo build-sbf`/`solana-test-validator` is a judgment call (both bundle cargo-build-sbf; only v4.2.2 tarball contents were verified).",
+    "Installed (extracted) disk sizes for the rustup toolchain and platform-tools were not measured (only compressed download sizes + the 250 MB Agave extract); the 3\u20135 GB / 10\u201325 min figures are inferred.",
+    "@solana/web3.js 1.99.0 declares no `engines`; Node 24 support is empirical (ran simulate/serialize/dump code), not declared.",
+    "litesvm's `svm.inner` (napi class) is a TS-private field; relying on it (or on `require('litesvm/dist/internal')`) for the bytes API could break on a litesvm minor bump \u2014 alternative is kit `getTransactionDecoder().decode(bytes)` which was also verified.",
+    "No real CPMM/PumpSwap swap was simulated inside litesvm with cloned mainnet accounts yet (only program loading + system transfer); account-cloning and rent/ATA setup for a full swap simulation remain to be exercised.",
+    "surfpool cheatcode parameter schemas (surfnet_setAccount, surfnet_cloneProgramAccount, \u2026) were not extracted \u2014 only method names from source; docs page is a React component.",
+    "node:sqlite is Stability 1.1 on Node 24.14 (ExperimentalWarning printed) and 1.2 RC from 24.15 \u2014 API could still change; better-sqlite3 13.0.3 with bundled linux-x64 prebuild is the fallback.",
+    "TypeScript 7.0.2 (Go-native) was not tested against these libraries' types; 5.9.3 was."
+   ]
+  }
+ },
+ "program_ids": {
+  "raydium_cpmm": "CPMMoo8L3F4NbTegBCKVNunggL7H1ZpdTHKxQB5qKP1C",
+  "pumpswap_amm": "pAMMBay6oceH9fJKBRHGP5D4bD4sWpmSwMn52FMfXEA",
+  "pump_fees": "pfeeUxB6jkeY1Hxd7CsFCAjcbHA9rWtchMGdZ6VojVZ",
+  "pump_bonding_curve": "6EF8rrecthR5Dkzon8Nwu78hRvfCKubJ14M5uBEwF6P",
+  "spl_token": "TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA",
+  "token_2022": "TokenzQdBNbLqP5VEhdkAS6EPFLC1PHnBqCXEpPxuEb",
+  "associated_token": "ATokenGPvbdGVxr1b2hvZbsiqW5xWH25efTNsLJA8knL"
+ },
+ "npm_pins": {
+  "@solana/kit": "8.3.0",
+  "@solana/spl-token": "0.4.15",
+  "@solana/web3.js": "1.99.0",
+  "bn.js": "5.2.5",
+  "bs58": "6.0.0",
+  "litesvm": "1.4.1",
+  "ws": "8.21.3",
+  "zod": "4.6.5",
+  "@pump-fun/pump-swap-sdk": "1.20.0",
+  "@raydium-io/raydium-sdk-v2": "0.2.70-alpha",
+  "@types/bn.js": "5.2.0",
+  "@types/node": "24.13.5",
+  "@types/ws": "8.18.1",
+  "tsx": "4.23.13",
+  "typescript": "5.9.3",
+  "vitest": "5.0.1"
+ }
+}

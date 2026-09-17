@@ -63,7 +63,7 @@ export function classifySimError(err: unknown, logs: string[]): string {
   if (/InstructionError/.test(s)) return 'INSTRUCTION_ERROR'
   return 'OTHER'
 }
-export async function mainnetSimulate(rpc: RpcClient, tx: DirectTx | { built: BuiltTx }, ua: UserAccounts, opts: { minContextSlot?: number } = {}): Promise<MainnetSimEvidence> {
+export async function mainnetSimulate(rpc: RpcClient, tx: DirectTx | { built: BuiltTx }, ua: UserAccounts, opts: { minContextSlot?: number | undefined } = {}): Promise<MainnetSimEvidence> {
   const r: SimulateResult = await rpc.simulateTransaction(tx.built.tx, { sigVerify: false, replaceRecentBlockhash: true, accounts: [ua.baseAta, ua.interAta], innerInstructions: true, ...(opts.minContextSlot !== undefined ? { minContextSlot: opts.minContextSlot } : {}) })
   const logs = r.value.logs ?? []
   let post: MainnetSimEvidence['postBalances'] = null
