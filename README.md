@@ -4,7 +4,10 @@ Detects, quotes exactly, builds and **simulates** the circuit `WSOL -> TOKEN (po
 
 Evidence levels: `QUOTE_ONLY` -> `LOCAL_REAL_PROGRAM_SIMULATION` (real program ELFs + real accounts in LiteSVM, synthetic labelled balances, exact deltas) -> `MAINNET_RPC_SIMULATION` (`simulateTransaction`, `sigVerify=false`) -> `CONFIRMED_EXECUTION` (not authorised in this lot).
 
-## Install (Linux / WSL; Node >= 22.13, npm)
+## Install (Linux or WSL; Node >= 22.13, npm)
+
+The TypeScript engine runs anywhere Node runs, but `litesvm` ships prebuilt binaries for Linux and macOS only, and `cargo build-sbf` (the Rust executor) is Linux/macOS: on Windows use WSL. `npm run doctor` prints what is present on the current machine.
+
 ```
 cd ~/trading/sol/atomarb
 npm install                      # pinned versions, package-lock.json

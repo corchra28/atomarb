@@ -7,7 +7,11 @@ import { redact } from '../telemetry/log.js'
 export async function doctor(loaded: LoadedConfig, log: JsonlLogger): Promise<number> {
   const { config, configHash } = loaded
   const rows: [string, string][] = []
+  rows.push(['platform', `${process.platform} ${process.arch} (litesvm prebuilt: ${process.platform === 'linux' || process.platform === 'darwin' ? 'yes' : 'NO — use WSL on Windows'})`])
   rows.push(['node', process.version], ['config', `${loaded.path} hash=${configHash.slice(0, 16)}`], ['live_trading', String(config.execution.live)])
+  const { existsSync } = await import('node:fs')
+  rows.push(['rust_toolchain', existsSync(`${process.env['HOME']}/.cargo/bin/cargo`) ? 'cargo present' : 'not installed (scripts/install_toolchain.sh; Linux/WSL only)'])
+  rows.push(['executor_binary', existsSync('tests/fixtures/programs/arb_executor.so') ? 'tests/fixtures/programs/arb_executor.so (local only, never deployed)' : 'NOT BUILT (scripts/build_executor.sh)'])
   const ep = resolveEndpoints(config)
   rows.push(['rpc_http', redact(ep.httpUrl)], ['rpc_wss', ep.wssUrl ? redact(ep.wssUrl) : 'NOT_SET (shadow mode will poll via HTTP only)'])
   try { const s = statfsSync('.'); rows.push(['disk_free_gib', (Number(s.bavail) * Number(s.bsize) / 1024 ** 3).toFixed(1)]) } catch { rows.push(['disk_free_gib', 'unknown']) }
