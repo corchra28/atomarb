@@ -75,6 +75,7 @@ export async function shadow(loaded: LoadedConfig, flags: Record<string, string 
   const episodes = new Map<string, Episode>()
   const counters = { polls: 0, routePolls: 0, snapshotIncomplete: 0, circuitsEvaluated: 0, positiveEvaluations: 0, candidates: 0, simsAttempted: 0, simsOk: 0, localAttempted: 0, localOk: 0, localMatch: 0, stale: 0, errors: 0 }
   const simTimes: number[] = []
+  const closest = new Map<string, { bps: number; amountIn: bigint; utc: string; category: string }>()
   let stopReason: string | null = null
   const programsCache = new Map<string, boolean>()
   outer: while (true) {
@@ -93,7 +94,11 @@ export async function shadow(loaded: LoadedConfig, flags: Record<string, string 
       const circuits = enumerateCircuits(decoded)
       const t1 = monoMs()
       const evals: { c: Circuit; best: CircuitEval | null; points: number }[] = []
-      for (const c of circuits) { const s = sizeCircuit(adapters, c, config.sizing.grid.map(BigInt), BigInt(config.sizing.maxCapitalLamports), config.sizing.refineSteps); evals.push({ c, best: s.best, points: s.evaluated.length }); counters.circuitsEvaluated++ }
+      for (const c of circuits) {
+        const s = sizeCircuit(adapters, c, config.sizing.grid.map(BigInt), BigInt(config.sizing.maxCapitalLamports), config.sizing.refineSteps); evals.push({ c, best: s.best, points: s.evaluated.length }); counters.circuitsEvaluated++
+        // distance to break-even even when no size is positive: best pnl in bps over all evaluated sizes (QUOTE_ONLY)
+        for (const e of s.evaluated) if (e.pnl !== null) { const bps = Number((e.pnl * 1_000_000n) / e.amountIn) / 100; const prev = closest.get(c.id); if (prev === undefined || bps > prev.bps) closest.set(c.id, { bps, amountIn: e.amountIn, utc: nowUtcIso(), category: c.category }) }
+      }
       lat.quote.push(monoMs() - t1)
       const nowIso = nowUtcIso()
       for (const { c, best } of evals) {
@@ -158,6 +163,7 @@ export async function shadow(loaded: LoadedConfig, flags: Record<string, string 
     latencyMs: { snapshot: pct(lat.snapshot), quote: pct(lat.quote), build: pct(lat.build), simulation: pct(lat.sim), stateAgeAtDecision: pct(lat.age) },
     rpc: { total: rpc.usage.total, errors: rpc.usage.errors, retries: rpc.usage.retries, byMethod: Object.fromEntries(Object.entries(rpc.usage.byMethod).map(([k, v]) => [k, { count: v.count, errors: v.errors, ...pct(v.ms) }])) },
     wss: wss ? { ...wss.stats, gaps } : null,
+    closestToBreakeven: [...closest.entries()].map(([id, v]) => ({ circuit: id, ...v })).sort((a, b) => b.bps - a.bps).slice(0, 20),
     episodes: { total: eps.length, byCategory: countBy(eps.map(e => e.category)), byToken: countBy(eps.map(e => e.token)), maxRefreshes: Math.max(0, ...eps.map(e => e.refreshes)), simulatedOk: eps.filter(e => e.simOk > 0).length, localOk: eps.filter(e => e.localOk > 0).length, localMatch: eps.filter(e => e.localMatch > 0).length, list: eps.map(e => ({ ...e })) },
     note: 'Every probe is an independent hypothetical intervention on real state; probe sums are not a realised portfolio. REALIZED_NET_PNL = NOT_OBSERVED. TRANSACTIONS_BROADCAST = 0.',
   }
