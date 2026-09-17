@@ -23,7 +23,20 @@
 
 *The 60-minute prospective run* (`reports/runs/shadow_2026-09-17T18-09-25-841Z_32a7b818/`): 50 pools validated on-chain, 22 routes, 221 polls, 4,860 route snapshots, **17,676 circuit evaluations across the whole sizing grid, zero positive**. It stopped on its 10,000-request budget at 55 minutes, with 276 HTTP 429s from the public endpoint and no data gaps (`snapshot_incomplete = 0`, `errors = 0`). Decision latency was small compared to a slot: snapshot p50 349 ms / p95 1,409 ms, quoting p50 17 ms, state age at the decision p50 3 ms.
 
-*The one-snapshot route diagnostic* (`reports/route_gaps_*.md`, 80 circuits, 44 requests) says why:
+*The population sweep* (`reports/route_gaps_*.md`, 612 circuits over 151 mints, 302 requests, one snapshot per mint) is the decisive measurement:
+
+| measure | value |
+|---|---|
+| circuits measured | 612 (544 same-adapter PumpSwap, 68 cross-adapter) |
+| circuits with positive **gross** PnL at some size | 22, every one of them only at 0.0001 to 0.001 SOL |
+| largest gross PnL seen anywhere | **2,663 lamports**, against a network fee of 9,000 |
+| circuits with positive **net** PnL at any size | **0** |
+| median best gross PnL across circuits | −454 bps |
+| routes whose thinner pool holds < 0.01 SOL | 458 of 612 |
+
+A coverage experiment ran alongside it: listing 100,000 Standard WSOL pools instead of 25,000 (Raydium CPMM pools with WSOL: 3,107 → 12,043) moved the cross-adapter intersection from 24 mints to **26** and the Raydium-only pairs from 5 to 7. Coverage is therefore not what is missing; the same-mint pairs that exist are simply too thin on one side.
+
+*The earlier 80-circuit diagnostic* said the same thing on a smaller sample:
 
 | measure | value |
 |---|---|
@@ -39,7 +52,7 @@ The reason is liquidity, not fees: the cross-adapter intersection pairs a normal
 
 Ranked by how much they would change the answer per unit of work:
 
-1. **Cover the pools that were excluded.** The 5,000-pool cap and the 13-day-old PumpSwap inventory hide exactly the venues where gaps are widest: newly migrated, thin, fast-moving pools. Rebuild the inventory from the chain (a program-account scan or an indexer) and re-run the same engine. This is the single largest lever and costs only data.
+1. **~~Cover the pools that were excluded~~ — tested, and it did not change the answer.** Quadrupling the Raydium listing (25,000 → 100,000 pools) added two cross-adapter mints and two Raydium-only pairs, and the 612-circuit sweep still found no size with a positive net. What remains untested on this axis is a **fresh** PumpSwap inventory built from the chain: the current one is 13 days old, and a token's first hours after migration are exactly when two pools of the same mint can diverge. That is a data-collection job (program-account scan or an indexer), not an engine change.
 2. **Look at the moment a gap appears, not at a 4-second poll.** The engine currently polls; subscribing to the vaults over WSS (already implemented) and re-quoting on notification measures whether gaps exist between polls. Needs a private endpoint.
 3. **Add one adapter with a different fee model** (Meteora DAMM v2 or DLMM). Two constant-product pools of the same token with 25 to 125 bps of fees rarely diverge enough; a different curve family changes that arithmetic.
 4. **Only then**: a funded simulation identity, a mainnet lookup table, and the landing-rate question (which cannot be answered before live).

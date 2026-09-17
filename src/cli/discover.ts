@@ -4,7 +4,7 @@ import type { JsonlLogger } from '../telemetry/log.js'
 import { runDiscovery } from '../discovery/index.js'
 
 /**
- * `atomarb discover [--config f] [--max-pools N] [--max-mints N] [--no-network] [--cap N] [--page-size N] [--max-pools-per-mint N] [--cross-check] [--reuse-list] [--inventory path]`
+ * `atomarb discover [--config f] [--max-pools N] [--max-mints N] [--no-network] [--cap N] [--api-budget N] [--page-size N] [--max-pools-per-mint N] [--cross-check] [--reuse-list] [--inventory path]`
  * Population discovery: Raydium API v3 (HTTPS only) + local PumpSwap inventory → reports/population_<utc>.{json,md} and
  * data/discovery/shortlist.json. NEVER calls Solana RPC (no RPC client is constructed here; tests grep for it). Exit 0 on success.
  */
@@ -31,13 +31,13 @@ function acquireLock(dir: string): () => void {
 export async function discover(loaded: LoadedConfig, flags: Record<string, string | true>, log: JsonlLogger): Promise<number> {
   const { config } = loaded
   const network = flags['no-network'] !== true
-  const maxPools = intFlag(flags, 'max-pools'); const maxMints = intFlag(flags, 'max-mints'); const listCap = intFlag(flags, 'cap'); const pageSize = intFlag(flags, 'page-size'); const maxPoolsPerMint = intFlag(flags, 'max-pools-per-mint')
+  const maxPools = intFlag(flags, 'max-pools'); const maxMints = intFlag(flags, 'max-mints'); const listCap = intFlag(flags, 'cap'); const pageSize = intFlag(flags, 'page-size'); const maxPoolsPerMint = intFlag(flags, 'max-pools-per-mint'); const apiBudget = intFlag(flags, 'api-budget')
   const inventoryPath = typeof flags['inventory'] === 'string' ? flags['inventory'] : undefined
   const release = network ? acquireLock(`${config.paths.dataDir}/discovery`) : () => {}
   try {
   const res = await runDiscovery(config, {
     network, log,
-    ...(maxPools !== undefined ? { maxPools } : {}), ...(maxMints !== undefined ? { maxMints } : {}), ...(listCap !== undefined ? { listCap } : {}), ...(pageSize !== undefined ? { pageSize } : {}), ...(maxPoolsPerMint !== undefined ? { maxPoolsPerMint } : {}),
+    ...(maxPools !== undefined ? { maxPools } : {}), ...(maxMints !== undefined ? { maxMints } : {}), ...(listCap !== undefined ? { listCap } : {}), ...(pageSize !== undefined ? { pageSize } : {}), ...(maxPoolsPerMint !== undefined ? { maxPoolsPerMint } : {}), ...(apiBudget !== undefined ? { apiBudget } : {}),
     ...(inventoryPath !== undefined ? { inventoryPath } : {}), crossCheckInfoMint: flags['cross-check'] === true, reuseListCache: flags['reuse-list'] === true,
   })
   const c = res.report.counts; const ray = res.report.sources['raydium_api_v3'] as Record<string, unknown> | undefined

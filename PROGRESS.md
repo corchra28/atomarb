@@ -53,9 +53,14 @@ Coverage improved while fixing this: raising the listing cap from 5,000 to 25,00
 - **Four adversarial reviews** received and applied (see the tables above and `docs/agent_runs/workflow_results.json`); the executor ABI moved to v2 and its binary was rebuilt.
 - Final artefacts: `TERMINAL_SUMMARY.txt`, `DECISION.md`, `TEST_REPORT.md`, `reports/runs/<id>/RUN_REPORT.{json,md}`, `reports/route_gaps_*.{json,md}`, `reports/fault_injection.json`, `ARTIFACT_HASHES.txt`.
 
+## Second round (coverage experiment + population sweep)
+
+- Raydium listing lifted from 25,000 to **100,000** pools (`--cap 100000 --api-budget 120`, 102 HTTPS requests, no RPC): CPMM WSOL pools 3,107 → **12,043**, cross-adapter mints 24 → **26**, Raydium-only pairs 5 → **7**. Coverage is not the binding constraint.
+- **612-circuit sweep** over 151 shortlisted mints (302 RPC requests, one snapshot per mint): 22 circuits show a positive gross PnL, all at 0.0001–0.001 SOL; the largest gross anywhere is **2,663 lamports** against a 9,000-lamport network fee, so **no circuit is net-positive at any size**; 458 of 612 routes have a thinner side below 0.01 SOL.
+
 ## What a next session would do
 
-1. Rebuild the PumpSwap inventory from the chain and lift the Raydium listing cap (coverage is the biggest lever; raising it from 5,000 to 25,000 already took the intersection from 17 to 24 mints and Raydium-only pairs from 0 to 5).
+1. Rebuild the PumpSwap inventory **from the chain** (the only untested coverage axis left; the listing cap has been tested and does not matter). A 13-day-old inventory misses the hours right after migration, which is when two pools of one mint can actually diverge.
 2. Re-run `npm run shadow` with a private endpoint so the run is not cut by the public rate limit, ideally with `SOLANA_WSS_URL` set so decisions follow vault notifications instead of a 4-second poll.
 3. Only then revisit the blockers in `BLOCKERS.md` (funded simulation identity, mainnet lookup table).
 

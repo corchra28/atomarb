@@ -1,10 +1,10 @@
 IMPLEMENTATION_STATUS       = MVP COMPLETE (adapters, discovery, routing/sizing, accounting, simulation, executor, CLI, reports)
 ADAPTERS_IMPLEMENTED        = raydium_cpmm, pumpswap
 ADAPTERS_INTEGRATION_TESTED = raydium_cpmm, pumpswap (real mainnet ELFs executed in LiteSVM)
-DISCOVERED_POOLS            = raydium_cpmm 3107 (API, 3102 mints) / pumpswap 25061 (local inventory 2026-09-04, 24617 mints); both unverified until snapshot
-POOL_INTERSECTION           = cross-adapter mints 24 (routes 59) | pumpswap mints with >=2 pools 123 (routes 653) | raydium mints with >=2 pools 5 (routes 5); routes truncated by per-mint cap 4501
-ELIGIBLE_ROUTES             = shortlist 50 pools / 28 routes; validated on-chain in the run: 50 pools / 22 routes (dropped 0)
-QUOTE_COUNT                 = 17676 circuit evaluations (each over the sizing grid) in run shadow_2026-09-17T18-09-25-841Z_32a7b818; route-gap diagnostic: 80 circuits, best 98.6 bps
+DISCOVERED_POOLS            = raydium_cpmm 12043 (API, 12036 mints) / pumpswap 25061 (local inventory 2026-09-04, 24617 mints); both unverified until snapshot
+POOL_INTERSECTION           = cross-adapter mints 26 (routes 63) | pumpswap mints with >=2 pools 123 (routes 653) | raydium mints with >=2 pools 7 (routes 7); routes truncated by per-mint cap 4501
+ELIGIBLE_ROUTES             = shortlist 367 pools / 294 routes; validated on-chain in the run: 50 pools / 22 routes (dropped 0)
+QUOTE_COUNT                 = 17676 circuit evaluations (each over the sizing grid) in run shadow_2026-09-17T18-09-25-841Z_32a7b818; route-gap diagnostic: 612 circuits, best 266.3 bps
 ATOMIC_SIM_ATTEMPTED        = mainnet 2 | local real-program 3 | executor-guarded 4
 ATOMIC_SIM_SUCCEEDED        = mainnet 0 | local real-program 3 (quote matched exactly: 3) | executor passed 0, reverted by guard 2
 SIMULATION_ENVIRONMENT      = LOCAL_REAL_PROGRAM_SIMULATION (LiteSVM + mainnet ELFs + real accounts + labelled synthetic balances) and MAINNET_RPC_SIMULATION (simulateTransaction, sigVerify=false, unfunded identity)

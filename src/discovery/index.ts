@@ -31,6 +31,8 @@ export interface DiscoveryOptions {
   maxPoolsPerMint?: number
   listCap?: number
   pageSize?: number
+  /** hard HTTP budget of the API client for this run (default 100). Raise it to exhaust the listing. */
+  apiBudget?: number
   /** also list via /pools/info/mint and compare id sets (costs another ceil(cap/pageSize) requests) */
   crossCheckInfoMint?: boolean
   /** network mode only: reuse the cached listing when present (re-rank / refetch pool keys without re-listing) */
@@ -74,7 +76,7 @@ export async function runDiscovery(config: Config, opts: DiscoveryOptions): Prom
   const maxMints = opts.maxMints ?? config.discovery.maxMints
   const listCap = opts.listCap ?? 5000
   const sources: Record<string, unknown> = {}; const warnings: string[] = []; const notes: string[] = []; const sourcesUsed: string[] = []
-  const client = opts.client ?? new RaydiumApiClient({ ...(log ? { log } : {}), clock })
+  const client = opts.client ?? new RaydiumApiClient({ ...(log ? { log } : {}), clock, ...(opts.apiBudget !== undefined ? { maxTotalRequests: opts.apiBudget } : {}) })
   const startedAtUtc = clock()
   // ---- PumpSwap local inventory ----
   let inventory: InventoryReadResult | null = null; let pumpswap: PoolRef[] = []
