@@ -33,6 +33,19 @@ Last updated: see `git log -1 --format=%cI PROGRESS.md`. Everything below is rec
 
 Coverage improved while fixing this: raising the listing cap from 5,000 to 25,000 pools took Raydium CPMM WSOL pools from 822 to **3,107**, cross-adapter mints from 17 to **24**, and Raydium-only pairs from 0 to **5**. The listing is still capped, so these remain lower bounds.
 
+## Review findings applied (target: raydium_cpmm — verdict ACCEPT_WITH_FIXES)
+
+| Severity | Defect (reproduced) | Fix |
+|---|---|---|
+| MAJOR | the creator-fee branch, the one place the note says the Raydium SDK is wrong, was never executed by the real program (no fixture has it enabled) and the unit tests were self-referential | a real-program test patches `enable_creator_fee` and all three `creator_fee_on` positions into a fixture pool and asserts exact equality in both directions, including which token's fee counter receives it |
+| MINOR | a quote for a pool the program would refuse (swap bit disabled, open_time in the future) came back with empty `rejectReasons` | the gate is evaluated inside `quoteExactIn`, mirroring the program's order |
+| MINOR | `protocol_fee_rate + fund_fee_rate <= 1e6` was not enforced, producing a negative lp_fee item | added as a reject |
+| MINOR | the transfer-fee warning reported the pending tier, not the epoch-active one | the warning uses the active tier and adds `TRANSFER_FEE_PENDING` |
+| MINOR | the older transfer-fee tier was an undeclared property stashed on `MintInfo` | both tiers are now part of the declared contract |
+| MINOR | `transfer_fee_basis_points > 10000` produced negative amounts instead of the Rust `None` | returns null, and a corrupt TLV is rejected at parse time |
+| MINOR | `accountsNeeded` double-counted a shared token program, and a test pinned the wrong length | deduplicated, test asserts distinctness |
+| MINOR | `FeeItem.bps` on the LP share and on output-side fees did not match its documented meaning | the rate is omitted where no single rate applies |
+
 ## Running when this was written
 
 - **60-minute shadow smoke test** on 50 shortlist pools / 22 routes. Journal: `data/atomarb.db` (table `runs`, `candidates`, `simulations`, `checkpoints`, `events`); progress readable at any time with `npm run report`. Result so far: thousands of circuit evaluations, **zero positive**.
