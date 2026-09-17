@@ -40,7 +40,7 @@ export const ConfigSchema = z.object({
     stalenessMaxMs: z.number().int().positive().default(3_000),
   }).prefault({}),
   smoke: z.object({
-    maxDurationMinutes: z.number().int().positive().max(60).default(60),
+    maxDurationMinutes: z.number().int().positive().max(2880).default(60),
     maxPools: z.number().int().positive().max(50).default(50),
     maxDiskBytes: z.number().int().positive().default(2 * 1024 ** 3),
   }).prefault({}),
