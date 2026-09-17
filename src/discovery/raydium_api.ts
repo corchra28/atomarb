@@ -184,15 +184,18 @@ export class RaydiumApiClient {
     for (;;) {
       if (total >= cap) { capped = true; stoppedReason = `CAP_REACHED cap=${cap}`; this.log?.warn('raydium_api_list_capped', { endpoint, mint, cap, pages: pages.length }); break }
       if (pages.length >= maxPages) { stoppedReason = `MAX_PAGES ${maxPages}`; break }
-      const { data, capture } = endpoint === 'list-v2'
-        ? await this.getJson<ListV2Page>('/pools/info/list-v2', { size: pageSize, mint1: mint, poolType, sortField: 'liquidity', sortType: 'desc', nextPageId: nextPageId ?? undefined })
+      const cursor: string | undefined = nextPageId ?? undefined
+      const resp: { data: ListV2Page | InfoMintPage; capture: RawCapture } = endpoint === 'list-v2'
+        ? await this.getJson<ListV2Page>('/pools/info/list-v2', { size: pageSize, mint1: mint, poolType, sortField: 'liquidity', sortType: 'desc', nextPageId: cursor })
         : await this.getJson<InfoMintPage>('/pools/info/mint', { mint1: mint, poolType, poolSortField: 'liquidity', sortType: 'desc', pageSize, page })
-      const items = Array.isArray((data as { data?: unknown }).data) ? (data as ListV2Page).data : []
+      const { data, capture } = resp
+      const items: ApiPoolItem[] = Array.isArray(data.data) ? data.data : []
       let fresh = 0
       for (const it of items) { if (!it || typeof it.id !== 'string') continue; if (seen.has(it.id)) { duplicateIds++; continue } seen.add(it.id); fresh++ }
       total += fresh
-      const np = endpoint === 'list-v2' ? (typeof (data as ListV2Page).nextPageId === 'string' && (data as ListV2Page).nextPageId !== '' ? (data as ListV2Page).nextPageId! : null) : null
-      const hasNext = endpoint === 'list-v2' ? np !== null : (data as InfoMintPage).hasNextPage === true
+      const rawNext: unknown = endpoint === 'list-v2' ? (data as ListV2Page).nextPageId : undefined
+      const np: string | null = typeof rawNext === 'string' && rawNext !== '' ? rawNext : null
+      const hasNext: boolean = endpoint === 'list-v2' ? np !== null : (data as InfoMintPage).hasNextPage === true
       pages.push({ ...capture, itemCount: items.length, nextPageId: np, hasNextPage: hasNext, body: redactDeep(data) })
       this.log?.info('raydium_api_page', { endpoint, page: pages.length, items: items.length, fresh, total, hasNext })
       if (items.length === 0) { stoppedReason = 'EMPTY_PAGE'; break }
@@ -219,19 +222,19 @@ export class RaydiumApiClient {
 }
 
 /** Pure: distinct items (by id, first occurrence wins) across persisted pages, truncated at `cap`. Shared by online and `--no-network` paths. */
-export function itemsFromPages(pages: ListPage[], cap: number): { items: ApiPoolItem[]; duplicateIds: number } {
-  const seen = new Set<string>(); const items: ApiPoolItem[] = []; let duplicateIds = 0
+export function itemsFromPages(pages: ListPage[], cap: number): { items: ApiPoolItem[]; pageOf: Map<string, ListPage>; duplicateIds: number } {
+  const seen = new Set<string>(); const items: ApiPoolItem[] = []; const pageOf = new Map<string, ListPage>(); let duplicateIds = 0
   for (const p of pages) {
     const body = p.body as { data?: unknown } | null
     const arr = body && Array.isArray(body.data) ? (body.data as ApiPoolItem[]) : []
     for (const it of arr) {
       if (!it || typeof it !== 'object' || typeof it.id !== 'string') continue
       if (seen.has(it.id)) { duplicateIds++; continue }
-      if (items.length >= cap) return { items, duplicateIds }
-      seen.add(it.id); items.push(it)
+      if (items.length >= cap) return { items, pageOf, duplicateIds }
+      seen.add(it.id); items.push(it); pageOf.set(it.id, p)
     }
   }
-  return { items, duplicateIds }
+  return { items, pageOf, duplicateIds }
 }
 /** §8: `type:"Standard"` covers AMM v4 and CPMM → keep only programId == CPMM. */
 export function filterCpmm(items: ApiPoolItem[]): ApiPoolItem[] { return items.filter(it => it.programId === RAYDIUM_CPMM_PROGRAM_ID) }

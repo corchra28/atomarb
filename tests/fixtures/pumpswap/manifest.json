@@ -1,0 +1,58 @@
+{
+ "fetched_at_utc": "2026-09-17T13:20:48.788Z",
+ "rpc": "https://api.mainnet-beta.solana.com",
+ "slot_request1": 447805184,
+ "slot_request2": 447805184,
+ "pools": {
+  "canonical": {
+   "address": "GseMAnNDvntR5uFePZ51yZBXzNSn7GdFPkfHwfr6d77J",
+   "base_mint": "7LSsEoJGhLeZzGvDofTdNg7M3JttxQqGWNLo6vWMpump",
+   "base_token_program": "spl_token",
+   "creator": "9XDYTfQKwW8sHPqnFdUreMmtmffmkHVPGTNV2e3LKxNW",
+   "coin_creator": "5L5k7gtNLbeXdzpvNrFshg1E1id1ceUDfc6vPUTxp98q",
+   "canonical": true,
+   "virtual_quote_reserves": "0",
+   "layout_length": 300,
+   "quote_reserve": "127506693554",
+   "is_cashback_coin": false,
+   "is_mayhem_mode": false
+  },
+  "boosted": {
+   "address": "FruHjS1iY2rR1vdcx7fRXKQmQh7BAGMqNhtqJCtQZLiz",
+   "base_mint": "DRWUnUkFbvA5T6DchUmdtZTLxpj6sdFFUHJxHucxpump",
+   "base_token_program": "token_2022",
+   "creator": "7767EycEjoaV4w2bFFYKbE9KJQaeKGcPmrgBTpzAKWNe",
+   "coin_creator": "EnqsfbZWwVpjJzzut4mvXTtT6CEnMkNZs7UhNQZVcVPa",
+   "canonical": true,
+   "virtual_quote_reserves": "17584505289",
+   "layout_length": 301,
+   "quote_reserve": "5768587105985",
+   "is_cashback_coin": false,
+   "is_mayhem_mode": false
+  },
+  "noncanonical": {
+   "address": "1nk4YGrrsDfqBSSBbGVmBqSg6Vdnvz6o8fqZMhKkSaa",
+   "base_mint": "3EMheh5MPVWpAGDdXnGBgs6uaukKL29zv65uuXxspump",
+   "base_token_program": "spl_token",
+   "creator": "9mFM4ZBCwz251c3knoaEKBUbUX8fQeytdUwiXDRNbywZ",
+   "coin_creator": "11111111111111111111111111111111",
+   "canonical": false,
+   "virtual_quote_reserves": "0",
+   "layout_length": 300,
+   "quote_reserve": "15156169",
+   "is_cashback_coin": false,
+   "is_mayhem_mode": false
+  }
+ },
+ "missing_dependents": [
+  "4Jjna3h73QbgmdqwnV5NJxjCidKWB7Q26jeuj9jtFetC",
+  "7P8gpKJmzgnq3xNnQ9NmU7tmSfzJVSb7b9Gds6kHMzvZ",
+  "AsidVXRbgBHpqEKV7H7xvkRZduNkbB1waQNaqFkKWQQw",
+  "HTNtT8XpnmZHf1ZYkRXWWB3PsY9Qfok4idiCzEJNekkC",
+  "4Jjna3h73QbgmdqwnV5NJxjCidKWB7Q26jeuj9jtFetC (pool-v2 PDA (expected NULL on mainnet))",
+  "HTNtT8XpnmZHf1ZYkRXWWB3PsY9Qfok4idiCzEJNekkC (pool-v2 PDA (expected NULL on mainnet))"
+ ],
+ "protocol_fee_recipient_first": "62qc2CNXwrYqQScmEdiZFFAnJR262PxWEuNQtxfafNgV",
+ "buyback_fee_recipient_first": "5YxQFdt3Tr9zJLvkFccqXVUwhdTWJQc1fFg2YPbxvxeD",
+ "rpc_requests_used": 2
+}

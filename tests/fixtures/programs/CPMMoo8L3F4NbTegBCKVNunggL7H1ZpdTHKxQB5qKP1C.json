@@ -1,0 +1,10 @@
+{
+ "programId": "CPMMoo8L3F4NbTegBCKVNunggL7H1ZpdTHKxQB5qKP1C",
+ "programDataAddress": "DMawCQzbgNTmbzaESc7o6pvL1KAeetY8zA7jNpzntHhU",
+ "loader": "upgradeable",
+ "slot": 447803095,
+ "sha256": "36537be95ba356056fa38b2847d928078c68bf6cd79b875c140e157e6452cc71",
+ "fetched_at_utc": "2026-09-17T13:09:46.788Z",
+ "bytes": 793824,
+ "source": "rpc:https://api.mainnet-beta.solana.com getMultipleAccounts(program, programdata) header 45 bytes stripped"
+}

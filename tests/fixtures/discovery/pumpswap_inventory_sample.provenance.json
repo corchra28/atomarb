@@ -1,0 +1,9 @@
+{
+ "source_file": "data/inventory/pumpswap_pools.jsonl.gz (8 real records + 5 synthetic bad lines)",
+ "source_sha256": "3865384cd95c9a8050b903bec4cd2fb4e823233899caaf153c4bb2f038577416",
+ "source_mtime_utc": "2026-09-04T14:12:34.613520+00:00",
+ "exported_at_utc": "2026-09-17T13:30:00+00:00",
+ "records_total": 13,
+ "records_kept_wsol_quote": 8,
+ "note": "TEST FIXTURE: real pool addresses copied from the local inventory (unverified), plus deliberately malformed lines to exercise the reader's skip paths"
+}

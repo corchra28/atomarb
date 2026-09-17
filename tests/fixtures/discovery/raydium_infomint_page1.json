@@ -1,0 +1,172 @@
+{
+ "id": "fixture",
+ "success": true,
+ "data": {
+  "count": 5,
+  "hasNextPage": true,
+  "data": [
+   {
+    "type": "Standard",
+    "programId": "675kPX9MHTjS2zt1qfr1NYHuzeLXfQM9H24wFSUt1Mp8",
+    "id": "58oQChx4yWmvKdwLLZzBi4ChoCc2fqCUWBkwMihLYQo2",
+    "mintA": {
+     "address": "So11111111111111111111111111111111111111112",
+     "programId": "TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA",
+     "decimals": 9,
+     "symbol": "WSOL"
+    },
+    "mintB": {
+     "address": "EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v",
+     "programId": "TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA",
+     "decimals": 6,
+     "symbol": "USDC"
+    },
+    "feeRate": 0.0025,
+    "openTime": "0",
+    "tvl": 33217491.88,
+    "mintAmountA": 164708.493605542,
+    "mintAmountB": 16608583.298683,
+    "burnPercent": 0,
+    "launchMigratePool": false,
+    "hasDynamicFee": false
+   },
+   {
+    "type": "Standard",
+    "programId": "CPMMoo8L3F4NbTegBCKVNunggL7H1ZpdTHKxQB5qKP1C",
+    "id": "Q2sPHPdUWFMg7M7wwrQKLrn619cAucfRsmhVJffodSp",
+    "mintA": {
+     "address": "So11111111111111111111111111111111111111112",
+     "programId": "TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA",
+     "decimals": 9,
+     "symbol": "WSOL"
+    },
+    "mintB": {
+     "address": "Dz9mQ9NzkBcCsuGPFJ3r1bS4wgqKMHBPiVuniW8Mbonk",
+     "programId": "TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA",
+     "decimals": 6,
+     "symbol": "USELESS"
+    },
+    "config": {
+     "id": "D4FPEruKEHrG5TenZ2mpDGEfu1iUvTiqBxvpU8HLBvC2",
+     "index": 0,
+     "protocolFeeRate": 120000,
+     "tradeFeeRate": 2500,
+     "fundFeeRate": 40000,
+     "createPoolFee": "150000000",
+     "creatorFeeRate": 500,
+     "showWithUI": true
+    },
+    "feeRate": 0.0025,
+    "openTime": "1746886997",
+    "tvl": 4964797.17,
+    "mintAmountA": 24617.804142204,
+    "mintAmountB": 9827364.842276,
+    "burnPercent": 98.26,
+    "launchMigratePool": true,
+    "hasDynamicFee": false
+   },
+   {
+    "type": "Standard",
+    "programId": "CPMMoo8L3F4NbTegBCKVNunggL7H1ZpdTHKxQB5qKP1C",
+    "id": "EyktEFod1gAgsuM1hXmEpqkitFFk9XczkqLPx2vKiceg",
+    "mintA": {
+     "address": "So11111111111111111111111111111111111111112",
+     "programId": "TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA",
+     "decimals": 9,
+     "symbol": "WSOL"
+    },
+    "mintB": {
+     "address": "43VWkd99HjqkhFTZbWBpMpRhjG469nWa7x7uEsgSH7We",
+     "programId": "TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA",
+     "decimals": 9,
+     "symbol": "STNK"
+    },
+    "config": {
+     "id": "G95xxie3XbkCqtE39GgQ9Ggc7xBC8Uceve7HFDEFApkc",
+     "index": 1,
+     "protocolFeeRate": 120000,
+     "tradeFeeRate": 10000,
+     "fundFeeRate": 40000,
+     "createPoolFee": "150000000",
+     "creatorFeeRate": 500,
+     "showWithUI": true
+    },
+    "feeRate": 0.01,
+    "openTime": "1732337917",
+    "tvl": 262564.7,
+    "mintAmountA": 1301.912302113,
+    "mintAmountB": 29649.087574077,
+    "burnPercent": 99.98,
+    "launchMigratePool": false,
+    "hasDynamicFee": false
+   },
+   {
+    "type": "Standard",
+    "programId": "675kPX9MHTjS2zt1qfr1NYHuzeLXfQM9H24wFSUt1Mp8",
+    "id": "AgFnRLUScRD2E4nWQxW73hdbSN7eKEUb2jHX7tx9YTYc",
+    "mintA": {
+     "address": "7BgBvyjrZX1YKz4oh9mjb8ZScatkkwb8DzFx7LoiVkM3",
+     "programId": "TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA",
+     "decimals": 9,
+     "symbol": "Old Slerf"
+    },
+    "mintB": {
+     "address": "So11111111111111111111111111111111111111112",
+     "programId": "TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA",
+     "decimals": 9,
+     "symbol": "WSOL"
+    },
+    "feeRate": 0.0025,
+    "openTime": "1710747025",
+    "tvl": 17016740.81,
+    "mintAmountA": 439522714.1264488,
+    "mintAmountB": 84376.891232778,
+    "burnPercent": 99.99,
+    "launchMigratePool": false,
+    "hasDynamicFee": false
+   },
+   {
+    "type": "Standard",
+    "programId": "CPMMoo8L3F4NbTegBCKVNunggL7H1ZpdTHKxQB5qKP1C",
+    "id": "G8kgi7aUpeX8EVR8VMkrth9SKEv5BietWC33UjAiiMGh",
+    "mintA": {
+     "address": "So11111111111111111111111111111111111111112",
+     "programId": "TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA",
+     "decimals": 9,
+     "symbol": "WSOL"
+    },
+    "mintB": {
+     "address": "ApZuxdpzMrbEYTGEzeY9afh5pj9d6qPRJCTgQYiipbKg",
+     "programId": "TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA",
+     "decimals": 9,
+     "symbol": "CYBERLEEK"
+    },
+    "config": {
+     "id": "D4FPEruKEHrG5TenZ2mpDGEfu1iUvTiqBxvpU8HLBvC2",
+     "index": 0,
+     "protocolFeeRate": 120000,
+     "tradeFeeRate": 2500,
+     "fundFeeRate": 40000,
+     "createPoolFee": "150000000",
+     "creatorFeeRate": 500,
+     "showWithUI": true
+    },
+    "feeRate": 0.0025,
+    "openTime": "1786828074",
+    "tvl": 259604.28,
+    "mintAmountA": 1287.187963415,
+    "mintAmountB": 214281998.63289127,
+    "burnPercent": 99.97,
+    "launchMigratePool": false,
+    "hasDynamicFee": false
+   }
+  ]
+ },
+ "_fixture": {
+  "builtAtUtc": "2026-09-17T13:19:51.233Z",
+  "source": "data/discovery/raydium_listv2_wsol_standard.json (list-v2 fetched 2026-09-17T13:13:15.712Z)",
+  "fetchedAtUtc": "2026-09-17T13:13:15.712Z",
+  "note": "/pools/info/mint shape; count = items in this page (live-verified 2026-09-17), hasNextPage true",
+  "redaction": "logoURI/name/tags/lpMint/day-week-month stats dropped; ids, mints, config, tvl, openTime are real API values; no credentials involved"
+ }
+}

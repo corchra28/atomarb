@@ -1,0 +1,214 @@
+{
+ "id": "fixture",
+ "success": true,
+ "data": [
+  {
+   "programId": "CPMMoo8L3F4NbTegBCKVNunggL7H1ZpdTHKxQB5qKP1C",
+   "id": "Q2sPHPdUWFMg7M7wwrQKLrn619cAucfRsmhVJffodSp",
+   "mintA": {
+    "address": "So11111111111111111111111111111111111111112",
+    "programId": "TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA",
+    "decimals": 9,
+    "symbol": "WSOL"
+   },
+   "mintB": {
+    "address": "Dz9mQ9NzkBcCsuGPFJ3r1bS4wgqKMHBPiVuniW8Mbonk",
+    "programId": "TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA",
+    "decimals": 6,
+    "symbol": "USELESS"
+   },
+   "lookupTableAccount": "EtMQWdftD2rbMSi2wbzcphpfbrFPiF9NgTT4XrvoNSxL",
+   "openTime": "1746886997",
+   "vault": {
+    "A": "HgNPDD8bpbSrGyHegiCT5xrYxHTfwLfZydwGkjNCJRKA",
+    "B": "9xsCiNwYQXM3ZeHFSVj9JQdP1vREJREpN23f6wvxA1ty"
+   },
+   "authority": "GpMZbSM2GgvTKHJirzeGfMFoaZ8UR2X7F4v8vHTvxFbL",
+   "mintLp": {
+    "address": "5rASbyrUYh4eVmZpgN6MxVY2w83dC4PFg9U9WYc9HW7g",
+    "programId": "TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA",
+    "decimals": 9,
+    "symbol": ""
+   },
+   "config": {
+    "id": "D4FPEruKEHrG5TenZ2mpDGEfu1iUvTiqBxvpU8HLBvC2",
+    "index": 0,
+    "protocolFeeRate": 120000,
+    "tradeFeeRate": 2500,
+    "fundFeeRate": 40000,
+    "createPoolFee": "150000000",
+    "creatorFeeRate": 500,
+    "showWithUI": true
+   },
+   "observationId": "4UdSz2kMddtX4woMmdgkWg75fdBP8FgYwqfkh4ri7mnD"
+  },
+  {
+   "programId": "CPMMoo8L3F4NbTegBCKVNunggL7H1ZpdTHKxQB5qKP1C",
+   "id": "EyktEFod1gAgsuM1hXmEpqkitFFk9XczkqLPx2vKiceg",
+   "mintA": {
+    "address": "So11111111111111111111111111111111111111112",
+    "programId": "TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA",
+    "decimals": 9,
+    "symbol": "WSOL"
+   },
+   "mintB": {
+    "address": "43VWkd99HjqkhFTZbWBpMpRhjG469nWa7x7uEsgSH7We",
+    "programId": "TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA",
+    "decimals": 9,
+    "symbol": "STNK"
+   },
+   "lookupTableAccount": "5uEN3NCFpDDvxo1Srdbhz1hsQxeXgU3QTTfrveAgr1Z9",
+   "openTime": "1732337917",
+   "vault": {
+    "A": "9UxY522tfaLZLQu17Y5iEVSD8kYoJwttAj9Vmy1W6X7L",
+    "B": "DkbBkU6bMZKgRmuxpojhndV9vBGBnAJkRxCbkmtzuswr"
+   },
+   "authority": "GpMZbSM2GgvTKHJirzeGfMFoaZ8UR2X7F4v8vHTvxFbL",
+   "mintLp": {
+    "address": "9Rn2JYRE94aJpXmVtsurJUqsQCix133EvSSS7p7CmzYX",
+    "programId": "TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA",
+    "decimals": 9,
+    "symbol": ""
+   },
+   "config": {
+    "id": "G95xxie3XbkCqtE39GgQ9Ggc7xBC8Uceve7HFDEFApkc",
+    "index": 1,
+    "protocolFeeRate": 120000,
+    "tradeFeeRate": 10000,
+    "fundFeeRate": 40000,
+    "createPoolFee": "150000000",
+    "creatorFeeRate": 500,
+    "showWithUI": true
+   },
+   "observationId": "5FcDpKjqVnA7yZu9NDmdJojRW5NBAkgdwGtR7Skc3Gbh"
+  },
+  {
+   "programId": "CPMMoo8L3F4NbTegBCKVNunggL7H1ZpdTHKxQB5qKP1C",
+   "id": "G8kgi7aUpeX8EVR8VMkrth9SKEv5BietWC33UjAiiMGh",
+   "mintA": {
+    "address": "So11111111111111111111111111111111111111112",
+    "programId": "TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA",
+    "decimals": 9,
+    "symbol": "WSOL"
+   },
+   "mintB": {
+    "address": "ApZuxdpzMrbEYTGEzeY9afh5pj9d6qPRJCTgQYiipbKg",
+    "programId": "TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA",
+    "decimals": 9,
+    "symbol": "CYBERLEEK"
+   },
+   "lookupTableAccount": "7JZ2Ax19SAFfEGkK9P5X13x4743iNjTUbHEaJ2wr1fs8",
+   "openTime": "1786828074",
+   "vault": {
+    "A": "6iZNEKMsSDHG42UpDXgGd2FRNZosEDe7RbLwjNPAtaKU",
+    "B": "4cQ4QmL4h85RyEVzb1bWsmvd25zMdgkAKipVyKqpKs5Y"
+   },
+   "authority": "GpMZbSM2GgvTKHJirzeGfMFoaZ8UR2X7F4v8vHTvxFbL",
+   "mintLp": {
+    "address": "3fmGoLP32R38phuEeaYCtet1ko53JvAQH6pnAAJJGiSH",
+    "programId": "TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA",
+    "decimals": 9,
+    "symbol": ""
+   },
+   "config": {
+    "id": "D4FPEruKEHrG5TenZ2mpDGEfu1iUvTiqBxvpU8HLBvC2",
+    "index": 0,
+    "protocolFeeRate": 120000,
+    "tradeFeeRate": 2500,
+    "fundFeeRate": 40000,
+    "createPoolFee": "150000000",
+    "creatorFeeRate": 500,
+    "showWithUI": true
+   },
+   "observationId": "CnGcJKB1yrUMzRPG2J3MsnPQ1TePuPZLEiaAAWmQh3aS"
+  },
+  {
+   "programId": "CPMMoo8L3F4NbTegBCKVNunggL7H1ZpdTHKxQB5qKP1C",
+   "id": "8ujpQXxnnWvRohU2oCe3eaSzoL7paU2uj3fEn4Zp72US",
+   "mintA": {
+    "address": "So11111111111111111111111111111111111111112",
+    "programId": "TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA",
+    "decimals": 9,
+    "symbol": "WSOL"
+   },
+   "mintB": {
+    "address": "9tqjeRS1swj36Ee5C1iGiwAxjQJNGAVCzaTLwFY8bonk",
+    "programId": "TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA",
+    "decimals": 6,
+    "symbol": "Ani"
+   },
+   "lookupTableAccount": "C8mwMrtdGer2dad9KRD5sV9tYRM967nQyBrctHfodaRH",
+   "openTime": "1752489279",
+   "vault": {
+    "A": "FakxWCeVRQLfer6vVBhdUihvVMFLxahtRdM1KgMg1hSL",
+    "B": "Am8GDfgnAvJTcQWMUyqfJRJk1CnWwnucZzh2kD69CqCV"
+   },
+   "authority": "GpMZbSM2GgvTKHJirzeGfMFoaZ8UR2X7F4v8vHTvxFbL",
+   "mintLp": {
+    "address": "4oiZV1vrtTXJLBttAQZ79irqh5PFRq338mAczej79v74",
+    "programId": "TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA",
+    "decimals": 9,
+    "symbol": ""
+   },
+   "config": {
+    "id": "D4FPEruKEHrG5TenZ2mpDGEfu1iUvTiqBxvpU8HLBvC2",
+    "index": 0,
+    "protocolFeeRate": 120000,
+    "tradeFeeRate": 2500,
+    "fundFeeRate": 40000,
+    "createPoolFee": "150000000",
+    "creatorFeeRate": 500,
+    "showWithUI": true
+   },
+   "observationId": "mqgAXSx16McmKNwkUxVGyJJSgnXHCN2Gb3Yw3QUG2gK"
+  },
+  {
+   "programId": "CPMMoo8L3F4NbTegBCKVNunggL7H1ZpdTHKxQB5qKP1C",
+   "id": "2higKRf25Q9WMcYfgyK96AAuFVv5zucfDAFHHDuVETcq",
+   "mintA": {
+    "address": "So11111111111111111111111111111111111111112",
+    "programId": "TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA",
+    "decimals": 9,
+    "symbol": "WSOL"
+   },
+   "mintB": {
+    "address": "73edX6xoGY4v5y2hzuKdrUbJXLntqgmo74au1Ki1pump",
+    "programId": "TokenzQdBNbLqP5VEhdkAS6EPFLC1PHnBqCXEpPxuEb",
+    "decimals": 6,
+    "symbol": "Staccana"
+   },
+   "lookupTableAccount": "4HU47ycbJPpN1AVKpb8286u6LuE6vz5UXQ9e1veFrDLU",
+   "openTime": "1782220562",
+   "vault": {
+    "A": "47KLLXNKUMuJBgis11NWmZ9iNPW2wHX2ZKQKUDCL3LA6",
+    "B": "5Ap19VZWbmP9NnvFabeyGzWjTqXFcFLPcuFDsNyAB9Sg"
+   },
+   "authority": "GpMZbSM2GgvTKHJirzeGfMFoaZ8UR2X7F4v8vHTvxFbL",
+   "mintLp": {
+    "address": "HBaEkQGJmCXAg97q8XRU6nFxDd5eCWNaqVB4xv7uvKhE",
+    "programId": "TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA",
+    "decimals": 9,
+    "symbol": ""
+   },
+   "config": {
+    "id": "D4FPEruKEHrG5TenZ2mpDGEfu1iUvTiqBxvpU8HLBvC2",
+    "index": 0,
+    "protocolFeeRate": 120000,
+    "tradeFeeRate": 2500,
+    "fundFeeRate": 40000,
+    "createPoolFee": "150000000",
+    "creatorFeeRate": 500,
+    "showWithUI": true
+   },
+   "observationId": "8Aqi4fPN9wRPoJ3j3p2MqjvRCur7m4c1aNHcbnHviZ8D"
+  },
+  null
+ ],
+ "_fixture": {
+  "builtAtUtc": "2026-09-17T13:19:51.233Z",
+  "source": "data/discovery/raydium_listv2_wsol_standard.json (list-v2 fetched 2026-09-17T13:13:15.712Z)",
+  "fetchedAtUtc": "2026-09-17T13:13:15.712Z",
+  "note": "/pools/key/ids: keys for the fixture CPMM ids + a null for an unknown id (the API returns null entries; SDK filters them with Boolean)",
+  "redaction": "logoURI/name/tags/lpMint/day-week-month stats dropped; ids, mints, config, tvl, openTime are real API values; no credentials involved"
+ }
+}

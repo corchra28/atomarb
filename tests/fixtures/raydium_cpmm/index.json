@@ -1,0 +1,70 @@
+{
+ "fetched_at_utc": "2026-09-17T13:27:27.680Z",
+ "pools": [
+  {
+   "pool": "47hq28mcL7q5GhBg7epyGF2dnuJd4MKFt8QhT7CzYUp4",
+   "label": "WSOL/USDC large (config 5)",
+   "slot": 447803092,
+   "accounts": 8,
+   "missing": [],
+   "status": 0,
+   "openTime": "1749098776",
+   "enableCreatorFee": false,
+   "creatorFeeOn": 0,
+   "token0Program": "TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA",
+   "token1Program": "TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA"
+  },
+  {
+   "pool": "Q2sPHPdUWFMg7M7wwrQKLrn619cAucfRsmhVJffodSp",
+   "label": "WSOL/USELESS LaunchLab-migrated (config 0)",
+   "slot": 447803093,
+   "accounts": 8,
+   "missing": [],
+   "status": 0,
+   "openTime": "1746886997",
+   "enableCreatorFee": false,
+   "creatorFeeOn": 0,
+   "token0Program": "TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA",
+   "token1Program": "TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA"
+  },
+  {
+   "pool": "9vQSDkK4HUSX7gJRVEqPu4wXmU6N7KtKx58EysDwCPCA",
+   "label": "WSOL/BERN Token-2022 transfer-fee mint (config 2, tiny)",
+   "slot": 447803093,
+   "accounts": 8,
+   "missing": [],
+   "status": 0,
+   "openTime": "1745790816",
+   "enableCreatorFee": false,
+   "creatorFeeOn": 0,
+   "token0Program": "TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA",
+   "token1Program": "TokenzQdBNbLqP5VEhdkAS6EPFLC1PHnBqCXEpPxuEb"
+  },
+  {
+   "pool": "A3URwhZE2YyVNKL9CmSvU9VG1oJoZS78kX4AdK5faDud",
+   "label": "WSOL/LOOP Token-2022 mint (config 0)",
+   "slot": 447806448,
+   "accounts": 8,
+   "missing": [],
+   "status": 0,
+   "openTime": "1785414511",
+   "enableCreatorFee": false,
+   "creatorFeeOn": 0,
+   "token0Program": "TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA",
+   "token1Program": "TokenzQdBNbLqP5VEhdkAS6EPFLC1PHnBqCXEpPxuEb"
+  },
+  {
+   "pool": "3ceKnrpPPUuz9FVsDJuYfTqbK5ia6KND7SQwcnRJ38KC",
+   "label": "WSOL/SolARBa Token-2022 mint (config 0)",
+   "slot": 447806449,
+   "accounts": 8,
+   "missing": [],
+   "status": 0,
+   "openTime": "1721937010",
+   "enableCreatorFee": false,
+   "creatorFeeOn": 0,
+   "token0Program": "TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA",
+   "token1Program": "TokenzQdBNbLqP5VEhdkAS6EPFLC1PHnBqCXEpPxuEb"
+  }
+ ]
+}

@@ -1,0 +1,10 @@
+{
+ "programId": "pAMMBay6oceH9fJKBRHGP5D4bD4sWpmSwMn52FMfXEA",
+ "programDataAddress": "6naEzKeUuFh1Jeeu51NXQgr5qkXgXtc9WKNct4xynVJc",
+ "slot": 447804243,
+ "sha256": "feb2ec72199f35999bbfd26ada811a37d297464ab265c78593b2d4717d7d42b5",
+ "fetched_at_utc": "2026-09-17T13:15:51.766Z",
+ "bytes": 10485715,
+ "loader": "upgradeable",
+ "source": "rpc_gma https://api.mainnet-beta.solana.com"
+}

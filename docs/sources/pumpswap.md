@@ -410,3 +410,64 @@ pub fn pump_pool_authority_pda(base_mint: &Pubkey) -> Pubkey {
 5. Rules behind `UnsupportedBaseMint` / `UnsupportedQuoteMint` (6006/6007), i.e. which mints `create_pool` rejects; and whether Token-2022 quote mints with transfer hooks/fees are allowed.
 6. Market-cap basis for tiering on-chain: SDK uses effective quote reserves and the live base-mint supply (or 1e15 for mayhem); on-chain `Pool::market_cap()` source not available.
 7. Whether `fee_config`/`fee_program` can be omitted (IDL marks them mandatory; SDK comment says pump-fees is mandatory) — treated as required.
+
+---
+
+## 11. Local real-program execution (mainnet ELF in LiteSVM) — VERIFIED 2026-09-17T13:15Z…13:45Z
+
+Source S4: the deployed program binaries themselves, dumped read-only via `getMultipleAccounts` (program account → programdata, 45-byte
+upgradeable-loader header stripped; `src/simulation/local_svm.ts dumpProgram`), executed with litesvm 1.4.1 (bundled SPL Token 3.5.0,
+Token-2022 11.0.0, ATA 1.1.1) against real account bytes fetched at slot **447804242** (`tests/fixtures/pumpswap/*.json`,
+`scripts/fetch_fixtures_pumpswap.ts`, 8 RPC requests in total). Harness: `tests/integration/pumpswap_local_program.test.ts`
+(Clock set to slot 447804242, unix ≈ 1789652255, epoch 1036; user = random on-curve pubkey, sigverify off; nothing broadcast).
+
+| program | programdata | slot | ELF sha256 | bytes |
+|---|---|---|---|---|
+| `pAMMBay6oceH9fJKBRHGP5D4bD4sWpmSwMn52FMfXEA` | `6naEzKeUuFh1Jeeu51NXQgr5qkXgXtc9WKNct4xynVJc` | 447804243 | `feb2ec72199f35999bbfd26ada811a37d297464ab265c78593b2d4717d7d42b5` | 10,485,715 |
+| `pfeeUxB6jkeY1Hxd7CsFCAjcbHA9rWtchMGdZ6VojVZ` | `75Uu23mqWBb8LM8vDppqC1mQAnCcBuLXhVaDezVMQLRw` | 447804244 | `4a6e66093305f8a7cb9ca6e4f47c7de726b590dd2be0d5413ce408feba27c8a5` | 948,944 |
+
+Pools executed: `GseMAnNDvntR5uFePZ51yZBXzNSn7GdFPkfHwfr6d77J` (canonical, SPL base, coin_creator set, market cap ≈196 SOL → tier 0),
+`FruHjS1iY2rR1vdcx7fRXKQmQh7BAGMqNhtqJCtQZLiz` (canonical, boosted V = 17,584,505,289, Token-2022 base `DRWUnUkF…pump`, 410-byte mint),
+`1nk4YGrrsDfqBSSBbGVmBqSg6Vdnvz6o8fqZMhKkSaa` (non-canonical: creator `9mFM4ZBC…` ≠ pool-authority, coin_creator = default).
+
+### 11a. `buy_exact_quote_in(spendable_quote_in = S, min_base_amount_out)` — exact on-chain relation (answers Open question 2)
+
+```
+f_total  = lp_bps + protocol_bps + (coin_creator == default ? 0 : creator_bps)      // fee program CPI GetFeesWithQuoteMint
+E        = floor(S * 10000 / (10000 + f_total))
+lp       = ceil(E * lp_bps / 10000); protocol = ceil(E * protocol_bps / 10000); creator = ceil(E * creator_bps / 10000)
+if E + lp + protocol + creator > S: E -= excess            (fees are NOT recomputed — identical to SDK buyQuoteInput)
+debit    = E + lp + protocol + creator                     ∈ {S, S − 1}; the gap lamport stays in the user's WSOL ATA
+base_out = floor(B * (E − 1) / (effQ + E − 1))              // the "−1" IS on-chain behaviour, not SDK conservatism
+pool_quote_vault += E + lp                                  // LP fee stays in the pool
+protocol_fee_recipient_ata += protocol − buyback; buyback_ata += buyback = floor(protocol * 5000 / 10000); coin_creator_vault_ata += creator
+pool_base_vault −= base_out; user_base_ata += base_out
+BuyEvent (ix_name "buy_exact_quote_in"): quote_amount_in = S, user_quote_amount_in = E, quote_amount_in_with_lp_fee = E + lp
+```
+
+- Verified byte-exact (base_out, WSOL debit, all four quote-side deltas) on all three pools and on sizes 1,000,000 / 3,333,333 / 10,000,000 /
+  50,000,000 / 123,456,789 / 400,000,000 (canonical) plus the gap sizes 1,002,376 / 1,012,501 (canonical), 1,000,995 / 1,003,001 (boosted),
+  1,000,995 (non-canonical), e.g. canonical S=1,002,376 → E=990,000, lp 198, protocol 9,207, creator 2,970, debit **1,002,375**, base_out 5,043,619,936.
+- `min_base_amount_out = base_out + 1` fails with custom error **6040 `BuySlippageBelowMinBaseAmountOut`** → the formula is tight.
+- The program requires the user's WSOL balance to cover only the **debit**, not S (executed with balance = 1,002,375 and S = 1,002,376 → success, ATA left at 0).
+- Adapter consequence (`src/adapters/pumpswap/adapter.ts`): `Quote.amountIn` = debit; `buildSwapInstruction` re-derives S as the largest of
+  {amountIn, amountIn+1} whose modelled debit ≤ amountIn.
+
+### 11b. `sell(base_amount_in, min_quote_amount_out)` — matches §5c exactly
+
+`quote_out = floor(effQ * base_in / (B + base_in))`; fees ceil on quote_out; `pool_quote_vault −= quote_out − lp` (LP fee stays);
+user receives `quote_out − lp − protocol − creator`; protocol/buyback/creator ATAs as in 11a; `pool_base_vault += base_in`.
+Verified on all three pools by selling back the exact base received (e.g. boosted: 5,277,919 base → quote_out 9,970,084 → user 9,940,171).
+Buy-then-sell on the same pool always returned less WSOL than spent (−246,917 / −59,829 / … lamports on 10,000,000 in).
+
+### 11c. Other observations
+
+- Effective reserves: the boosted pool priced both legs with `effQ = raw vault + virtual_quote_reserves` (10,000,000 in → 5,277,919 base out; sell back → 9,940,171), confirming §5.
+- Fee schedule on-chain: canonical pool with market cap ≈196 SOL charged tier 0 = **2 / 93 / 30 bps** (fee-program return data `02…5d…1e`);
+  non-canonical pool charged flat **25 / 5 / 0** (coin_creator = default). Buyback = floor(protocol·5000/10000) split observed on every trade.
+- `user_volume_accumulator` is created init_if_needed on the first buy: 137 bytes, **rent 1,844,400 lamports** paid by the user (SOL delta = −5,000 fee − 1,844,400); sells pay only the tx fee.
+- `coin_creator_vault_ata` is also init_if_needed: when the fixture lacked it (coin_creator = default → authority PDA `["creator_vault", Pubkey::default]`) the user paid 2,039,280 lamports for it. On mainnet it already exists; `scripts/fetch_fixtures_pumpswap.ts` now always fetches it.
+- `pool-v2` remaining account: passed as a NULL (non-existent) account — accepted (Open question 1: omission was not tested; presence-as-NULL works).
+- First entries of `protocol_fee_recipients` (`62qc2C…`) and `buyback_fee_recipients` (`5YxQFd…`) with their WSOL ATAs were accepted; the adapter uses them deterministically.
+- Compute: `buy_exact_quote_in` consumed 79,216 (canonical) / 86,053 (boosted) / 97,439 (non-canonical) CU including the UVA init; `sell` fewer.
+- Token-2022 base mint `DRWUnUkF…pump` (MetadataPointer/TokenMetadata only, no TransferFeeConfig) traded with a base ATA created by the real ATA program (170 bytes, rent 2,074,080). Transfer-fee / hook mints were NOT executed (no fixture); the adapter prices transfer fees conservatively and rejects hooks (token2022.md §6).

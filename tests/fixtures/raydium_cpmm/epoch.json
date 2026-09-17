@@ -1,0 +1,19 @@
+{
+ "source": "rpc:https://api.mainnet-beta.solana.com getEpochSchedule + getEpochInfo",
+ "fetched_at_utc": "2026-09-17T13:09:46.104Z",
+ "epochSchedule": {
+  "firstNormalEpoch": 0,
+  "firstNormalSlot": 0,
+  "leaderScheduleSlotOffset": 432000,
+  "slotsPerEpoch": 432000,
+  "warmup": false
+ },
+ "epochInfo": {
+  "absoluteSlot": 447803093,
+  "blockHeight": 425844273,
+  "epoch": 1036,
+  "slotIndex": 251093,
+  "slotsInEpoch": 432000,
+  "transactionCount": 549416890852
+ }
+}

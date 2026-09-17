@@ -1,0 +1,12 @@
+{
+ "id": "fixture",
+ "success": false,
+ "msg": "query poolType type error",
+ "_fixture": {
+  "builtAtUtc": "2026-09-17T13:19:51.233Z",
+  "source": "data/discovery/raydium_listv2_wsol_standard.json (list-v2 fetched 2026-09-17T13:13:15.712Z)",
+  "fetchedAtUtc": "2026-09-17T13:13:15.712Z",
+  "note": "real error body observed for /pools/info/mint?poolType=Standard (HTTP 500) — raydium_cpmm.md §8",
+  "redaction": "logoURI/name/tags/lpMint/day-week-month stats dropped; ids, mints, config, tvl, openTime are real API values; no credentials involved"
+ }
+}

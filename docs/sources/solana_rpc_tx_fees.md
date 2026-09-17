@@ -470,6 +470,41 @@ S3 lookup-tables.md (verbatim): "A single lookup table can store up to 256 addre
 
 ---
 
+### ALT account byte layout (appended 2026-09-17 by rust_executor; used to fabricate a LOCAL-ONLY table in tests/integration/executor_guard.test.ts)
+
+Source: https://github.com/anza-xyz/solana-sdk/blob/8e8e679ad3072748887d23a678ce2e6a6fb5e41b/address-lookup-table-interface/src/state.rs (S2; local `.scratch/solana-sdk`, file last changed in `8e8e679`), consulted 2026-09-17T13:25Z. VERIFIED_IN_SOURCE.
+
+The account data is `bincode`/`wincode` of `ProgramState::LookupTable(LookupTableMeta)` written into the first `LOOKUP_TABLE_META_SIZE = 56` bytes (`overwrite_meta_data` does `meta_data.fill(0)` first, so unused bytes are zero), followed by the raw addresses (`serialize_for_tests`: `data.extend_from_slice(address.as_ref())`):
+
+| offset | size | field | value |
+|------:|-----:|-------|-------|
+| 0 | 4 | `ProgramState` enum tag, u32 LE | `1` = `LookupTable` (`0` = `Uninitialized`) |
+| 4 | 8 | `deactivation_slot` u64 LE | `u64::MAX` while active |
+| 12 | 8 | `last_extended_slot` u64 LE | |
+| 20 | 1 | `last_extended_slot_start_index` u8 | |
+| 21 | 1+32 | `authority: Option<Pubkey>` | tag byte `0` = None (then nothing), `1` = Some followed by 32 bytes |
+| 54 (if Some) | 2 | `_padding` u16 | 0 |
+| 56 | 32×n | addresses | `LOOKUP_TABLE_MAX_ADDRESSES = 256` |
+
+```rust
+pub enum ProgramState {
+    /// Account is not initialized.
+    Uninitialized,
+    /// Initialized `LookupTable` account.
+    LookupTable(LookupTableMeta),
+}
+pub struct LookupTableMeta {
+    pub deactivation_slot: Slot,
+    pub last_extended_slot: Slot,
+    pub last_extended_slot_start_index: u8,
+    pub authority: Option<Pubkey>,
+    pub _padding: u16,
+    // Raw list of addresses follows this serialized structure in
+    // the account's data, starting from `LOOKUP_TABLE_META_SIZE`.
+}
+```
+Executed: a table fabricated this way (tag 1, deactivation `u64::MAX`, last_extended_slot 0, authority None, n addresses) resolves in litesvm 1.4.1 for v0 messages compiled with web3.js 1.99.0 `compileToV0Message([alt])` (tests/integration/executor_guard.test.ts).
+
 ## 6. `accountSubscribe` / `programSubscribe`
 
 ### Facts

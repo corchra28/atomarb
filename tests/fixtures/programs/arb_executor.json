@@ -1,0 +1,14 @@
+{
+ "program": "arb_executor",
+ "note": "LOCAL-ONLY research program; loaded into LiteSVM by tests/integration/executor_*.test.ts; never deployed.",
+ "sha256": "8a4203346c1407fa1f2b0f18bf931e4de87444a8c5954500397d509b80b8892d",
+ "bytes": 41192,
+ "built_at_utc": "2026-09-17T13:28:44Z",
+ "rustc_host": "rustc 1.98.1 (48a229cea 2026-09-01)",
+ "rustc_platform_tools": "rustc 1.89.0-dev",
+ "cargo_build_sbf": "cargo-build-sbf 4.1.0;platform-tools v1.54;rustc 1.89.0",
+ "sbpf_arch_flag": "default(v0)",
+ "solana_program_crate": "4.1.0",
+ "source_hash_sha256": "871398325880776baef47ba60fa3eabb3edf671b60ffbef6fe8d0c8a87ef5476",
+ "source_hash_method": "sha256 of the concatenation of programs/arb_executor/src/*.rs sorted with LC_ALL=C (files: constants.rs,error.rs,guard.rs,legs.rs,lib.rs,params.rs,token.rs)"
+}

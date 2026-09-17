@@ -1,0 +1,120 @@
+{
+ "id": "fixture",
+ "success": true,
+ "data": {
+  "data": [
+   {
+    "type": "Standard",
+    "programId": "CPMMoo8L3F4NbTegBCKVNunggL7H1ZpdTHKxQB5qKP1C",
+    "id": "8ujpQXxnnWvRohU2oCe3eaSzoL7paU2uj3fEn4Zp72US",
+    "mintA": {
+     "address": "So11111111111111111111111111111111111111112",
+     "programId": "TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA",
+     "decimals": 9,
+     "symbol": "WSOL"
+    },
+    "mintB": {
+     "address": "9tqjeRS1swj36Ee5C1iGiwAxjQJNGAVCzaTLwFY8bonk",
+     "programId": "TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA",
+     "decimals": 6,
+     "symbol": "Ani"
+    },
+    "config": {
+     "id": "D4FPEruKEHrG5TenZ2mpDGEfu1iUvTiqBxvpU8HLBvC2",
+     "index": 0,
+     "protocolFeeRate": 120000,
+     "tradeFeeRate": 2500,
+     "fundFeeRate": 40000,
+     "createPoolFee": "150000000",
+     "creatorFeeRate": 500,
+     "showWithUI": true
+    },
+    "feeRate": 0.0025,
+    "openTime": "1752489279",
+    "tvl": 116472.47,
+    "mintAmountA": 577.529625238,
+    "mintAmountB": 217822269.928137,
+    "burnPercent": 99.84,
+    "launchMigratePool": true,
+    "hasDynamicFee": false
+   },
+   {
+    "type": "Standard",
+    "programId": "CPMMoo8L3F4NbTegBCKVNunggL7H1ZpdTHKxQB5qKP1C",
+    "id": "Q2sPHPdUWFMg7M7wwrQKLrn619cAucfRsmhVJffodSp",
+    "mintA": {
+     "address": "So11111111111111111111111111111111111111112",
+     "programId": "TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA",
+     "decimals": 9,
+     "symbol": "WSOL"
+    },
+    "mintB": {
+     "address": "Dz9mQ9NzkBcCsuGPFJ3r1bS4wgqKMHBPiVuniW8Mbonk",
+     "programId": "TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA",
+     "decimals": 6,
+     "symbol": "USELESS"
+    },
+    "config": {
+     "id": "D4FPEruKEHrG5TenZ2mpDGEfu1iUvTiqBxvpU8HLBvC2",
+     "index": 0,
+     "protocolFeeRate": 120000,
+     "tradeFeeRate": 2500,
+     "fundFeeRate": 40000,
+     "createPoolFee": "150000000",
+     "creatorFeeRate": 500,
+     "showWithUI": true
+    },
+    "feeRate": 0.0025,
+    "openTime": "1746886997",
+    "tvl": 4964797.17,
+    "mintAmountA": 24617.804142204,
+    "mintAmountB": 9827364.842276,
+    "burnPercent": 98.26,
+    "launchMigratePool": true,
+    "hasDynamicFee": false
+   },
+   {
+    "type": "Standard",
+    "programId": "CPMMoo8L3F4NbTegBCKVNunggL7H1ZpdTHKxQB5qKP1C",
+    "id": "2higKRf25Q9WMcYfgyK96AAuFVv5zucfDAFHHDuVETcq",
+    "mintA": {
+     "address": "So11111111111111111111111111111111111111112",
+     "programId": "TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA",
+     "decimals": 9,
+     "symbol": "WSOL"
+    },
+    "mintB": {
+     "address": "73edX6xoGY4v5y2hzuKdrUbJXLntqgmo74au1Ki1pump",
+     "programId": "TokenzQdBNbLqP5VEhdkAS6EPFLC1PHnBqCXEpPxuEb",
+     "decimals": 6,
+     "symbol": "Staccana"
+    },
+    "config": {
+     "id": "D4FPEruKEHrG5TenZ2mpDGEfu1iUvTiqBxvpU8HLBvC2",
+     "index": 0,
+     "protocolFeeRate": 120000,
+     "tradeFeeRate": 2500,
+     "fundFeeRate": 40000,
+     "createPoolFee": "150000000",
+     "creatorFeeRate": 500,
+     "showWithUI": true
+    },
+    "feeRate": 0.0025,
+    "openTime": "1782220562",
+    "tvl": 87448.4,
+    "mintAmountA": 433.583538682,
+    "mintAmountB": 101563939.266386,
+    "burnPercent": 0,
+    "launchMigratePool": false,
+    "hasDynamicFee": false
+   }
+  ]
+ },
+ "_fixture": {
+  "builtAtUtc": "2026-09-17T13:19:51.233Z",
+  "source": "data/discovery/raydium_listv2_wsol_standard.json (list-v2 fetched 2026-09-17T13:13:15.712Z)",
+  "fetchedAtUtc": "2026-09-17T13:13:15.712Z",
+  "note": "last page (no nextPageId): [CPMM(new), CPMM(duplicate of page 1 item 2), CPMM(new)] to test cross-page dedup",
+  "redaction": "logoURI/name/tags/lpMint/day-week-month stats dropped; ids, mints, config, tvl, openTime are real API values; no credentials involved"
+ }
+}
