@@ -20,3 +20,13 @@ Data flow (shadow): discovery shortlist -> per-token route -> ONE getMultipleAcc
 
 Time: wall-clock UTC at receive, monotonic durations, RPC context slot; slot x 0.4 s is never used as a timestamp; transactionIndex is never fabricated.
 Evidence levels: QUOTE_ONLY < LOCAL_REAL_PROGRAM_SIMULATION < MAINNET_RPC_SIMULATION < CONFIRMED_EXECUTION (not authorised).
+
+## Evidence discipline (why a number in a report can be trusted)
+
+1. **Every external fact is pinned.** `sources.lock.json` holds 209 facts across 6 topics with URL, commit sha / npm version / live-response date and a confidence level (`VERIFIED_IN_SOURCE` > `DOCS_ONLY` > `INFERRED` > `UNKNOWN`), plus 49 open questions that the code must not silently assume away. Adapters cite the note section next to the offsets and discriminators they use.
+2. **Layouts are checked, not guessed.** Discriminator plus length; only lengths documented as historical are accepted with defaulted trailing fields; anything else is `UNSUPPORTED: UNKNOWN_LAYOUT`.
+3. **Quotes are proven against the real programs.** The mainnet ELF is dumped through RPC (45-byte programdata header), loaded into LiteSVM with the real accounts, and executed; the assertion is exact equality of token deltas, not an approximation.
+4. **The circuit is proven end to end.** Leg B consumes exactly leg A's output; the realised WSOL delta equals the quoted PnL; the intermediate balance returns to zero.
+5. **The guard is proven both ways.** It reverts real losing routes (`ProfitBelowMin`) and passes a synthetic profitable one at exactly the quoted profit, failing one lamport above.
+6. **The tests are proven to bite.** `scripts/fault_injection.ts` breaks one invariant at a time in a tracked file and records which test caught it; a mutation nobody catches is reported as a hole and the run restores every file.
+7. **Nothing is reported that was not measured.** Missing data is `NOT_RUN` / `INCOMPLETE` / `UNKNOWN`, never zero; probe sums are never presented as a portfolio.
