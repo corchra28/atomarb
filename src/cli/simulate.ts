@@ -10,7 +10,7 @@ import { snapshotPools } from '../state/snapshot.js'
 import { enumerateCircuits, evaluateCircuit } from '../routing/circuit.js'
 import { parsePoolsFlag, printBlock, fmtLamports } from './common.js'
 import { buildDirectCircuitTx, mainnetSimulate, localProbe, localProbeExecutor, userAccountsFor } from '../simulation/probe.js'
-import { nowUtcIso } from '../util/time.js'
+import { nowUtcIso, monoMs } from '../util/time.js'
 import { jsonReplacer } from '../util/bigint.js'
 /**
  * simulate --pools <a>,<b> --amount <lamports> [--direction 0|1] [--no-mainnet] [--no-local] [--identity <pubkey>]
@@ -60,6 +60,20 @@ export async function simulate(loaded: LoadedConfig, flags: Record<string, strin
       out['executor'] = x
       printBlock('LOCAL_REAL_PROGRAM_SIMULATION + ARB_EXECUTOR guard (local build, NOT deployed)', [['executor_sha256', x.executorSha256.slice(0, 16)], ['tx_bytes', x.txBytes], ['used_alt', x.usedAlt], ['verdict', x.verdict], ...x.runs.map((r, i) => [`run${i}_min_profit=${r.minProfit}`, { ok: r.ok, executorError: r.executorError, err: r.err, units: r.unitsConsumed, deltas: r.deltas, logs: r.logsTail }] as [string, unknown]), ['snapshot', x.snapshot], ['missing_on_chain', x.accountsMissingOnChain]])
     } catch (e) { out['executor'] = { error: (e as Error).message }; console.error(`EXECUTOR_PROBE_ERROR ${(e as Error).message}`) }
+  }
+  if (flags['landing-check']) {
+    // How much does the decision decay by the time it could land? Wait until the chain is `execution.landingSlots` ahead of the snapshot, re-snapshot, re-quote.
+    const startSlot = Math.max(c.poolA.snapshot.maxSlot, c.poolB.snapshot.maxSlot)
+    const target = startSlot + config.execution.landingSlots
+    const t0 = monoMs(); let slot = startSlot; let polls = 0
+    while (slot < target && monoMs() - t0 < 30_000) { slot = await rpc.getSlot(); polls++; if (slot < target) await new Promise(r => setTimeout(r, 300)) }
+    const again = await snapshotPools(rpc, adapters, pools, { requireSingleBatch: true })
+    const decodedAgain = again.outcomes.filter(o => o.status === 'OK' && o.decoded).map(o => o.decoded!)
+    const c2 = enumerateCircuits(decodedAgain).find(x => x.id === c.id)
+    const ev2 = c2 ? evaluateCircuit(adapters, c2, amount) : null
+    const landing = { landingSlots: config.execution.landingSlots, snapshotSlot: startSlot, landedSlot: slot, waitedMs: monoMs() - t0, polls, pnlAtDecision: ev.value.pnl.pnl, pnlAtLanding: ev2 && ev2.ok ? ev2.value.pnl.pnl : null, reject: ev2 && !ev2.ok ? ev2.reason : (c2 ? null : 'CIRCUIT_GONE'), decay: ev2 && ev2.ok ? ev2.value.pnl.pnl - ev.value.pnl.pnl : null }
+    out['landing'] = landing
+    printBlock('LANDING CHECK (decision vs landing-time state)', Object.entries(landing) as [string, unknown][])
   }
   const dirOut = join(config.paths.dataDir, 'simulations'); mkdirSync(dirOut, { recursive: true })
   const file = join(dirOut, `${nowUtcIso().replace(/[:.]/g, '-')}_${c.id.slice(0, 40).replace(/[^A-Za-z0-9]/g, '_')}.json`)

@@ -24,7 +24,7 @@ npm run discover -- --config config/config.example.json      # population + shor
 npm run discover -- --no-network                              # same, from the cached API responses (0 HTTP requests)
 #   extra flags: --cap N --page-size N --max-pools N --max-mints N --max-pools-per-mint N --cross-check --reuse-list --inventory <path>
 npm run quote    -- --pools pumpswap:<POOL>,raydium_cpmm:<POOL> --amount 10000000 [--sizing]
-npm run simulate -- --pools pumpswap:<POOL>,pumpswap:<POOL2> --amount 10000000 [--direction 0|1] [--no-mainnet] [--no-local] [--identity <pubkey>]
+npm run simulate -- --pools pumpswap:<POOL>,pumpswap:<POOL2> --amount 10000000 [--direction 0|1] [--no-mainnet] [--no-local] [--no-executor] [--identity <pubkey>] [--landing-check]
 npm run shadow   -- --duration 60m --config config/config.example.json [--pools-file data/discovery/shortlist.json] [--max-sims-per-minute 2]
 npm run report   -- --run <runId>
 npm run stop                                          # writes data/STOP; loops exit at the next checkpoint
