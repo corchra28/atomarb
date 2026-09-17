@@ -50,6 +50,20 @@ for (const R of ROUTES) {
       const s = sizeCircuit(adapters, circuits[0]!, [1_000_000n, 10_000_000n, 100_000_000n, 1_000_000_000n], 1_000_000_000n, 6)
       expect(s.zeroTradeChosen).toBe(true)
     }, 120_000)
+    it('realised PnL is measured, not copied: a tampered quote is reported as NOT matching while the measured delta stays the same', async () => {
+      const adapters = await adaptersP; const bundle = bundleFromFixture(loadFixture(path))
+      const [c] = enumerateCircuits(decodeRoute(adapters, bundle, R.pools))
+      const ev = evaluateCircuit(adapters, c!, R.amount); expect(ev.ok).toBe(true); if (!ev.ok) return
+      const honest = await localProbe(null, adapters, c!, ev.value, COST, { bundle })
+      expect(honest.realised!.matchesQuote).toBe(true)
+      expect(honest.realised!.pnl).toBe(honest.deltas!.baseAta)
+      const tampered = { ...ev.value, pnl: { ...ev.value.pnl, pnl: ev.value.pnl.pnl + 1n } }
+      const lying = await localProbe(null, adapters, c!, tampered, COST, { bundle })
+      expect(lying.ok).toBe(true)
+      expect(lying.deltas!.baseAta).toBe(honest.deltas!.baseAta)          // the chain does the same thing
+      expect(lying.realised!.pnl).toBe(honest.deltas!.baseAta)            // realised is the measured delta
+      expect(lying.realised!.matchesQuote).toBe(false)                    // ... and it does not match the tampered quote
+    }, 120_000)
     it('executor: guard reverts the losing circuit with ProfitBelowMin after both real CPIs (leg A min-out == quote is accepted)', async () => {
       const adapters = await adaptersP; const bundle = bundleFromFixture(loadFixture(path))
       const [c] = enumerateCircuits(decodeRoute(adapters, bundle, R.pools))

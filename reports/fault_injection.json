@@ -1,0 +1,91 @@
+{
+ "generatedUtc": "2026-09-17T18:21:51.762Z",
+ "mutations": 7,
+ "caught": 7,
+ "holes": [],
+ "workingTreeCleanAfterRun": false,
+ "dirty": "M tests/integration/circuit_local_program.test.ts\n?? reports/fault_injection.json\n?? scripts/fault_injection.ts",
+ "results": [
+  {
+   "id": "pumpswap_drop_creator_fee",
+   "invariant": "creator fee is charged on PumpSwap buys",
+   "file": "src/adapters/pumpswap/math.ts",
+   "applied": true,
+   "caughtBy": [
+    "tests/unit/pumpswap_math.test.ts",
+    "tests/unit/pumpswap_sdk_crosscheck.test.ts",
+    "tests/integration/pumpswap_local_program.test.ts"
+   ],
+   "missedBy": [],
+   "hole": false
+  },
+  {
+   "id": "raydium_raw_vault_reserves",
+   "invariant": "pricing reserves exclude protocol/fund/creator fees held in the vault",
+   "file": "src/adapters/raydium_cpmm/math.ts",
+   "applied": true,
+   "caughtBy": [
+    "tests/unit/raydium_adapter.test.ts",
+    "tests/integration/raydium_local_program.test.ts"
+   ],
+   "missedBy": [],
+   "hole": false
+  },
+  {
+   "id": "accounting_double_count_dex_fees",
+   "invariant": "fees already inside the quotes are never subtracted a second time",
+   "file": "src/accounting/pnl.ts",
+   "applied": true,
+   "caughtBy": [
+    "tests/unit/accounting.test.ts"
+   ],
+   "missedBy": [],
+   "hole": false
+  },
+  {
+   "id": "routing_sell_preexisting_inventory",
+   "invariant": "leg B consumes exactly leg A output (no pre-existing inventory)",
+   "file": "src/routing/circuit.ts",
+   "applied": true,
+   "caughtBy": [
+    "tests/unit/routing.test.ts",
+    "tests/integration/circuit_local_program.test.ts"
+   ],
+   "missedBy": [],
+   "hole": false
+  },
+  {
+   "id": "probe_ignore_realised_delta",
+   "invariant": "realised PnL is measured from on-chain balance deltas, never copied from the quote",
+   "file": "src/simulation/probe.ts",
+   "applied": true,
+   "caughtBy": [
+    "tests/integration/circuit_local_program.test.ts"
+   ],
+   "missedBy": [],
+   "hole": false
+  },
+  {
+   "id": "rpc_allow_send",
+   "invariant": "submit RPC methods are refused (read-only)",
+   "file": "src/state/rpc.ts",
+   "applied": true,
+   "caughtBy": [
+    "tests/unit/rpc_client.test.ts"
+   ],
+   "missedBy": [],
+   "hole": false
+  },
+  {
+   "id": "snapshot_claim_single_batch",
+   "invariant": "a multi-call fetch is never reported as one atomic snapshot",
+   "file": "src/state/rpc.ts",
+   "applied": true,
+   "caughtBy": [
+    "tests/unit/rpc_client.test.ts"
+   ],
+   "missedBy": [],
+   "hole": false
+  }
+ ]
+}
