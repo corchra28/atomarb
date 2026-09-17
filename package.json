@@ -1,0 +1,41 @@
+{
+  "name": "atomarb",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Solana atomic cross-pool arbitrage research engine: detection, exact quoting, simulation, accounting. Read-only; live mode disabled (LIVE_NOT_AUTHORIZED).",
+  "type": "module",
+  "engines": { "node": ">=22.13" },
+  "scripts": {
+    "doctor": "tsx src/cli/main.ts doctor",
+    "typecheck": "tsc -p tsconfig.json --noEmit",
+    "build": "tsc -p tsconfig.json",
+    "test": "vitest run",
+    "test:unit": "vitest run tests/unit",
+    "test:integration": "vitest run tests/integration",
+    "discover": "tsx src/cli/main.ts discover",
+    "quote": "tsx src/cli/main.ts quote",
+    "simulate": "tsx src/cli/main.ts simulate",
+    "shadow": "tsx src/cli/main.ts shadow",
+    "report": "tsx src/cli/main.ts report",
+    "stop": "tsx src/cli/main.ts stop"
+  },
+  "dependencies": {
+    "@solana/web3.js": "1.99.0",
+    "@solana/spl-token": "0.4.15",
+    "bn.js": "5.2.5",
+    "bs58": "6.0.0",
+    "ws": "8.21.3",
+    "zod": "4.6.5",
+    "litesvm": "1.4.1"
+  },
+  "devDependencies": {
+    "@raydium-io/raydium-sdk-v2": "0.2.70-alpha",
+    "@pump-fun/pump-swap-sdk": "1.20.0",
+    "@types/bn.js": "5.2.0",
+    "@types/node": "24.13.5",
+    "@types/ws": "8.18.1",
+    "tsx": "4.23.13",
+    "typescript": "5.9.3",
+    "vitest": "5.0.1"
+  }
+}

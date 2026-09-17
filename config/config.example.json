@@ -1,0 +1,38 @@
+{
+  "version": 1,
+  "rpc": {
+    "httpUrlEnv": "SOLANA_RPC_URL",
+    "wssUrlEnv": "SOLANA_WSS_URL",
+    "commitment": "confirmed",
+    "requestTimeoutMs": 15000,
+    "maxRequestsPerSecond": 5,
+    "maxConcurrentRequests": 2,
+    "maxTotalHttpRequests": 10000,
+    "backoff": { "baseMs": 500, "maxMs": 20000, "jitter": 0.3 }
+  },
+  "discovery": {
+    "sources": ["raydium_api_v3", "local_pumpswap_inventory"],
+    "localPumpswapInventoryPath": "data/inventory/pumpswap_pools.jsonl.gz",
+    "maxMints": 2000,
+    "maxPools": 50,
+    "minQuoteReserveLamports": "1000000000"
+  },
+  "pools": [],
+  "sizing": {
+    "grid": ["1000000", "5000000", "10000000", "50000000", "100000000", "500000000", "1000000000"],
+    "refineSteps": 8,
+    "maxCapitalLamports": "1000000000"
+  },
+  "costs": {
+    "baseFeeLamportsPerSignature": 5000,
+    "computeUnitLimit": 400000,
+    "computeUnitPriceMicroLamports": 10000,
+    "jitoTipLamports": 0,
+    "minNetProfitLamports": "100000",
+    "ataRentLamports": 2039280,
+    "failedAttemptCostLamports": 5000
+  },
+  "execution": { "live": false, "landingSlots": 3, "stalenessMaxMs": 3000 },
+  "smoke": { "maxDurationMinutes": 60, "maxPools": 50, "maxDiskBytes": 2147483648 },
+  "paths": { "dataDir": "data", "reportsDir": "reports/runs" }
+}
