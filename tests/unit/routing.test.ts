@@ -60,3 +60,33 @@ describe('circuit evaluation', () => {
     expect(evaluateCircuit(adapters, c!, 0n)).toEqual({ ok: false, reason: 'ZERO_TRADE' })
   })
 })
+
+describe('shared pools across routes', () => {
+  it('two circuits that share a pool cannot both be evaluated against the untouched state: the second must use the post-swap reserves', () => {
+    const t = Keypair.generate().publicKey
+    const cheap = mockPool('raydium_cpmm', t, 100n * SOL, 1_100_000n * 1_000_000n, 25)
+    const richA = mockPool('pumpswap', t, 100n * SOL, 1_000_000n * 1_000_000n, 25)
+    const richB = mockPool('pumpswap', t, 100n * SOL, 1_000_000n * 1_000_000n, 25)
+    const circuits = enumerateCircuits([cheap, richA, richB]).filter(c => c.poolA.address.equals(cheap.address))
+    expect(circuits).toHaveLength(2)                                   // both sell into a different rich pool but BUY from the same cheap pool
+    const size = SOL
+    const first = evaluateCircuit(adapters, circuits[0]!, size); expect(first.ok).toBe(true); if (!first.ok) return
+    const naiveSecond = evaluateCircuit(adapters, circuits[1]!, size); expect(naiveSecond.ok).toBe(true); if (!naiveSecond.ok) return
+    expect(naiveSecond.value.pnl.pnl).toBe(first.value.pnl.pnl)         // identical because both assume the untouched shared pool
+    // sequential reality: the shared pool has already been traded by the first circuit
+    const usedCheap = adapters.raydium_cpmm.applySwap(cheap, first.value.quoteA)
+    const sequential = evaluateCircuit(adapters, { ...circuits[1]!, poolA: usedCheap }, size)
+    expect(sequential.ok).toBe(true); if (!sequential.ok) return
+    expect(sequential.value.pnl.pnl).toBeLessThan(naiveSecond.value.pnl.pnl)   // no duplicated profit from the same reserves
+    expect(sequential.value.quoteA.amountOutToUser).toBeLessThan(first.value.quoteA.amountOutToUser)
+  })
+  it('applySwap does not mutate the pool it is given', () => {
+    const t = Keypair.generate().publicKey
+    const p = mockPool('pumpswap', t, 10n * SOL, 1_000_000n * 1_000_000n, 30)
+    const before = { a: p.reserveA, b: p.reserveB }
+    const q = adapters.pumpswap.quoteExactIn(p, WSOL_MINT, SOL)
+    const after = adapters.pumpswap.applySwap(p, q)
+    expect({ a: p.reserveA, b: p.reserveB }).toEqual(before)
+    expect(after.reserveA).not.toBe(p.reserveA)
+  })
+})
