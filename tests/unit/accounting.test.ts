@@ -54,3 +54,21 @@ describe('simulation error identity', () => {
     expect(classifySimError({ InstructionError: [3, { Custom: 1 }] }, ['Program log: Error: insufficient funds'])).toMatch(/INSUFFICIENT_FUNDS/)
   })
 })
+
+import { failureScenarios, breakEvenLandingRate } from '../../src/accounting/pnl.js'
+describe('failure-cost scenarios', () => {
+  it('every attempt pays the fee, only a landed one earns', () => {
+    const s = failureScenarios(100_000n, 9_000n, [1, 0.5, 0.1, 0.05])
+    expect(s[0]!.expectedNetPerAttempt).toBe(91_000n)
+    expect(s[1]!.expectedNetPerAttempt).toBe(41_000n)
+    expect(s[2]!.expectedNetPerAttempt).toBe(1_000n)
+    expect(s[3]!.expectedNetPerAttempt).toBe(-4_000n)
+    expect(s[3]!.attemptsToBreakEven).toBeNull()
+    expect(s[2]!.attemptsToBreakEven).toBe(9)     // ceil(attempt cost 9000 / expected net 1000)
+  })
+  it('break-even landing rate is fee / profit, and null when the profit cannot cover one attempt', () => {
+    expect(breakEvenLandingRate(100_000n, 9_000n)).toBeCloseTo(0.09, 6)
+    expect(breakEvenLandingRate(9_000n, 9_000n)).toBeNull()
+    expect(breakEvenLandingRate(-1n, 9_000n)).toBeNull()
+  })
+})

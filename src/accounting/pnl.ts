@@ -46,3 +46,22 @@ export function operatingPnl(periodStartUtc: string, periodEndUtc: string, txs: 
   const attempts = txs.length + failedAttempts.count
   return { periodStartUtc, periodEndUtc, sumTransactionPnl: sum, failedAttemptCosts: failed, infrastructureCosts: infra, pnl: sum - failedTotal - infraTotal, attempts, status: attempts === 0 ? 'NOT_TESTED' : (txs.some(t => t.status !== 'COMPLETE') ? 'INCOMPLETE' : 'COMPLETE') }
 }
+
+export interface FailureScenario { landingRate: number; expectedNetPerAttempt: bigint; attemptsToBreakEven: number | null }
+/**
+ * Failure-cost scenarios for a candidate whose realised profit would be `pnlIfLanded`: at a landing rate r, the expected net per attempt is
+ * r * pnlIfLanded - attemptCost (every attempt pays the network fee, only a landed one earns). `attemptsToBreakEven` = ceil(attemptCost / expectedNet):
+ * how many attempts at this rate recover the cost of one failed attempt (null when the expectation is not positive). The landing rate itself is NOT estimated here: it is unknown before live.
+ */
+export function failureScenarios(pnlIfLanded: bigint, attemptCostLamports: bigint, landingRates: number[] = [1, 0.5, 0.25, 0.1, 0.05, 0.01]): FailureScenario[] {
+  return landingRates.map(r => {
+    const scaled = (pnlIfLanded * BigInt(Math.round(r * 1e6))) / 1_000_000n
+    const net = scaled - attemptCostLamports
+    return { landingRate: r, expectedNetPerAttempt: net, attemptsToBreakEven: net > 0n ? Number((attemptCostLamports + net - 1n) / net) : null }
+  })
+}
+/** The landing rate at which a candidate stops losing money, given the cost of an attempt. Null when it is unreachable (pnl <= cost even at rate 1). */
+export function breakEvenLandingRate(pnlIfLanded: bigint, attemptCostLamports: bigint): number | null {
+  if (pnlIfLanded <= 0n || pnlIfLanded <= attemptCostLamports) return null
+  return Number((attemptCostLamports * 1_000_000n) / pnlIfLanded) / 1e6
+}

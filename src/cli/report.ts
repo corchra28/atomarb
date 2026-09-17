@@ -45,6 +45,15 @@ export async function report(loaded: LoadedConfig, flags: Record<string, string 
   const closest = summary['closestToBreakeven'] as { circuit: string; bps: number; amountIn: string }[] | undefined
   if (closest?.length) lines.push('## Closest to break-even (QUOTE_ONLY, best pnl in bps over all evaluated sizes)', '', 'circuit | bps | amount_in', ...closest.slice(0, 10).map(x => `${x.circuit.replace(/(raydium_cpmm|pumpswap):(\w{6})\w+/g, '$1:$2..')} | ${x.bps} | ${x.amountIn}`), '')
   lines.push('## Top candidates (QUOTE_ONLY unless simulated)', '', 'ts | mint | direction | amount_in | tx_pnl | single_batch', ...topCands.map(c => `${c.ts_utc} | ${c.mint.slice(0, 8)}.. | ${c.direction} | ${c.amount_in} | ${c.tx_pnl} | ${c.single_batch}`), '')
+  const best = topCands[0]
+  if (best) {
+    const { failureScenarios, breakEvenLandingRate } = await import('../accounting/pnl.js')
+    const cost = BigInt(config.costs.baseFeeLamportsPerSignature) + (BigInt(config.costs.computeUnitLimit) * BigInt(config.costs.computeUnitPriceMicroLamports) + 999_999n) / 1_000_000n
+    const sc = failureScenarios(BigInt(best.tx_pnl), cost)
+    lines.push('## Failure-cost scenarios for the best candidate (landing rate is UNKNOWN before live)', '', `attempt cost = ${cost} lamports; candidate tx_pnl = ${best.tx_pnl}`, '', 'landing rate | expected net per attempt | attempts to recover one failure', ...sc.map(x => `${x.landingRate} | ${x.expectedNetPerAttempt} | ${x.attemptsToBreakEven ?? 'never'}`), '', `break-even landing rate = ${breakEvenLandingRate(BigInt(best.tx_pnl), cost) ?? 'unreachable'}`, '')
+  } else {
+    lines.push('## Failure-cost scenarios', '', 'NOT_TESTED: no candidate reached the minimum net profit in this run, so there is no profit to weigh against the cost of failed attempts.', '')
+  }
   lines.push('## Terminal summary', '', '```')
   lines.push(`SIMULATED_POSITIVE_EPISODES = ${positiveEpisodes}`, `MAINNET_SIM_ATTEMPTED / SUCCEEDED = ${sims.find(s => s.environment === 'MAINNET_RPC_SIMULATION')?.n ?? 0} / ${sims.find(s => s.environment === 'MAINNET_RPC_SIMULATION')?.ok ?? 0}`, `LOCAL_REAL_PROGRAM_OK / QUOTE_MATCH = ${localOk} / ${localMatch}`, `REALIZED_NET_PNL = NOT_OBSERVED`, `TRANSACTIONS_BROADCAST = 0`, `LIVE_TRADING_ENABLED = NO`, `ECONOMIC_VERDICT = ${verdict}`, '```', '')
   lines.push('Every probe is an independent hypothetical intervention on real state; probe sums are not a realised portfolio. Landing rate and competition cost are unknown before live and are not estimated here.')
