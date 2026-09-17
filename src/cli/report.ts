@@ -13,7 +13,12 @@ export async function report(loaded: LoadedConfig, flags: Record<string, string 
   if (!runId) { console.error('NO_RUNS'); return 1 }
   const run = db.db.prepare('SELECT * FROM runs WHERE id=?').get(runId) as Record<string, unknown> | undefined
   if (!run) { console.error(`RUN_NOT_FOUND ${runId}`); return 1 }
-  const summary = run['summary_json'] ? JSON.parse(String(run['summary_json'])) as Record<string, unknown> : {}
+  let summary = run['summary_json'] ? JSON.parse(String(run['summary_json'])) as Record<string, unknown> : {}
+  let live = false
+  if (!run['summary_json']) {   // run still in progress: use the latest durable checkpoint instead of pretending there is no data
+    const cp = db.db.prepare('SELECT payload, ts_utc FROM checkpoints WHERE run_id=? AND name=?').get(runId, 'progress') as { payload: string; ts_utc: string } | undefined
+    if (cp) { summary = { ...JSON.parse(cp.payload) as Record<string, unknown>, checkpointUtc: cp.ts_utc }; live = true }
+  }
   const q = <T>(sql: string, ...p: unknown[]) => db.db.prepare(sql).all(...(p as (string | number | null)[])) as T[]
   const cand = q<{ status: string; n: number }>('SELECT status, COUNT(*) n FROM candidates WHERE run_id=? GROUP BY status', runId)
   const candTotal = q<{ n: number }>('SELECT COUNT(*) n FROM candidates WHERE run_id=?', runId)[0]?.n ?? 0
@@ -28,7 +33,7 @@ export async function report(loaded: LoadedConfig, flags: Record<string, string 
   const positiveEpisodes = (summary['episodes'] as { total?: number } | undefined)?.total ?? 0
   const verdict = candTotal === 0 && (summary['counters'] as { circuitsEvaluated?: number } | undefined)?.circuitsEvaluated === 0 ? 'NOT_TESTED' : (localMatch > 0 && (sims.find(s => s.environment === 'MAINNET_RPC_SIMULATION')?.ok ?? 0) > 0 ? 'SIMULATED_CANDIDATE_EDGE' : (positiveEpisodes > 0 ? 'INCOMPLETE_EVIDENCE' : 'NO_VERIFIED_EDGE'))
   const lines: string[] = []
-  lines.push(`# RUN_REPORT ${runId}`, '', `kind=${run['kind']} status=${run['status']} started=${run['started_utc']} ended=${run['ended_utc']} stop=${run['stop_reason']} config_hash=${String(run['config_hash']).slice(0, 16)}`, '')
+  lines.push(`# RUN_REPORT ${runId}`, '', `kind=${run['kind']} status=${run['status']}${live ? ' (IN PROGRESS: figures come from the latest checkpoint ' + String(summary['checkpointUtc']) + ')' : ''} started=${run['started_utc']} ended=${run['ended_utc']} stop=${run['stop_reason']} config_hash=${String(run['config_hash']).slice(0, 16)}`, '')
   lines.push('## Counts (from the full SQLite journal)', '')
   lines.push(`candidates_total=${candTotal} ${cand.map(c => `${c.status}=${c.n}`).join(' ')}`)
   lines.push(`simulations: ${sims.map(s => `${s.environment}: n=${s.n} ok=${s.ok}`).join(' | ') || 'none'}`)
@@ -36,7 +41,9 @@ export async function report(loaded: LoadedConfig, flags: Record<string, string 
   lines.push(`local_real_program: ok=${localOk} quote_matched_exactly=${localMatch}`)
   lines.push(`events: ${events.map(e => `${e.kind}=${e.n}`).join(' ') || 'none'}`)
   lines.push(`candidate_concentration_top_mint_share=${concentration.toFixed(2)}`, '')
-  lines.push('## Latency / RPC / WSS (from run summary)', '', '```', JSON.stringify({ latencyMs: summary['latencyMs'], rpc: summary['rpc'], wss: summary['wss'], counters: summary['counters'] }, null, 1), '```', '')
+  lines.push('## Latency / RPC / WSS / counters', '', '```', JSON.stringify({ latencyMs: summary['latencyMs'], rpc: summary['rpc'] ?? summary['rpcTotal'], wss: summary['wss'], counters: summary['counters'] }, null, 1), '```', '')
+  const closest = summary['closestToBreakeven'] as { circuit: string; bps: number; amountIn: string }[] | undefined
+  if (closest?.length) lines.push('## Closest to break-even (QUOTE_ONLY, best pnl in bps over all evaluated sizes)', '', 'circuit | bps | amount_in', ...closest.slice(0, 10).map(x => `${x.circuit.replace(/(raydium_cpmm|pumpswap):(\w{6})\w+/g, '$1:$2..')} | ${x.bps} | ${x.amountIn}`), '')
   lines.push('## Top candidates (QUOTE_ONLY unless simulated)', '', 'ts | mint | direction | amount_in | tx_pnl | single_batch', ...topCands.map(c => `${c.ts_utc} | ${c.mint.slice(0, 8)}.. | ${c.direction} | ${c.amount_in} | ${c.tx_pnl} | ${c.single_batch}`), '')
   lines.push('## Terminal summary', '', '```')
   lines.push(`SIMULATED_POSITIVE_EPISODES = ${positiveEpisodes}`, `MAINNET_SIM_ATTEMPTED / SUCCEEDED = ${sims.find(s => s.environment === 'MAINNET_RPC_SIMULATION')?.n ?? 0} / ${sims.find(s => s.environment === 'MAINNET_RPC_SIMULATION')?.ok ?? 0}`, `LOCAL_REAL_PROGRAM_OK / QUOTE_MATCH = ${localOk} / ${localMatch}`, `REALIZED_NET_PNL = NOT_OBSERVED`, `TRANSACTIONS_BROADCAST = 0`, `LIVE_TRADING_ENABLED = NO`, `ECONOMIC_VERDICT = ${verdict}`, '```', '')
