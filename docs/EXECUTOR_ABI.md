@@ -164,3 +164,15 @@ Transaction size: a Raydium→Raydium circuit fits in one v0 message without a l
 
 ## Build provenance
 `scripts/build_executor.sh` → `tests/fixtures/programs/arb_executor.so` + `arb_executor.json` {sha256, bytes, built_at_utc, rustc_host, rustc_platform_tools, cargo_build_sbf, sbpf_arch_flag, solana_program_crate, source_hash_sha256 (= sha256 of `src/*.rs` concatenated in C-locale order)}. Toolchain: `docs/sources/toolchain.md`.
+
+
+## How the probe drives it (and what a live deployment would change)
+
+`src/simulation/probe.ts::localProbeExecutor` builds the two leg segments from the adapters' own instruction builders, then lets the **program** write the CPI data
+from the typed parameters. It passes `leg_a_min_out` = the quoted leg-A output and `leg_b_min_out` = 1, so the only economic gate is the executor's guard
+(`base_after >= base_before + min_profit`) — that is what is being measured. Two runs are made: `min_profit = 0` (does the circuit break even at all?) and
+`min_profit = quoted trading PnL` (is the quote reproduced exactly on-chain?).
+
+A live deployment would differ in three ways, all policy rather than measurement: a margin on `leg_a_min_out` (the pool can move between snapshot and landing),
+a `min_profit` that covers the network and priority fees plus an uncertainty budget, and an address lookup table for any circuit with a PumpSwap leg
+(1,262–1,684 bytes without one). None of that is enabled here: the program is never deployed and nothing is signed or sent.
