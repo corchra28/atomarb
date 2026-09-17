@@ -41,3 +41,16 @@ describe('pnl classes', () => {
   })
 })
 describe('duration parsing', () => { it('parses m/h/s', () => { expect(parseDuration('60m')).toBe(60); expect(parseDuration('2h')).toBe(120); expect(parseDuration('90s')).toBe(1.5); expect(() => parseDuration('x')).toThrow() }) })
+
+import { parseSimError, classifySimError } from '../../src/simulation/probe.js'
+describe('simulation error identity', () => {
+  it('extracts the failing instruction index and custom code of the TESTED message', () => {
+    expect(parseSimError({ InstructionError: [3, { Custom: 6001 }] }, ['Program log: AnchorError … Error Code: ZeroBaseAmount. Error Number: 6001.']))
+      .toEqual({ instructionIndex: 3, kind: 'Custom', customCode: 6001, programLogError: expect.stringContaining('ZeroBaseAmount') })
+    expect(parseSimError({ InstructionError: [0, 'InsufficientFunds'] }, [])).toEqual({ instructionIndex: 0, kind: 'InsufficientFunds', customCode: null, programLogError: null })
+    expect(parseSimError('BlockhashNotFound', [])).toEqual({ instructionIndex: null, kind: 'BlockhashNotFound', customCode: null, programLogError: null })
+    expect(parseSimError(null, [])).toEqual({ instructionIndex: null, kind: null, customCode: null, programLogError: null })
+    expect(classifySimError(null, [])).toBe('OK')
+    expect(classifySimError({ InstructionError: [3, { Custom: 1 }] }, ['Program log: Error: insufficient funds'])).toMatch(/INSUFFICIENT_FUNDS/)
+  })
+})

@@ -45,7 +45,7 @@ export async function simulate(loaded: LoadedConfig, flags: Record<string, strin
   if (!flags['no-mainnet']) {
     const m = await mainnetSimulate(rpc, direct, ua)
     out['mainnet'] = m
-    printBlock('MAINNET_RPC_SIMULATION', [['context_slot', m.contextSlot], ['err', m.err ?? null], ['err_class', m.errClass], ['units_consumed', m.unitsConsumed], ['fee_for_message', m.feeForMessageLamports], ['post_balances', m.postBalances], ['duration_ms', m.durationMs], ['logs_tail', m.logs.slice(-6)]])
+    printBlock('MAINNET_RPC_SIMULATION', [['context_slot', m.contextSlot], ['err', m.err ?? null], ['err_detail', m.errDetail], ['err_class', m.errClass], ['units_consumed', m.unitsConsumed], ['fee_for_message', m.feeForMessageLamports], ['post_balances', m.postBalances], ['duration_ms', m.durationMs], ['logs_tail', m.logs.slice(-6)]])
   }
   if (!flags['no-local']) {
     try {

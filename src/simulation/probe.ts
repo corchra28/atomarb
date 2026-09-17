@@ -48,9 +48,24 @@ export function buildDirectCircuitTx(adapters: Record<AdapterId, PoolAdapter>, c
   return { built, ixA: a.instruction, ixB: b.instruction, accountsWritten: [...a.accountsWritten, ...b.accountsWritten], minOutA: ev.quoteA.amountOutToUser, minOutB: ev.quoteB.amountOutToUser, limitation: 'DIRECT_FIXED_AMOUNTS: leg B amount = quoted leg A output; no dynamic delta; no on-chain profit guard beyond leg B minimum_amount_out' }
 }
 export interface MainnetSimEvidence {
-  level: EvidenceLevel; environment: 'MAINNET_RPC_SIMULATION'; contextSlot: number; err: unknown; errClass: string; logs: string[]; unitsConsumed: number | null; messageHash: string; requestConfig: Record<string, unknown>; durationMs: number; receivedAtUtc: string
+  level: EvidenceLevel; environment: 'MAINNET_RPC_SIMULATION'; contextSlot: number; err: unknown; errDetail: SimErrorDetail; errClass: string; logs: string[]; unitsConsumed: number | null; messageHash: string; requestConfig: Record<string, unknown>; durationMs: number; receivedAtUtc: string
   postBalances: { baseAta: bigint | null; interAta: bigint | null } | null
   feeForMessageLamports: bigint | null
+}
+/** Structured error identity: which instruction of THE TESTED message failed and with which code (never the index of a reference transaction). */
+export interface SimErrorDetail { instructionIndex: number | null; kind: string | null; customCode: number | null; programLogError: string | null }
+export function parseSimError(err: unknown, logs: string[]): SimErrorDetail {
+  const out: SimErrorDetail = { instructionIndex: null, kind: null, customCode: null, programLogError: null }
+  const e = err as { InstructionError?: [number, unknown] } | string | null | undefined
+  if (e && typeof e === 'object' && Array.isArray(e.InstructionError)) {
+    out.instructionIndex = e.InstructionError[0]
+    const inner = e.InstructionError[1]
+    if (typeof inner === 'string') out.kind = inner
+    else if (inner && typeof inner === 'object' && 'Custom' in (inner as Record<string, unknown>)) { out.kind = 'Custom'; out.customCode = Number((inner as { Custom: number }).Custom) }
+    else out.kind = JSON.stringify(inner)
+  } else if (typeof e === 'string') out.kind = e
+  const l = logs.find(x => /Program log: (Error|AnchorError)/.test(x)); if (l) out.programLogError = l.slice(0, 300)
+  return out
 }
 export function classifySimError(err: unknown, logs: string[]): string {
   const s = JSON.stringify(err ?? null)
@@ -66,7 +81,7 @@ export function classifySimError(err: unknown, logs: string[]): string {
 export async function mainnetSimulate(rpc: RpcClient, tx: DirectTx | { built: BuiltTx }, ua: UserAccounts, opts: { minContextSlot?: number | undefined } = {}): Promise<MainnetSimEvidence> {
   if (!tx.built.inspection.withinSizeLimit) {
     // A mainnet address lookup table would be needed (creating/extending one is a write, not available in this read-only lot). Local probes fabricate an ALT instead.
-    return { level: 'QUOTE_ONLY', environment: 'MAINNET_RPC_SIMULATION', contextSlot: 0, err: { TxTooLarge: tx.built.serializedBytes }, errClass: `TX_TOO_LARGE_NEEDS_ALT (${tx.built.serializedBytes} > ${MAX_TX_BYTES} bytes; no lookup table in read-only mode)`, logs: [], unitsConsumed: null, messageHash: tx.built.messageHash, requestConfig: {}, durationMs: 0, receivedAtUtc: nowUtcIso(), postBalances: null, feeForMessageLamports: null }
+    return { level: 'QUOTE_ONLY', environment: 'MAINNET_RPC_SIMULATION', contextSlot: 0, err: { TxTooLarge: tx.built.serializedBytes }, errDetail: { instructionIndex: null, kind: 'TxTooLarge', customCode: null, programLogError: null }, errClass: `TX_TOO_LARGE_NEEDS_ALT (${tx.built.serializedBytes} > ${MAX_TX_BYTES} bytes; no lookup table in read-only mode)`, logs: [], unitsConsumed: null, messageHash: tx.built.messageHash, requestConfig: {}, durationMs: 0, receivedAtUtc: nowUtcIso(), postBalances: null, feeForMessageLamports: null }
   }
   const r: SimulateResult = await rpc.simulateTransaction(tx.built.tx, { sigVerify: false, replaceRecentBlockhash: true, accounts: [ua.baseAta, ua.interAta], innerInstructions: true, ...(opts.minContextSlot !== undefined ? { minContextSlot: opts.minContextSlot } : {}) })
   const logs = r.value.logs ?? []
@@ -77,7 +92,7 @@ export async function mainnetSimulate(rpc: RpcClient, tx: DirectTx | { built: Bu
   }
   let fee: bigint | null = null
   try { const f = await rpc.getFeeForMessage(Buffer.from(tx.built.messageBytes).toString('base64')); fee = f.value === null ? null : BigInt(f.value) } catch { fee = null }
-  return { level: 'MAINNET_RPC_SIMULATION', environment: 'MAINNET_RPC_SIMULATION', contextSlot: r.context.slot, err: r.value.err, errClass: classifySimError(r.value.err, logs), logs, unitsConsumed: r.value.unitsConsumed ?? null, messageHash: tx.built.messageHash, requestConfig: r.requestConfig, durationMs: r.durationMs, receivedAtUtc: r.receivedAtUtc, postBalances: post, feeForMessageLamports: fee }
+  return { level: 'MAINNET_RPC_SIMULATION', environment: 'MAINNET_RPC_SIMULATION', contextSlot: r.context.slot, err: r.value.err, errDetail: parseSimError(r.value.err, logs), errClass: classifySimError(r.value.err, logs), logs, unitsConsumed: r.value.unitsConsumed ?? null, messageHash: tx.built.messageHash, requestConfig: r.requestConfig, durationMs: r.durationMs, receivedAtUtc: r.receivedAtUtc, postBalances: post, feeForMessageLamports: fee }
 }
 /** Program ELF cache: tests/fixtures/programs/<id>.so (committed by fixture scripts) or data/programs/<id>.so (dumped on demand). */
 export async function loadProgramCached(rpc: RpcClient | null, programId: PublicKey, dirs: string[] = ['tests/fixtures/programs', 'data/programs']): Promise<ProgramDump> {
