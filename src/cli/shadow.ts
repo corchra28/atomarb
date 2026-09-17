@@ -15,6 +15,7 @@ import { monoMs, nowUtcIso, percentile, sleep } from '../util/time.js'
 import { jsonReplacer } from '../util/bigint.js'
 import { buildDirectCircuitTx, mainnetSimulate, localProbe, userAccountsFor, type LocalProbeEvidence, type MainnetSimEvidence } from '../simulation/probe.js'
 import { externalCosts } from '../accounting/pnl.js'
+import { CapitalLedger } from '../accounting/capital.js'
 import { WssManager } from '../state/wss.js'
 import { sha256Hex } from '../util/hash.js'
 import { WSOL_MINT } from '../state/token.js'
@@ -73,8 +74,10 @@ export async function shadow(loaded: LoadedConfig, flags: Record<string, string 
   }
   const lat = { snapshot: [] as number[], quote: [] as number[], build: [] as number[], sim: [] as number[], age: [] as number[] }
   const episodes = new Map<string, Episode>()
-  const counters = { polls: 0, routePolls: 0, snapshotIncomplete: 0, circuitsEvaluated: 0, positiveEvaluations: 0, candidates: 0, simsAttempted: 0, simsOk: 0, localAttempted: 0, localOk: 0, localMatch: 0, stale: 0, errors: 0 }
+  const counters = { capitalRejected: 0, polls: 0, routePolls: 0, snapshotIncomplete: 0, circuitsEvaluated: 0, positiveEvaluations: 0, candidates: 0, simsAttempted: 0, simsOk: 0, localAttempted: 0, localOk: 0, localMatch: 0, stale: 0, errors: 0 }
   const simTimes: number[] = []
+  // capital budget, pending positions and concurrency for prospective probes (hypothetical mode: probe PnLs never change capital)
+  const ledger = new CapitalLedger({ capitalLamports: BigInt(config.sizing.maxCapitalLamports), maxEpisodeFrac: 0.2, maxAggregateOpenFrac: 0.4, reserveFrac: 0.3, maxConcurrent: 3, hypothetical: true })
   const closest = new Map<string, { bps: number; amountIn: bigint; utc: string; category: string }>()
   let stopReason: string | null = null
   const programsCache = new Map<string, boolean>()
@@ -120,7 +123,10 @@ export async function shadow(loaded: LoadedConfig, flags: Record<string, string 
           if (e.refreshes === 1) db.event(runId, nowIso, monoMs(), 'episode_start', c.id, snap.bundle?.maxSlot ?? null, { txPnl, amountIn: best.amountIn })
           // bounded simulations
           const now = monoMs(); while (simTimes.length && simTimes[0]! < now - 60_000) simTimes.shift()
-          if (simTimes.length < maxSimsPerMinute && stateAgeMs <= config.execution.stalenessMaxMs) {
+          const feeBudget = ext.total
+          const hold = ledger.reserve({ id: candidateId, amountIn: best.amountIn, feeBudget, pools: [c.poolA.address.toBase58(), c.poolB.address.toBase58()], mint: token, utc: nowIso })
+          if (!hold.ok) { counters.capitalRejected++; db.event(runId, nowIso, monoMs(), 'capital_reject', c.id, snap.bundle?.maxSlot ?? null, { code: hold.code, detail: hold.detail, budget: hold.budget }) }
+          if (hold.ok && simTimes.length < maxSimsPerMinute && stateAgeMs <= config.execution.stalenessMaxMs) {
             simTimes.push(now); counters.simsAttempted++; e.simulated++
             const t2 = monoMs()
             try {
@@ -144,7 +150,11 @@ export async function shadow(loaded: LoadedConfig, flags: Record<string, string 
                 db.db.prepare('INSERT OR REPLACE INTO simulations (id,run_id,candidate_id,ts_utc,environment,context_slot,err,units_consumed,message_hash,payload) VALUES (?,?,?,?,?,?,?,?,?,?)').run(`${candidateId}:local`, runId, candidateId, nowUtcIso(), l.environment, l.snapshot.maxSlot, l.err, Number(l.unitsConsumed), direct.built.messageHash, JSON.stringify({ deltas: l.deltas, quoted: l.quoted, realised: l.realised, accounting: l.accounting, synthetic: l.synthetic.length, missing: l.accountsMissingOnChain, logsTail: l.logs.slice(-5) }, jsonReplacer))
               }
             } catch (err) { counters.errors++; log.warn('sim_error', { circuit: c.id, error: (err as Error).message }) }
-          } else if (stateAgeMs > config.execution.stalenessMaxMs) counters.stale++
+            finally { ledger.settle({ id: candidateId, realisedPnl: 0n, feePaid: ext.total, status: 'NOT_LANDED', utc: nowUtcIso() }) }   // a probe never lands: it costs the modelled fee and credits nothing
+          } else {
+            if (hold.ok) ledger.settle({ id: candidateId, realisedPnl: 0n, feePaid: 0n, status: 'NOT_LANDED', utc: nowUtcIso() })          // not simulated: release without cost
+            if (stateAgeMs > config.execution.stalenessMaxMs) counters.stale++
+          }
         } else if (ep0 && ep0.open) { ep0.open = false; db.event(runId, nowIso, monoMs(), 'episode_end', c.id, snap.bundle?.maxSlot ?? null, ep0) }
       }
       lat.age.push(stateAgeMs)
@@ -163,6 +173,7 @@ export async function shadow(loaded: LoadedConfig, flags: Record<string, string 
     latencyMs: { snapshot: pct(lat.snapshot), quote: pct(lat.quote), build: pct(lat.build), simulation: pct(lat.sim), stateAgeAtDecision: pct(lat.age) },
     rpc: { total: rpc.usage.total, errors: rpc.usage.errors, retries: rpc.usage.retries, byMethod: Object.fromEntries(Object.entries(rpc.usage.byMethod).map(([k, v]) => [k, { count: v.count, errors: v.errors, ...pct(v.ms) }])) },
     wss: wss ? { ...wss.stats, gaps } : null,
+    capital: ledger.snapshot(),
     closestToBreakeven: [...closest.entries()].map(([id, v]) => ({ circuit: id, ...v })).sort((a, b) => b.bps - a.bps).slice(0, 20),
     episodes: { total: eps.length, byCategory: countBy(eps.map(e => e.category)), byToken: countBy(eps.map(e => e.token)), maxRefreshes: Math.max(0, ...eps.map(e => e.refreshes)), simulatedOk: eps.filter(e => e.simOk > 0).length, localOk: eps.filter(e => e.localOk > 0).length, localMatch: eps.filter(e => e.localMatch > 0).length, list: eps.map(e => ({ ...e })) },
     note: 'Every probe is an independent hypothetical intervention on real state; probe sums are not a realised portfolio. REALIZED_NET_PNL = NOT_OBSERVED. TRANSACTIONS_BROADCAST = 0.',
