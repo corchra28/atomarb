@@ -1,0 +1,84 @@
+{
+ "runId": "shadow_2026-09-17T18-09-25-841Z_32a7b818",
+ "stopReason": "HTTP_BUDGET",
+ "elapsedMs": 3297020,
+ "durationMin": 60,
+ "pools": 50,
+ "validPools": 50,
+ "dropped": [],
+ "routes": 22,
+ "counters": {
+  "polls": 221,
+  "routePolls": 4860,
+  "snapshotIncomplete": 0,
+  "circuitsEvaluated": 17676,
+  "positiveEvaluations": 0,
+  "candidates": 0,
+  "simsAttempted": 0,
+  "simsOk": 0,
+  "localAttempted": 0,
+  "localOk": 0,
+  "localMatch": 0,
+  "stale": 0,
+  "errors": 0
+ },
+ "latencyMs": {
+  "snapshot": {
+   "n": 4860,
+   "p50": 349,
+   "p95": 1409,
+   "p99": 2140
+  },
+  "quote": {
+   "n": 4860,
+   "p50": 17,
+   "p95": 87,
+   "p99": 354
+  },
+  "build": {
+   "n": 0,
+   "p50": null,
+   "p95": null,
+   "p99": null
+  },
+  "simulation": {
+   "n": 0,
+   "p50": null,
+   "p95": null,
+   "p99": null
+  },
+  "stateAgeAtDecision": {
+   "n": 4860,
+   "p50": 3,
+   "p95": 8,
+   "p99": 12
+  }
+ },
+ "rpc": {
+  "total": 10000,
+  "errors": 276,
+  "retries": 276,
+  "byMethod": {
+   "getMultipleAccounts": {
+    "count": 10000,
+    "errors": 276,
+    "n": 9994,
+    "p50": 113,
+    "p95": 350,
+    "p99": 717
+   }
+  }
+ },
+ "wss": null,
+ "episodes": {
+  "total": 0,
+  "byCategory": {},
+  "byToken": {},
+  "maxRefreshes": 0,
+  "simulatedOk": 0,
+  "localOk": 0,
+  "localMatch": 0,
+  "list": []
+ },
+ "note": "Every probe is an independent hypothetical intervention on real state; probe sums are not a realised portfolio. REALIZED_NET_PNL = NOT_OBSERVED. TRANSACTIONS_BROADCAST = 0."
+}

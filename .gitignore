@@ -9,7 +9,7 @@ data/
 *.db-journal
 *.db-wal
 *.db-shm
-reports/runs/
+# reports/runs/ is tracked: the run reports are deliverables (no secrets, no raw data)
 target/
 programs/**/target/
 .DS_Store
