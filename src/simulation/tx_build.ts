@@ -17,6 +17,7 @@ export interface TxInspection {
   instructions: { programId: string; discriminatorHex: string; dataLen: number; accounts: { key: string; signer: boolean; writable: boolean }[] }[]
   serializedBytes: number
   withinSizeLimit: boolean
+  note?: string
   computeUnitLimit: number | null
   computeUnitPriceMicroLamports: bigint | null
 }
@@ -27,9 +28,37 @@ export function computeBudgetIxs(cuLimit: number, cuPriceMicro: number): Transac
 export function buildV0(payer: PublicKey, blockhash: string, instructions: TransactionInstruction[], alts: AddressLookupTableAccount[] = []): BuiltTx {
   const msg = new TransactionMessage({ payerKey: payer, recentBlockhash: blockhash, instructions }).compileToV0Message(alts)
   const tx = new VersionedTransaction(msg)
-  const messageBytes = msg.serialize()
-  const serialized = tx.serialize()
-  return { tx, messageBytes, messageHash: sha256Hex(messageBytes), serializedBytes: serialized.length, inspection: inspect(msg, serialized.length) }
+  // web3.js serialises into a fixed 1232-byte packet buffer and THROWS on an oversized message; an oversized circuit must be reported, not crash.
+  let messageBytes: Uint8Array; let serializedBytes: number; let oversize = false
+  try { messageBytes = msg.serialize(); serializedBytes = tx.serialize().length } catch (e) {
+    if (!/overrun|too large|out of range/i.test((e as Error).message)) throw e
+    oversize = true; messageBytes = identityBytes(msg); serializedBytes = estimateV0Size(msg)
+  }
+  const insp = inspect(msg, serializedBytes)
+  if (oversize) insp.note = `message exceeds ${MAX_TX_BYTES} bytes: size is an exact field-by-field estimate (${serializedBytes}); web3.js cannot serialise it`
+  return { tx, messageBytes, messageHash: sha256Hex(messageBytes), serializedBytes, inspection: insp }
+}
+const shortVec = (n: number): number => (n < 0x80 ? 1 : n < 0x4000 ? 2 : 3)
+/** Exact wire size of a v0 transaction, computed field by field (used when the message is too large for web3.js to serialise). */
+export function estimateV0Size(msg: MessageV0): number {
+  const sigs = msg.header.numRequiredSignatures
+  let n = shortVec(sigs) + 64 * sigs                                   // signatures
+  n += 1 + 3 + shortVec(msg.staticAccountKeys.length) + 32 * msg.staticAccountKeys.length + 32   // version byte, header, static keys, blockhash
+  n += shortVec(msg.compiledInstructions.length)
+  for (const ix of msg.compiledInstructions) n += 1 + shortVec(ix.accountKeyIndexes.length) + ix.accountKeyIndexes.length + shortVec(ix.data.length) + ix.data.length
+  n += shortVec(msg.addressTableLookups.length)
+  for (const l of msg.addressTableLookups) n += 32 + shortVec(l.writableIndexes.length) + l.writableIndexes.length + shortVec(l.readonlyIndexes.length) + l.readonlyIndexes.length
+  return n
+}
+/** Deterministic identity bytes for hashing an oversized message (not the wire format; used only so the message still has a stable hash). */
+function identityBytes(msg: MessageV0): Uint8Array {
+  const parts: Uint8Array[] = [new Uint8Array([msg.header.numRequiredSignatures, msg.header.numReadonlySignedAccounts, msg.header.numReadonlyUnsignedAccounts])]
+  for (const k of msg.staticAccountKeys) parts.push(k.toBytes())
+  for (const l of msg.addressTableLookups) { parts.push(l.accountKey.toBytes()); parts.push(Uint8Array.from(l.writableIndexes)); parts.push(Uint8Array.from(l.readonlyIndexes)) }
+  for (const ix of msg.compiledInstructions) { parts.push(new Uint8Array([ix.programIdIndex])); parts.push(Uint8Array.from(ix.accountKeyIndexes)); parts.push(ix.data) }
+  const total = parts.reduce((a, p) => a + p.length, 0); const out = new Uint8Array(total); let o = 0
+  for (const p of parts) { out.set(p, o); o += p.length }
+  return out
 }
 export function inspect(msg: MessageV0, serializedBytes: number): TxInspection {
   const keys = msg.staticAccountKeys.map(k => k.toBase58())
