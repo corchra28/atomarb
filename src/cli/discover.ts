@@ -1,3 +1,4 @@
+import * as nodeFs from 'node:fs'
 import type { LoadedConfig } from '../config/load.js'
 import type { JsonlLogger } from '../telemetry/log.js'
 import { runDiscovery } from '../discovery/index.js'
@@ -12,11 +13,28 @@ function intFlag(flags: Record<string, string | true>, name: string): number | u
   if (v === true || !/^\d+$/.test(v)) throw new Error(`--${name} needs a positive integer`)
   return Number(v)
 }
+/** Refuses a second concurrent run: two clients would double the self-imposed 2 req/s against the same public API (review finding). */
+function acquireLock(dir: string): () => void {
+  const { mkdirSync, writeFileSync, readFileSync, existsSync, rmSync } = nodeFs
+  mkdirSync(dir, { recursive: true })
+  const lock = `${dir}/.discover.lock`
+  if (existsSync(lock)) {
+    const pid = Number(readFileSync(lock, 'utf8').trim())
+    let alive = false
+    try { process.kill(pid, 0); alive = pid !== process.pid } catch { alive = false }
+    if (alive) throw new Error(`DISCOVER_ALREADY_RUNNING: pid ${pid} holds ${lock} (two runs would double the API rate); wait for it or remove the file if the process is gone`)
+    rmSync(lock)
+  }
+  writeFileSync(lock, String(process.pid))
+  return () => { try { rmSync(lock) } catch { /* already gone */ } }
+}
 export async function discover(loaded: LoadedConfig, flags: Record<string, string | true>, log: JsonlLogger): Promise<number> {
   const { config } = loaded
   const network = flags['no-network'] !== true
   const maxPools = intFlag(flags, 'max-pools'); const maxMints = intFlag(flags, 'max-mints'); const listCap = intFlag(flags, 'cap'); const pageSize = intFlag(flags, 'page-size'); const maxPoolsPerMint = intFlag(flags, 'max-pools-per-mint')
   const inventoryPath = typeof flags['inventory'] === 'string' ? flags['inventory'] : undefined
+  const release = network ? acquireLock(`${config.paths.dataDir}/discovery`) : () => {}
+  try {
   const res = await runDiscovery(config, {
     network, log,
     ...(maxPools !== undefined ? { maxPools } : {}), ...(maxMints !== undefined ? { maxMints } : {}), ...(listCap !== undefined ? { listCap } : {}), ...(pageSize !== undefined ? { pageSize } : {}), ...(maxPoolsPerMint !== undefined ? { maxPoolsPerMint } : {}),
@@ -42,4 +60,5 @@ export async function discover(loaded: LoadedConfig, flags: Record<string, strin
   for (const [k, v] of rows) console.log(`${k.padEnd(20)} ${v}`)
   for (const w of res.report.warnings) console.log(`WARNING              ${w}`)
   return 0
+  } finally { release() }
 }
