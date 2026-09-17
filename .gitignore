@@ -1,0 +1,16 @@
+node_modules/
+dist/
+.scratch/
+.env
+.env.*
+!.env.example
+data/
+*.db
+*.db-journal
+*.db-wal
+*.db-shm
+reports/runs/
+target/
+programs/**/target/
+.DS_Store
+*.log
