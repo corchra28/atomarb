@@ -159,8 +159,8 @@ export interface SwapIxParams {
 export interface PoolAdapter {
   readonly id: AdapterId
   readonly programId: PublicKey
-  /** Discover candidate pools for a set of mints (or all WSOL pools) from index APIs / local inventories. Never used for pricing. */
-  discoverPools(opts: { mints?: PublicKey[]; limit?: number; sources?: string[] }): Promise<{ pools: PoolRef[]; sourcesUsed: string[]; notes: string[] } | Unsupported>
+  /** Optional: adapter-specific discovery. The primary discovery entry point is src/discovery (index APIs + local inventories); never used for pricing. */
+  discoverPools?(opts: { mints?: PublicKey[]; limit?: number; sources?: string[] }): Promise<{ pools: PoolRef[]; sourcesUsed: string[]; notes: string[] } | Unsupported>
   /** Accounts that must be fetched (ideally in ONE getMultipleAccounts) to decode + quote this pool. May require a 2-step fetch: pool first, then dependents. */
   requiredAccounts(pool: PoolRef, poolAccount?: RawAccount): PublicKey[] | Unsupported
   decodeSnapshot(pool: PoolRef, bundle: AccountBundle): DecodedPool | Unsupported
