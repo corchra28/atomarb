@@ -110,10 +110,12 @@ export interface Token2022Gate {
   warnings: { code: string; detail: string }[]
   /** transfer fee used for quoting: the LARGER of older/newer TransferFee (the adapter has no Clock; conservative) */
   transferFee: { bps: number; maxFee: bigint; epoch: bigint; basis: string } | null
+  /** both scheduled tiers, so the fee can be evaluated exactly at a known epoch, or worst-case per amount when the epoch is unknown */
+  transferFeeTiers: { older: { bps: number; maxFee: bigint; epoch: bigint }; newer: { bps: number; maxFee: bigint; epoch: bigint } } | null
 }
 function isZero32(b: Uint8Array): boolean { for (let i = 0; i < 32; i++) if (b[i] !== 0) return false; return true }
 export function token2022Gate(raw: RawAccount, mint: MintInfo): Token2022Gate {
-  const g: Token2022Gate = { rejects: [], warnings: [], transferFee: null }
+  const g: Token2022Gate = { rejects: [], warnings: [], transferFee: null, transferFeeTiers: null }
   if (mint.freezeAuthority) g.warnings.push({ code: 'FREEZE_AUTHORITY_SET', detail: `mint ${mint.mint.toBase58()} freeze authority ${mint.freezeAuthority.toBase58()} (token2022.md §6: can freeze vault/ATA)` })
   if (!raw.owner.equals(TOKEN_2022_PROGRAM_ID)) return g
   if (raw.data.length <= MINT_SIZE) return g // token2022.md §3: exactly 82 bytes → no extensions
@@ -145,9 +147,13 @@ export function token2022Gate(raw: RawAccount, mint: MintInfo): Token2022Gate {
         // token2022.md §4: older fee used while epoch < newer.epoch; without a Clock we take the larger fee (conservative for both legs)
         const older = { epoch: readU64(e.data, 72), maxFee: readU64(e.data, 80), bps: e.data[88]! | (e.data[89]! << 8) }
         const newer = { epoch: readU64(e.data, 90), maxFee: readU64(e.data, 98), bps: e.data[106]! | (e.data[107]! << 8) }
-        const pick = newer.bps > older.bps || (newer.bps === older.bps && newer.maxFee >= older.maxFee) ? { ...newer, basis: 'newer' } : { ...older, basis: 'older' }
-        g.transferFee = { bps: pick.bps, maxFee: pick.maxFee, epoch: pick.epoch, basis: `${pick.basis} (max of older=${older.bps}bps/newer=${newer.bps}bps; adapter has no Clock)` }
-        if (pick.bps > 0) g.warnings.push({ code: 'TOKEN2022_TRANSFER_FEE', detail: `transfer fee ${pick.bps} bps max ${pick.maxFee} applied to the base leg` })
+        if (older.bps > 10_000 || newer.bps > 10_000) { g.rejects.push({ code: 'TOKEN2022_TRANSFER_FEE_INVALID', detail: `transfer_fee_basis_points older=${older.bps} newer=${newer.bps} > 10000` }); break }
+        g.transferFeeTiers = { older, newer }
+        // The tier is chosen by EPOCH (token2022.md §4: newer applies from newer.epoch). Picking by bps is wrong: a scheduled update that lowers bps
+        // while raising maximum_fee makes the larger-bps tier the SMALLER fee at real sizes, which would under-charge the leg (review finding).
+        const pick = epochOf(raw) !== null ? (epochOf(raw)! >= newer.epoch ? { ...newer, basis: `newer (epoch ${epochOf(raw)} >= ${newer.epoch})` } : { ...older, basis: `older (epoch ${epochOf(raw)} < ${newer.epoch})` }) : { ...older, basis: 'older (epoch unknown; the exact fee is computed per amount as the worst case of both tiers)' }
+        g.transferFee = { bps: pick.bps, maxFee: pick.maxFee, epoch: pick.epoch, basis: pick.basis }
+        if (pick.bps > 0 || newer.bps > 0 || older.bps > 0) g.warnings.push({ code: 'TOKEN2022_TRANSFER_FEE', detail: `transfer fee tiers older=${older.bps}bps/max ${older.maxFee} (epoch ${older.epoch}), newer=${newer.bps}bps/max ${newer.maxFee} (epoch ${newer.epoch}); applied: ${pick.basis}` })
         break
       }
       default: break
@@ -155,7 +161,16 @@ export function token2022Gate(raw: RawAccount, mint: MintInfo): Token2022Gate {
   }
   return g
 }
+/** Epoch implied by the snapshot slot (mainnet: 432,000 slots per epoch, no warm-up) — the same rule the Raydium adapter uses. */
+export const SLOTS_PER_EPOCH = 432_000n
+function epochOf(raw: RawAccount): bigint | null { return raw.contextSlot > 0 ? BigInt(Math.floor(raw.contextSlot / Number(SLOTS_PER_EPOCH))) : null }
 function readU64(b: Uint8Array, off: number): bigint { let v = 0n; for (let i = 7; i >= 0; i--) v = (v << 8n) | BigInt(b[off + i]!); return v }
+/** Worst case over both scheduled tiers, evaluated per amount (the only sound choice when the epoch is unknown). */
+export function transferFeeAmountWorstCase(amount: bigint, tiers: { older: { bps: number; maxFee: bigint }; newer: { bps: number; maxFee: bigint } } | null, fallback: { bps: number; maxFee: bigint } | null): bigint {
+  if (!tiers) return transferFeeAmount(amount, fallback)
+  const a = transferFeeAmount(amount, tiers.older), b = transferFeeAmount(amount, tiers.newer)
+  return a > b ? a : b
+}
 /** token2022.md §4 calculate_fee: 0 if bps==0 or amount==0 else min(ceil(amount*bps/10000), maximum_fee). */
 export function transferFeeAmount(amount: bigint, fee: { bps: number; maxFee: bigint } | null): bigint {
   if (!fee || fee.bps === 0 || amount === 0n) return 0n

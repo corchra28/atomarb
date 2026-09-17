@@ -15,7 +15,7 @@ import {
   type PumpPool, type PumpGlobalConfig, type PumpFeeConfig,
 } from './layout.js'
 import { isPumpPool, selectFeeSchedule, type FeeSchedule } from './fees.js'
-import { buyQuoteInput, sellBaseInput, token2022Gate, transferFeeAmount, type PoolMathState, type Token2022Gate } from './math.js'
+import { buyQuoteInput, sellBaseInput, token2022Gate, transferFeeAmount, transferFeeAmountWorstCase, type PoolMathState, type Token2022Gate } from './math.js'
 
 export const PUMPSWAP_ADAPTER_ID: AdapterId = 'pumpswap'
 
@@ -191,11 +191,12 @@ export class PumpswapAdapter implements PoolAdapter {
     }
     const feeItem = (name: string, bps: bigint, amount: bigint, recipient: string): FeeItem => ({ name, bps: Number(bps), amount, mint: d.mintB.mint, alreadyIncluded: true, recipient, source: sched.source })
     const tf = P.token2022.transferFee
+    const tfTiers = P.token2022.transferFeeTiers
     const spot = (n: bigint, dn: bigint): string => (dn === 0n ? 'inf' : (Number(n) / Number(dn)).toString())
     if (isBuy) {
       const r = buyQuoteInput(s, fees, amountIn)
       if (!r.ok) { rejectReasons.push(r.reject); return { ...base, inputMint, outputMint: d.mintA.mint, amountIn, amountOutToUser: 0n, vaultInDelta: 0n, vaultOutDelta: 0n, fees: [], priceImpactBps: 0, math: { reject: `${r.reject}: ${r.detail}` } } }
-      const baseTransferFee = transferFeeAmount(r.baseOut, tf)
+      const baseTransferFee = transferFeeAmountWorstCase(r.baseOut, tfTiers, tf)
       const amountOutToUser = r.baseOut - baseTransferFee
       const fs: FeeItem[] = [feeItem('lp_fee', sched.lpBps, r.lpFee, 'lp'), feeItem('protocol_fee', sched.protocolBps, r.protocolFee, 'protocol')]
       if (r.creatorFee > 0n) fs.push(feeItem('coin_creator_fee', sched.creatorBps, r.creatorFee, 'creator'))
@@ -220,15 +221,16 @@ export class PumpswapAdapter implements PoolAdapter {
         },
       }
     }
-    // sell: Token-2022 transfer fee is withheld on the user→vault transfer; price on the NET amount the vault receives (conservative; on-chain handling of
-    // transfer-fee base mints is UNKNOWN per token2022.md §8 — flagged as TOKEN2022_TRANSFER_FEE warning at validation)
-    const inTransferFee = transferFeeAmount(amountIn, tf)
+    // sell: pump_amm prices the curve on the GROSS `base_amount_in` argument, while Token-2022 withholds the transfer fee on the user→vault transfer,
+    // so the vault receives amountIn - fee. Verified against the real program with a real transfer-fee mint (review finding: pricing on the net amount
+    // under-quoted the leg by the fee). The curve therefore uses the gross amount and vaultInDelta carries the net.
+    const inTransferFee = transferFeeAmountWorstCase(amountIn, tfTiers, tf)
     const netIn = amountIn - inTransferFee
-    const r = sellBaseInput(s, fees, netIn)
+    const r = sellBaseInput(s, fees, amountIn)
     if (!r.ok) { rejectReasons.push(r.reject); return { ...base, inputMint, outputMint: d.mintB.mint, amountIn, amountOutToUser: 0n, vaultInDelta: 0n, vaultOutDelta: 0n, fees: [], priceImpactBps: 0, math: { reject: `${r.reject}: ${r.detail}` } } }
     const fs: FeeItem[] = [feeItem('lp_fee', sched.lpBps, r.lpFee, 'lp'), feeItem('protocol_fee', sched.protocolBps, r.protocolFee, 'protocol')]
     if (r.creatorFee > 0n) fs.push(feeItem('coin_creator_fee', sched.creatorBps, r.creatorFee, 'creator'))
-    if (inTransferFee > 0n) fs.push({ name: 'token2022_transfer_fee', bps: tf!.bps, amount: inTransferFee, mint: d.mintA.mint, alreadyIncluded: true, recipient: 'token2022_transfer_fee', source: `TransferFeeConfig ${tf!.basis}` })
+    if (inTransferFee > 0n) fs.push({ name: 'token2022_transfer_fee', bps: tf!.bps, amount: inTransferFee, mint: d.mintA.mint, alreadyIncluded: true, recipient: 'token2022_transfer_fee', source: `TransferFeeConfig ${tf!.basis}; withheld on the user→vault transfer, the curve prices the gross base_amount_in` })
     const spotP = Number(r.effQ) / Number(s.baseReserve); const execP = Number(r.userQuoteOut) / Number(amountIn)
     return {
       ...base, inputMint, outputMint: d.mintB.mint, amountIn, amountOutToUser: r.userQuoteOut, vaultInDelta: netIn, vaultOutDelta: r.quoteAmountOut - r.lpFee, fees: fs,
@@ -280,6 +282,8 @@ export class PumpswapAdapter implements PoolAdapter {
    * choice keeps the account set — and therefore stateHash / ALT sizing / local-simulation fixtures — reproducible.
    */
   buildSwapInstruction(d: DecodedPool, params: SwapIxParams): { instruction: TransactionInstruction; accountsWritten: PublicKey[] } | Unsupported {
+    if (params.amountIn <= 0n || params.amountIn + 1n > (1n << 64n) - 1n) return unsupported('AMOUNT_NOT_U64', `amountIn ${params.amountIn} outside [1, 2^64-2] (the buy path re-derives spendable = amountIn + 1)`)
+    if (params.minimumAmountOut < 0n || params.minimumAmountOut > (1n << 64n) - 1n) return unsupported('AMOUNT_NOT_U64', `minimumAmountOut ${params.minimumAmountOut} outside u64`)
     const P = pumpswapParams(d); const p = P.pool
     const baseTp = tokenProgramOf(d.mintA.program), quoteTp = tokenProgramOf(d.mintB.program)
     const userBaseAta = associatedTokenAddress(params.user, p.baseMint, baseTp), userQuoteAta = associatedTokenAddress(params.user, p.quoteMint, quoteTp)
@@ -289,6 +293,7 @@ export class PumpswapAdapter implements PoolAdapter {
     else return unsupported('USER_ACCOUNTS_NOT_ATA', `userInputAccount/userOutputAccount must be the user's ATAs (${userQuoteAta.toBase58()} / ${userBaseAta.toBase58()})`)
     if (params.amountIn <= 0n) return unsupported('ZERO_AMOUNT', String(params.amountIn))
     if (P.disableFlags & (isBuy ? DISABLE_FLAG.buy : DISABLE_FLAG.sell)) return unsupported(isBuy ? 'BUY_DISABLED' : 'SELL_DISABLED', `disable_flags=${P.disableFlags}`)
+    if (isBuy && params.minimumAmountOut === 0n) return unsupported('ZERO_MIN_OUT', 'pump_amm rejects min_base_amount_out == 0 with 6001 ZeroBaseAmount (verified on the real program); pass at least 1')
     const protocolFeeRecipient = protocolFeeRecipientFor(P.globalConfig, p.isMayhemMode)
     const protocolFeeRecipientAta = associatedTokenAddress(protocolFeeRecipient, p.quoteMint, quoteTp)
     const ccva = coinCreatorVaultAuthorityPda(p.coinCreator)

@@ -222,9 +222,9 @@ export async function localProbeExecutor(rpc: RpcClient | null, adapters: Record
   const elf = new Uint8Array(readFileSyncFs(ARB_EXECUTOR_SO_PATH))
   const user = PublicKey.unique(); const ua = userAccountsFor(user, c)
   const A = adapters[c.poolA.adapter], B = adapters[c.poolB.adapter]
-  const a = A.buildSwapInstruction(c.poolA, { user, userInputAccount: ua.baseAta, userOutputAccount: ua.interAta, amountIn: ev.quoteA.amountIn, minimumAmountOut: 0n })
+  const a = A.buildSwapInstruction(c.poolA, { user, userInputAccount: ua.baseAta, userOutputAccount: ua.interAta, amountIn: ev.quoteA.amountIn, minimumAmountOut: 1n })   // the executor re-encodes the CPI data from leg_a_min_out; 0 is refused by pump_amm (6001)
   if (isUnsupported(a)) throw new Error(`LEG_A_BUILD_${a.code}: ${a.reason}`)
-  const b = B.buildSwapInstruction(c.poolB, { user, userInputAccount: ua.interAta, userOutputAccount: ua.baseAta, amountIn: ev.quoteA.amountOutToUser, minimumAmountOut: 0n })
+  const b = B.buildSwapInstruction(c.poolB, { user, userInputAccount: ua.interAta, userOutputAccount: ua.baseAta, amountIn: ev.quoteA.amountOutToUser, minimumAmountOut: 1n })
   if (isUnsupported(b)) throw new Error(`LEG_B_BUILD_${b.code}: ${b.reason}`)
   const legA: ExecutorLeg = legFromInstruction(c.poolA.adapter === 'raydium_cpmm' ? LEG_KIND.RAYDIUM_CPMM_SWAP_BASE_INPUT : LEG_KIND.PUMPSWAP_BUY_EXACT_QUOTE_IN, a.instruction)
   const legB: ExecutorLeg = legFromInstruction(c.poolB.adapter === 'raydium_cpmm' ? LEG_KIND.RAYDIUM_CPMM_SWAP_BASE_INPUT : LEG_KIND.PUMPSWAP_SELL, b.instruction)
