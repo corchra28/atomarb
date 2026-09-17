@@ -38,7 +38,10 @@ const testLine = /total=(\d+) passed=(\d+) failed=(\d+) skipped=(\d+)/.exec(tr)
 // population
 const pop = existsSync('reports') ? readdirSync('reports').filter(f => f.startsWith('population_') && f.endsWith('.json')).sort().pop() : undefined
 const popJson = pop ? JSON.parse(readFileSync(join('reports', pop), 'utf8')) as Record<string, unknown> : null
-const popSum = (popJson?.['summary'] ?? popJson?.['counts'] ?? popJson) as Record<string, unknown> | null
+const popSum = (popJson?.['counts'] ?? null) as Record<string, unknown> | null
+const popShort = (popJson?.['shortlist'] ?? null) as { pools?: unknown[]; routes?: unknown[] } | unknown[] | null
+const shortlistPools = Array.isArray(popShort) ? popShort.length : (popShort?.pools?.length ?? (existsSync('data/discovery/shortlist.json') ? (JSON.parse(readFileSync('data/discovery/shortlist.json', 'utf8')) as unknown[]).length : 'UNKNOWN'))
+const shortlistRoutes = Array.isArray(popJson?.['shortlistRoutes']) ? (popJson['shortlistRoutes'] as unknown[]).length : 'UNKNOWN'
 // gaps
 const gap = existsSync('reports') ? readdirSync('reports').filter(f => f.startsWith('route_gaps_') && f.endsWith('.json')).sort().pop() : undefined
 const gapJson = gap ? JSON.parse(readFileSync(join('reports', gap), 'utf8')) as { summary: Record<string, unknown> } : null
@@ -54,8 +57,9 @@ const verdict = counts.candidates === 0 && (c['circuitsEvaluated'] ?? 0) > 0 ? '
 out.push('IMPLEMENTATION_STATUS       = MVP COMPLETE (adapters, discovery, routing/sizing, accounting, simulation, executor, CLI, reports)')
 out.push(`ADAPTERS_IMPLEMENTED        = ${adapters.join(', ')}`)
 out.push(`ADAPTERS_INTEGRATION_TESTED = ${integrationTested.join(', ')} (real mainnet ELFs executed in LiteSVM)`)
-out.push(`DISCOVERED_POOLS            = raydium_cpmm ${popSum?.['raydiumPools'] ?? popSum?.['raydium_pools'] ?? 'UNKNOWN'} / pumpswap ${popSum?.['pumpswapPools'] ?? popSum?.['pumpswap_pools'] ?? 'UNKNOWN'} (API + local inventory, unverified until snapshot)`)
-out.push(`ELIGIBLE_ROUTES             = shortlist ${popSum?.['shortlistPools'] ?? 'UNKNOWN'} pools / ${popSum?.['shortlistRoutes'] ?? 'UNKNOWN'} routes; validated on-chain in the run: ${summary['validPools'] ?? 'NOT_RUN'} pools / ${summary['routes'] ?? 'NOT_RUN'} routes`)
+out.push(`DISCOVERED_POOLS            = raydium_cpmm ${popSum?.['raydium_cpmm_wsol_pools'] ?? 'UNKNOWN'} (API, ${popSum?.['raydium_mints'] ?? '?'} mints) / pumpswap ${popSum?.['pumpswap_wsol_pools'] ?? 'UNKNOWN'} (local inventory 2026-09-04, ${popSum?.['pumpswap_mints'] ?? '?'} mints); both unverified until snapshot`)
+out.push(`POOL_INTERSECTION           = cross-adapter mints ${popSum?.['cross_adapter_mints'] ?? '?'} (routes ${popSum?.['routes_cross_adapter'] ?? '?'}) | pumpswap mints with >=2 pools ${popSum?.['pumpswap_mints_with_2plus'] ?? '?'} (routes ${popSum?.['routes_pumpswap_x2'] ?? '?'}) | raydium mints with >=2 pools ${popSum?.['raydium_mints_with_2plus'] ?? '?'} (routes ${popSum?.['routes_raydium_x2'] ?? '?'}); routes truncated by per-mint cap ${popSum?.['routes_truncated_by_per_mint_cap'] ?? '?'}`)
+out.push(`ELIGIBLE_ROUTES             = shortlist ${shortlistPools} pools / ${shortlistRoutes} routes; validated on-chain in the run: ${summary['validPools'] ?? 'NOT_RUN'} pools / ${summary['routes'] ?? 'NOT_RUN'} routes (dropped ${Array.isArray(summary['dropped']) ? (summary['dropped'] as unknown[]).length : 'NOT_RUN'})`)
 out.push(`QUOTE_COUNT                 = ${c['circuitsEvaluated'] ?? 0} circuit evaluations (each over the sizing grid) in run ${runId ?? 'NONE'}${gapJson ? `; route-gap diagnostic: ${gapJson.summary['circuits']} circuits, best ${gapJson.summary['bestBps']} bps` : ''}`)
 out.push(`ATOMIC_SIM_ATTEMPTED        = mainnet ${counts.mainnetSim + simMainnet} | local real-program ${counts.localOk + simLocalOk} | executor-guarded ${execRuns.length}`)
 out.push(`ATOMIC_SIM_SUCCEEDED        = mainnet ${counts.mainnetOk + simMainnetOk} | local real-program ${counts.localOk + simLocalOk} (quote matched exactly: ${counts.localMatch + simLocalMatch}) | executor passed ${execRuns.filter(r => r.ok).length}, reverted by guard ${execRuns.filter(r => r.executorError === 'ProfitBelowMin').length}`)
