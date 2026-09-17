@@ -1,10 +1,10 @@
 {
- "generatedUtc": "2026-09-17T18:21:51.762Z",
+ "generatedUtc": "2026-09-17T19:06:30.757Z",
  "mutations": 7,
  "caught": 7,
  "holes": [],
  "workingTreeCleanAfterRun": false,
- "dirty": "M tests/integration/circuit_local_program.test.ts\n?? reports/fault_injection.json\n?? scripts/fault_injection.ts",
+ "dirty": "M TEST_REPORT.md\n?? reports/route_gaps_2026-09-17T19-05-29-046Z.json\n?? reports/route_gaps_2026-09-17T19-05-29-046Z.md",
  "results": [
   {
    "id": "pumpswap_drop_creator_fee",

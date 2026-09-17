@@ -19,7 +19,21 @@
 
 ## Economic result
 
-See the terminal block in `TERMINAL_SUMMARY.txt` and `reports/runs/<runId>/RUN_REPORT.md`. On the population actually measured, every circuit is negative at every size: the executable price gap between two pools of the same mint is smaller than the fees those two pools charge. This is a result about **this** population in **this** window, not a proof that Solana atomic arbitrage is impossible.
+**NO_VERIFIED_EDGE.** Two independent measurements say the same thing.
+
+*The 60-minute prospective run* (`reports/runs/shadow_2026-09-17T18-09-25-841Z_32a7b818/`): 50 pools validated on-chain, 22 routes, 221 polls, 4,860 route snapshots, **17,676 circuit evaluations across the whole sizing grid, zero positive**. It stopped on its 10,000-request budget at 55 minutes, with 276 HTTP 429s from the public endpoint and no data gaps (`snapshot_incomplete = 0`, `errors = 0`). Decision latency was small compared to a slot: snapshot p50 349 ms / p95 1,409 ms, quoting p50 17 ms, state age at the decision p50 3 ms.
+
+*The one-snapshot route diagnostic* (`reports/route_gaps_*.md`, 80 circuits, 44 requests) says why:
+
+| measure | value |
+|---|---|
+| circuits with positive gross PnL at any size | 1 of 80 |
+| that circuit's best gross PnL | 986 lamports at 0.0001 SOL (network fee alone: 9,000 lamports) |
+| the same circuit one size up (0.001 SOL) | −105,506 lamports |
+| median best gross PnL across circuits | −420 bps |
+| routes whose thinner pool holds < 0.01 SOL | 54 of 80 |
+
+The reason is liquidity, not fees: the cross-adapter intersection pairs a normal Raydium pool with a PumpSwap pool holding a few thousandths of a SOL, so price impact swamps any gap above dust size. Where both sides are deep, the gap is smaller than the fees. This is a result about **this** population in **this** window, not a proof that Solana atomic arbitrage is impossible.
 
 ## The next test that could change the conclusion
 

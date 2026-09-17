@@ -1,25 +1,25 @@
-# TEST_REPORT (generated 2026-09-17T18:25:45.003Z)
+# TEST_REPORT (generated 2026-09-17T19:06:07.945Z)
 
-vitest exit code: 0; total=237 passed=235 failed=0 skipped=2
+vitest exit code: 0; total=263 passed=261 failed=0 skipped=2
 
 | category | files | pass | fail | skipped |
 |---|---|---|---|---|
-| local_real_program_integration | 4 | 36 | 0 | 0 |
+| local_real_program_integration | 4 | 42 | 0 | 0 |
 | network | 1 | 0 | 0 | 1 |
-| unit | 21 | 199 | 0 | 1 |
+| unit | 25 | 219 | 0 | 1 |
 
 mainnet_simulation tests: none in the suite (mainnet simulations are produced by the simulate/shadow commands and recorded in reports/runs; they are not unit tests).
 
 ## Rust (programs/arb_executor, cargo test)
 
 ```
-cargo test (host): 22 passed, 0 failed across params / guard / legs / constants / token suites
+cargo test (host): 23 passed, 0 failed across params / guard / legs / constants / token suites
 running 0 tests
 test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
 running 4 tests
 test result: ok. 4 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
-running 4 tests
-test result: ok. 4 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+running 5 tests
+test result: ok. 5 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
 running 9 tests
 test result: ok. 9 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
 running 4 tests

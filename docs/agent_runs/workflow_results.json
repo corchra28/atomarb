@@ -1,5 +1,5 @@
 {
- "captured_utc": "2026-09-17T18:55:56.130161+00:00",
+ "captured_utc": "2026-09-17T19:07:19.551943+00:00",
  "wf_1b386fa2-b51": {
   "agents": [
    {
@@ -2541,6 +2541,61 @@
       "suggested_fix": "Either add `const WSOL_MINT` to src/constants.rs and require `*base_mint.key == WSOL_MINT` (new error code, and the lamport guard in finding 1 then becomes sound), or change the table row to \"base mint \u2014 NOT checked against WSOL; the caller chooses the denomination, and min_profit is denominated in it\"."
      }
     ]
+   },
+   {
+    "findings": [
+     {
+      "severity": "MAJOR",
+      "file": "/home/rares/trading/sol/atomarb/src/adapters/pumpswap/math.ts",
+      "claim": "token2022Gate picks the Token-2022 transfer fee with the larger BASIS POINTS (line 148: `newer.bps > older.bps || (newer.bps === older.bps && newer.maxFee >= older.maxFee)`) and calls it \"conservative\" (line 145 comment and the `basis: max of older.../newer...` string). The fee is min(ceil(amount*bps/10000), maximum_fee), so when a scheduled fee update LOWERS bps and RAISES maximum_fee, the larger-bps entry is the SMALLER fee at real trade sizes. The adapter then under-charges the transfer fee and OVERSTATES Quote.amountOutToUser on a buy (and overstates the curve input, hence the WSOL out, on a sell). validatePool only warns (TOKEN2022_TRANSFER_FEE), so such a pool is quoted and traded.",
+      "evidence": "/home/rares/trading/sol/atomarb/.scratch/review_pumpswap/04_transfer_fee_pick.ts (real boosted fixture pool + REAL Token-2022 program in LiteSVM, clock epoch 1036). TransferFeeConfig appended to the real Token-2022 base mint: older={epoch 0, max 1000, 100bps}, newer={epoch 5, max 1e18, 50bps}, so Token-2022 get_epoch_fee applies NEWER at epoch 1036 (docs/sources/token2022.md section 4). Output: gate pick = {bps:100, maxFee:1000, basis:'older (max of older=100bps/newer=50bps; adapter has no Clock)'}; validatePool ok=true warnings=[TOKEN2022_TRANSFER_FEE,BOOST_POOL]; BUY 10,000,000 lamports -> pool releases 5,250,537 base, adapter fee=1000 -> amountOutToUser=5,249,537; the REAL Token-2022 transfer_checked(5,250,537) at epoch 1036 withheld 26,253 and the destination received 5,224,284. Quote OVERSTATED by 25,253 base units (0.48% of the leg). Same direction on the sell leg: adapter net-to-vault 999,999,000 vs truth 995,000,000 on a 1,000,000,000 base sell.",
+      "reproduced": true,
+      "suggested_fix": "Do not pick an entry by bps. Either (a) evaluate both fee functions for the actual amount and take the larger: fee = max(min(ceil(a*older.bps/1e4), older.maxFee), min(ceil(a*newer.bps/1e4), newer.maxFee)) - the true worst case without a Clock - or (b) derive the epoch from the snapshot (RawAccount.contextSlot / a fetched Clock) and apply get_epoch_fee exactly, rejecting the pool when older and newer disagree and the epoch is unknown."
+     },
+     {
+      "severity": "MINOR",
+      "file": "/home/rares/trading/sol/atomarb/src/adapters/pumpswap/adapter.ts",
+      "claim": "buildSwapInstruction accepts minimumAmountOut = 0 on the BUY side and emits a buy_exact_quote_in instruction that the real pump_amm program ALWAYS rejects with custom error 6001 ZeroBaseAmount (buy.rs:599). Nothing in the adapter flags it; a caller asking for 'no slippage floor' silently gets a guaranteed-failing transaction. src/simulation/probe.ts:208-210 builds exactly that (harmless today only because the Rust executor re-encodes the leg data from its own leg_a_min_out).",
+      "evidence": "/home/rares/trading/sol/atomarb/.scratch/review_pumpswap/02_min_out_zero.ts against the REAL ELF: [canonical|boosted|noncanonical] BUY min_base_amount_out=0 -> custom=6001 'AnchorError thrown in programs/pump-amm/src/instructions/swap/buy.rs:599. Error Code: ZeroBaseAmount'; the identical leg with min=1 succeeds (out=50,313,230,241 / 5,250,537 / 18,855,623,888). SELL with min_quote_amount_out=0 succeeds on all three pools, so the asymmetry is real.",
+      "reproduced": true,
+      "suggested_fix": "In buildSwapInstruction return unsupported('ZERO_MIN_OUT', ...) (or clamp to 1) when isBuy && params.minimumAmountOut === 0n, and record the program-side rule next to IX_DISC.buyExactQuoteIn."
+     },
+     {
+      "severity": "MINOR",
+      "file": "/home/rares/trading/sol/atomarb/src/adapters/pumpswap/adapter.ts",
+      "claim": "On a Token-2022 base mint with a real transfer fee, the sell leg is priced on the NET amount the vault receives (lines 223-227: netIn = amountIn - inTransferFee, then sellBaseInput(s, fees, netIn)), but the real pump_amm program prices the curve on the GROSS base_amount_in argument. The quote is therefore systematically low by roughly the transfer fee - safe direction, but the adapter loses the byte-exactness it has everywhere else and under-detects arbitrage on such pools. The code comment calls the on-chain behaviour UNKNOWN; it is now determined.",
+      "evidence": "/home/rares/trading/sol/atomarb/.scratch/review_pumpswap/07_t22_fee_pool.ts: real boosted pool, real Token-2022 base mint given TransferFeeConfig 100bps (older == newer, so the epoch cannot matter) and the pool base vault given the TransferFeeAmount extension. BUY: quote out 5,198,031 == chain userBase 5,198,031 (EXACT) and applySwap's base reserve matches the chain exactly. SELL 5,198,031 base: quote out 9,742,361 vs chain userQuote 9,840,769 (chain pays 98,408 MORE, i.e. it used the gross base_amount_in); vault received 5,146,050 == quote.vaultInDelta, so the vault side is modelled correctly.",
+      "reproduced": true,
+      "suggested_fix": "Price the curve on the gross amountIn (the value the instruction argument carries) while keeping vaultInDelta = amountIn - transferFee, or keep the conservative model but document it as a deliberate under-quote and record the exact gap in Quote.math now that the program's behaviour is known."
+     },
+     {
+      "severity": "MINOR",
+      "file": "/home/rares/trading/sol/atomarb/src/adapters/pumpswap/adapter.ts",
+      "claim": "applySwap only checks q.pool == d.address and q.rejectReasons; it never compares q.stateHash with d.stateHash although both fields exist. A stale or duplicated quote is applied silently and yields a pool state the chain can never reach, which is then quoted as if it were real.",
+      "evidence": "/home/rares/trading/sol/atomarb/.scratch/review_pumpswap/10_guards.ts part (a): one quote at d0 (10,000,000 lamports); applySwap(applySwap(d0,q),q) was accepted despite quote.stateHash=fc3497db225f vs d1.stateHash=5e52b9f1947c; model base=649,496,287,148,823 vs the chain after executing the same instruction twice base=649,496,294,942,821 -> divergence 7,793,998 base units. No in-repo caller does this today (routing/circuit.ts re-quotes on the returned state), so the impact is latent.",
+      "reproduced": true,
+      "suggested_fix": "Return unsupported('QUOTE_STATE_MISMATCH', ...) when q.stateHash !== d.stateHash (the raydium adapter has the same gap, so a shared guard would cover both)."
+     },
+     {
+      "severity": "MINOR",
+      "file": "/home/rares/trading/sol/atomarb/src/adapters/pumpswap/adapter.ts",
+      "claim": "No u64 bound anywhere in the quoting/building path: quoteExactIn returns a normal Quote for amountIn = u64::MAX, and buildSwapInstruction throws a raw RangeError from writeU64LE (src/util/bytes.ts:34) for amounts >= 2^64 instead of returning Unsupported, violating the PoolAdapter contract that unsupported cases are typed Unsupported values.",
+      "evidence": "/home/rares/trading/sol/atomarb/.scratch/review_pumpswap/10_guards.ts part (c): quoteExactIn(amountIn = 18446744073709551615) -> Quote(amountIn=18446744073709551615, out=649596909063066, rejects=[]); sell buildSwapInstruction with amountIn = 2^64 -> 'THREW RangeError: u64 out of range: 18446744073709551616'.",
+      "reproduced": true,
+      "suggested_fix": "Reject amountIn - and the re-derived spendable budget, which is amountIn+1 - outside [1, 2^64-1] with unsupported('AMOUNT_NOT_U64', ...) in quoteExactIn and buildSwapInstruction."
+     },
+     {
+      "severity": "MINOR",
+      "file": "/home/rares/trading/sol/atomarb/src/adapters/pumpswap/adapter.ts",
+      "claim": "quoteExactIn and buildSwapInstruction never consult validatePool, so a DecodedPool that validatePool rejects is still priced and still yields a complete instruction. The only thing keeping bad pools out of the engine is the status==='OK' filter in src/state/snapshot.ts and the CLIs; any future caller that quotes a decoded pool directly gets a price computed from an attacker-chosen account balance.",
+      "evidence": "/home/rares/trading/sol/atomarb/.scratch/review_pumpswap/10_guards.ts part (b): pool.pool_quote_token_account repointed at the protocol-fee-recipient WSOL ATA inflated to 500,000,000,000 lamports -> validatePool ok=false rejects=[QUOTE_VAULT_NOT_ATA, QUOTE_VAULT_OWNER], yet quoteExactIn returns out=12,837,627,459 with rejectReasons=[] (reserveB=500,000,000,000) and buildSwapInstruction builds a 26-account instruction.",
+      "reproduced": true,
+      "suggested_fix": "Either carry a validated flag on DecodedPool (set when decodeSnapshot+validatePool succeed) and refuse pools without it in quoteExactIn/buildSwapInstruction, or re-run the cheap structural checks (vault == ATA(pool, mint, program), quote == WSOL, pool PDA) inside quoteExactIn."
+     }
+    ],
+    "target": "pumpswap adapter in /home/rares/trading/sol/atomarb (src/adapters/pumpswap/{adapter,math,fees,layout,index}.ts, tests/unit/pumpswap_*.test.ts, tests/integration/pumpswap_local_program.test.ts, scripts/fetch_fixtures_pumpswap.ts) reviewed against docs/sources/pumpswap.md (incl. section 11) and the src/adapters/types.ts contract",
+    "tests_run": "(1) `npx tsc -p tsconfig.json --noEmit` -> no output, TSC_EXIT=0 (re-run at the end of the review; still 0 after a parallel worker touched src/adapters/types.ts, src/state/token.ts and the raydium files - no pumpswap file changed during the review).\n(2) `npx vitest run tests/unit/pumpswap_{adapter,fees,layout,math,sdk_crosscheck}.test.ts tests/integration/pumpswap_local_program.test.ts` -> \" Test Files  6 passed (6)\" / \"      Tests  56 passed (56)\" / \"   Duration  2.19s\". The integration suite really runs (not skipped) and really executes the mainnet ELFs: tests/fixtures/programs/pAMMBay6...so sha256 feb2ec72199f35999bbfd26ada811a37d297464ab265c78593b2d4717d7d42b5 and pfeeUxB6...so sha256 4a6e66093305f8a7cb9ca6e4f47c7de726b590dd2be0d5413ce408feba27c8a5 match pumpswap.md section 11 exactly, both .so files are git-tracked (so skipIf cannot silently hide them in CI), and the logs carry genuine program output (\"AnchorError thrown in programs/pump-amm/src/instructions/swap/buy.rs:700 ... BuySlippageBelowMinBaseAmountOut\", pfee CPI \"GetFeesWithQuoteMint\" with return data). Its assertions are exact toBe() equalities on user/pool/protocol/buyback/creator deltas, not tolerances.\n(3) `cargo test` in programs/arb_executor with PATH=\"$HOME/.cargo/bin:$HOME/.local/share/solana/install/active_release/bin:$PATH\" -> 7 test binaries, every one \"test result: ok\": 9 passed; 4 passed (x3); 1 passed; 0 passed (x2); 0 failed overall.\n(4) Twelve adversarial probes written under /home/rares/trading/sol/atomarb/.scratch/review_pumpswap/ (nothing in the repo modified, no commits, zero RPC requests, no keys, nothing sent): 00_info, 01/01b fee-tier market-cap basis, 02_min_out_zero, 03_creator_fee_override, 04_transfer_fee_pick, 05_budget_scan, 06_boost_cap, 07_t22_fee_pool, 08_holder_reward_cashback, 09_mayhem, 10_guards, 11_creator_bps_over_max.\nWHAT THE PROBES CONFIRMED CORRECT (no defect found): fee tiers are selected from the EFFECTIVE quote reserve (raw vault + virtual) - decided against the real program with straddle states where raw and effective land in different tiers (tier5 vs tier0 and tier11 vs tier10; the pump-fees CPI return data matched the effective basis both times and all deltas were exact), which answers pumpswap.md Open question 6. Mayhem pools use the fixed 1e15 circulating supply (tier0-vs-tier1 straddle, exact match) and the reserved_fee_recipient branch is accepted on-chain. The per-pool creator_fee_bps override IS applied by pump_amm on a WSOL-quoted pool (300/123 bps -> creator vault deltas 288,601/120,376 exactly as quoted) and is NOT clamped to max_configurable_creator_fee_bps (5,000 and 9,999 bps also matched). The BOOST cap is byte-exact: the first base_in the adapter rejects (173,654,388,036) is the first the program rejects with 6063 InsufficientRealQuoteReserves (sell.rs:158), and every accepted size below it paid exactly the quoted amount. 60,000 sizes across the three pools produced zero violations of debit <= budget, of amountIn == vaultInDelta + protocol + creator (no fee double-count or omission; the lp fee stays in the pool, buyback is carved out of the protocol fee), of amountOutToUser + protocol + creator == vaultOutDelta on sells, or of the no-profit roundtrip; the spendable_quote_in re-derivation reproduced the chain exactly on gap budgets for ALL THREE pools (canonical 7,320,376 / 17,536,501; boosted and noncanonical 1,335,997 / 3,360,051 / 5,384,105). is_holder_reward=1 and is_cashback_coin=1 change neither the debit nor the output (holder_rewards mirrors the creator fee, cashback re-routes it), and the cashback remaining-account ordering (27 accounts) executes on the real program. Unknown pool / GlobalConfig / FeeConfig lengths and discriminators fail closed with UNKNOWN_LAYOUT.",
+    "verdict": "ACCEPT_WITH_FIXES"
    }
   ],
   "events": [
