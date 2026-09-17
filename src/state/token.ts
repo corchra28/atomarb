@@ -61,8 +61,9 @@ export function parseMint(acc: RawAccount): MintInfo {
       // TransferFeeConfig: authority(32) withdraw_authority(32) withheld_amount(8) older{epoch u64, max_fee u64, bps u16} newer{epoch u64, max_fee u64, bps u16}
       const older = { epoch: readU64LE(tf.data, 72), maxFee: readU64LE(tf.data, 80), bps: readU16LE(tf.data, 88) }
       const newer = { epoch: readU64LE(tf.data, 90), maxFee: readU64LE(tf.data, 98), bps: readU16LE(tf.data, 106) }
+      if (newer.bps > 10_000 || older.bps > 10_000) throw new Error(`MINT_TRANSFER_FEE_BPS_INVALID ${acc.pubkey.toBase58()} older=${older.bps} newer=${newer.bps} (> 10000)`)
       info.transferFee = { bps: newer.bps, maxFee: newer.maxFee, epoch: newer.epoch }
-      ;(info as MintInfo & { transferFeeOlder?: unknown }).transferFeeOlder = older
+      info.transferFeeOlder = { bps: older.bps, maxFee: older.maxFee, epoch: older.epoch }
     }
   }
   return info

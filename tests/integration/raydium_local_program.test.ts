@@ -66,6 +66,67 @@ const feesOf = (p: RaydiumCpmmParams) => [p.pool.protocolFeesToken0, p.pool.prot
 describe.skipIf(!haveElf)('LOCAL_REAL_PROGRAM_SIMULATION raydium_cpmm swap_base_input against the real mainnet ELF', () => {
   it('program fixture provenance is intact', () => { const p = loadProgram(); expect(p.elf.length).toBe(793_824); expect(p.sha256).toBe('36537be95ba356056fa38b2847d928078c68bf6cd79b875c140e157e6452cc71') })
 
+  // Review finding (MAJOR): no live pool has enable_creator_fee = true, so the creator-fee branch — the one the SDK gets wrong (§5.6) — was never
+  // executed by the real program. Patch the flag and the position into a fixture pool (those bytes are plain state, the pool is not a PDA over them)
+  // and prove the adapter's quote still equals what the real program does, in all three creator_fee_on positions and both directions.
+  describe.each([0, 1, 2])('creator fee enabled, creator_fee_on=%i (patched fixture, real program)', on => {
+    const id = 'Q2sPHPdUWFMg7M7wwrQKLrn619cAucfRsmhVJffodSp'
+    it('quote equals the on-chain result exactly in both directions', () => {
+      const file = loadFixture(`${DIR}${id}.json`)
+      const patched: FixtureFile = { ...file, accounts: file.accounts.map(a => {
+        if (a.note !== 'pool_state') return a
+        const d = new Uint8Array(Buffer.from(a.data_base64, 'base64'))
+        d[389] = on; d[390] = 1                                   // creator_fee_on, enable_creator_fee (layout §2)
+        return { ...a, data_base64: Buffer.from(d).toString('base64') }
+      }) }
+      const { svm, slot } = makeSvm(patched)
+      const d0 = adapter.decodeSnapshot(ref(id), bundleFromFixture(patched)); if (isUnsupported(d0)) throw new Error(d0.reason)
+      const p0 = d0.params as RaydiumCpmmParams
+      expect(p0.pool.enableCreatorFee).toBe(true); expect(p0.pool.creatorFeeOn).toBe(on); expect(p0.config.creatorFeeRate).toBeGreaterThan(0n)
+      const v = adapter.validatePool(d0); expect(v.ok, JSON.stringify(v.rejects)).toBe(true)
+      expect(v.warnings.some(w => w.code === 'CREATOR_FEE_ENABLED')).toBe(true)
+      const wsolIsA = d0.mintA.mint.equals(WSOL_MINT)
+      const tokenMint = wsolIsA ? d0.mintB : d0.mintA
+      const tokenProgram = tokenMint.program === 'spl_token' ? TOKEN_PROGRAM_ID : TOKEN_2022_PROGRAM_ID
+      const user = Keypair.generate().publicKey
+      const wsolAta = associatedTokenAddress(user, WSOL_MINT, TOKEN_PROGRAM_ID), outAta = associatedTokenAddress(user, tokenMint.mint, tokenProgram)
+      const WSOL_START = 500_000_000n
+      svm.fundSystemAccount(user, 1_000_000_000n, 'test user')
+      svm.fundTokenAccount(wsolAta, WSOL_MINT, user, WSOL_START, TOKEN_PROGRAM_ID, 'user WSOL ATA', true)
+      svm.fundTokenAccount(outAta, tokenMint.mint, user, 0n, tokenProgram, 'user output ATA (empty)')
+      const amountIn = 100_000_000n
+      const q1 = adapter.quoteExactIn(d0, WSOL_MINT, amountIn); if (isUnsupported(q1)) throw new Error(q1.reason)
+      expect(q1.rejectReasons).toEqual([])
+      const creatorItem = q1.fees.find(f => f.name === 'creator_fee')
+      const feeOnInput = on === 0 || (on === 1 && wsolIsA) || (on === 2 && !wsolIsA)
+      expect(creatorItem, 'a creator fee item must be reported').toBeDefined()
+      expect(creatorItem!.amount).toBeGreaterThan(0n)
+      expect(creatorItem!.mint.equals(feeOnInput ? WSOL_MINT : tokenMint.mint)).toBe(true)   // §5.3 step 4: position depends on creator_fee_on AND direction
+      const built = adapter.buildSwapInstruction(d0, { user, userInputAccount: wsolAta, userOutputAccount: outAta, amountIn, minimumAmountOut: q1.amountOutToUser, inputMint: WSOL_MINT } as RaydiumSwapIxParams)
+      if (isUnsupported(built)) throw new Error(built.reason)
+      const r1 = svm.execute(withRandomSig(buildV0(user, svm.svm.latestBlockhash(), [built.instruction]).tx))
+      expect(r1.ok, r1.err ?? '').toBe(true)
+      expect(svm.tokenAmount(outAta)).toBe(q1.amountOutToUser)          // the program agrees with the ceil(total)+floor-split rule
+      expect(svm.tokenAmount(wsolAta)).toBe(WSOL_START - amountIn)
+      // the creator fee lands in the fee counter of the correct token, exactly as applySwap predicted
+      const predicted = adapter.applySwap(d0, q1); if (isUnsupported(predicted)) throw new Error(predicted.reason)
+      const d1 = adapter.decodeSnapshot(ref(id), bundleFromSvm(svm, d0.dependsOn, slot, d0.snapshot.receivedAtUtc)); if (isUnsupported(d1)) throw new Error(d1.reason)
+      expect(feesOf(d1.params as RaydiumCpmmParams)).toEqual(feesOf(predicted.params as RaydiumCpmmParams))
+      const creatorCounters = wsolIsA ? [(d1.params as RaydiumCpmmParams).pool.creatorFeesToken0, (d1.params as RaydiumCpmmParams).pool.creatorFeesToken1] : [(d1.params as RaydiumCpmmParams).pool.creatorFeesToken1, (d1.params as RaydiumCpmmParams).pool.creatorFeesToken0]
+      expect(feeOnInput ? creatorCounters[0] : creatorCounters[1]).toBe(creatorItem!.amount)
+      // the tight bound still holds with the creator fee on
+      const tight = adapter.buildSwapInstruction(d1, { user, userInputAccount: outAta, userOutputAccount: wsolAta, amountIn: q1.amountOutToUser, minimumAmountOut: 0n, inputMint: tokenMint.mint } as RaydiumSwapIxParams)
+      if (isUnsupported(tight)) throw new Error(tight.reason)
+      const q2 = adapter.quoteExactIn(d1, tokenMint.mint, q1.amountOutToUser); if (isUnsupported(q2)) throw new Error(q2.reason)
+      const back = adapter.buildSwapInstruction(d1, { user, userInputAccount: outAta, userOutputAccount: wsolAta, amountIn: q1.amountOutToUser, minimumAmountOut: q2.amountOutToUser, inputMint: tokenMint.mint } as RaydiumSwapIxParams)
+      if (isUnsupported(back)) throw new Error(back.reason)
+      const r2 = svm.execute(withRandomSig(buildV0(user, svm.svm.latestBlockhash(), [back.instruction]).tx))
+      expect(r2.ok, r2.err ?? '').toBe(true)
+      expect(svm.tokenAmount(wsolAta)).toBe(WSOL_START - amountIn + q2.amountOutToUser)   // EXACT credit on the reverse direction too
+      expect(q2.amountOutToUser).toBeLessThan(amountIn)                                    // still no roundtrip profit
+    }, 120_000)
+  })
+
   describe.each(POOL_FILES.map(f => f.replace('.json', '')))('pool %s', id => {
     const file = loadFixture(`${DIR}${id}.json`)
     it('WSOL → token executes with the quote as minimum_amount_out; balances change by EXACTLY the quote; then swap back with no profit', () => {

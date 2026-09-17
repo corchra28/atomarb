@@ -64,8 +64,9 @@ export interface MintInfo {
   mintAuthority: PublicKey | null
   /** Token-2022 extension type ids present on the mint (empty for SPL Token) */
   extensions: number[]
-  /** parsed TransferFeeConfig if present */
+  /** parsed TransferFeeConfig if present: the NEWER tier, plus the OLDER tier it replaces (Token-2022 applies `older` until `newer.epoch`) */
   transferFee?: { bps: number; maxFee: bigint; epoch: bigint } | undefined
+  transferFeeOlder?: { bps: number; maxFee: bigint; epoch: bigint } | undefined
 }
 
 export interface TokenAccountInfo {

@@ -54,7 +54,7 @@ export interface RaydiumCpmmAdapterOptions { epochSchedule?: EpochSchedule; prog
 
 function transferFeeView(m: MintInfo): M.TransferFeeConfigView | undefined {
   if (m.program !== 'token_2022' || !m.transferFee) return undefined
-  const older = (m as MintInfo & { transferFeeOlder?: { epoch: bigint; maxFee: bigint; bps: number } }).transferFeeOlder
+  const older = m.transferFeeOlder   // declared on MintInfo; when absent Token-2022 had no earlier tier, so older == newer
   return { newer: { epoch: m.transferFee.epoch, maxFee: m.transferFee.maxFee, bps: m.transferFee.bps }, older: older ?? { epoch: m.transferFee.epoch, maxFee: m.transferFee.maxFee, bps: m.transferFee.bps } }
 }
 const mintFeeView = (m: MintInfo, tf: M.TransferFeeConfigView | undefined): M.MintFeeView => ({ program: m.program, transferFee: tf })
@@ -152,13 +152,19 @@ export class RaydiumCpmmAdapter implements PoolAdapter {
       if (m.program === 'token_2022') {
         const bad = m.extensions.filter(e => !ALLOWED_TOKEN_2022_EXTENSIONS.has(e))
         if (bad.length) rej('TOKEN2022_EXTENSION', `${side} ${m.mint.toBase58()} has disallowed Token-2022 extensions [${bad.join(',')}] (T22 §7.1; SupportMintAssociated whitelist not modelled)`)
-        if (m.transferFee && m.transferFee.bps > 0) warn('TRANSFER_FEE', `${side} transfer fee ${m.transferFee.bps} bps (max ${m.transferFee.maxFee}) from epoch ${m.transferFee.epoch}; quoting uses epoch ${p.epoch}`)
+        const view = transferFeeView(m)
+        if (view) {
+          const active = M.epochFeeTier(view, p.epoch)          // the tier the program will actually apply at this epoch
+          if (active.bps > 0) warn('TRANSFER_FEE', `${side} transfer fee ${active.bps} bps (max ${active.maxFee}) active at epoch ${p.epoch}`)
+          if (view.newer.epoch > p.epoch) warn('TRANSFER_FEE_PENDING', `${side} a new transfer fee of ${view.newer.bps} bps (max ${view.newer.maxFee}) takes effect at epoch ${view.newer.epoch} (now ${p.epoch})`)
+        }
       }
       if (m.freezeAuthority && !m.mint.equals(WSOL_MINT)) warn('FREEZE_AUTHORITY', `${side} ${m.mint.toBase58()} has a freeze authority`)
     }
     if (d.reserveA === 0n || d.reserveB === 0n) rej('ZERO_RESERVE', `reserves ${d.reserveA}/${d.reserveB} (fee-adjusted) — constant product undefined`)
     if (d.mintA.decimals !== st.mint0Decimals || d.mintB.decimals !== st.mint1Decimals) warn('DECIMALS_MISMATCH', 'mint decimals differ from pool snapshot (transfer_checked uses the live mint)')
     if (cfg.tradeFeeRate + cfg.creatorFeeRate >= L.FEE_RATE_DENOMINATOR) rej('FEE_RATE_INVALID', `trade+creator rate ${cfg.tradeFeeRate + cfg.creatorFeeRate} >= 1e6`)
+    if (cfg.protocolFeeRate + cfg.fundFeeRate > L.FEE_RATE_DENOMINATOR) rej('FEE_RATE_INVALID', `protocol+fund rate ${cfg.protocolFeeRate + cfg.fundFeeRate} > 1e6 (update_amm_config invariant); the LP share would be negative`)
     if (st.enableCreatorFee) warn('CREATOR_FEE_ENABLED', `creator_fee_rate ${cfg.creatorFeeRate} (1e-6) on=${st.creatorFeeOn}`)
     if (st.paddingNonZero) warn('PADDING_NONZERO', 'PoolState padding bytes are non-zero (layout may have grown)')
     if (cfg.padding0 !== 0n) warn('CONFIG_PADDING_NONZERO', `amm_config bytes 116..124 = ${cfg.padding0} (SDK calls this creatorFeeShareRate; not on mainnet per §10)`)
@@ -180,7 +186,8 @@ export class RaydiumCpmmAdapter implements PoolAdapter {
 
   private accountsNeeded(d: DecodedPool): PublicKey[] {
     const p = d.params as RaydiumCpmmParams
-    return [p.authority, p.configAddress, d.address, d.vaultA.address, d.vaultB.address, programIdOf(d.mintA.program), programIdOf(d.mintB.program), d.mintA.mint, d.mintB.mint, p.pool.observationKey]
+    const keys = [p.authority, p.configAddress, d.address, d.vaultA.address, d.vaultB.address, programIdOf(d.mintA.program), programIdOf(d.mintB.program), d.mintA.mint, d.mintB.mint, p.pool.observationKey]
+    return [...new Map(keys.map(k => [k.toBase58(), k])).values()]   // distinct accounts (both sides may share one token program)
   }
 
   quoteExactIn(d: DecodedPool, inputMint: PublicKey, amountIn: bigint): Quote | Unsupported {
@@ -188,6 +195,12 @@ export class RaydiumCpmmAdapter implements PoolAdapter {
     const { ctx, inMint, outMint } = s
     const p = d.params as RaydiumCpmmParams
     const base = { adapter: 'raydium_cpmm' as const, pool: d.address, inputMint, outputMint: outMint.mint, amountIn, accountsNeeded: this.accountsNeeded(d), stateHash: d.stateHash, contextSlot: { min: d.snapshot.minSlot, max: d.snapshot.maxSlot } }
+    // the program checks the swap gate before the math (§4): a quote for a pool it would refuse must say so in rejectReasons, not only in validatePool
+    const gate: string[] = []
+    if ((p.pool.status & L.STATUS_BIT.SWAP_DISABLED) !== 0) gate.push(`NOT_APPROVED: swap disabled by status bit 2 (status=${p.pool.status})`)
+    const nowUnix = p.nowUnix ?? Math.floor(Date.parse(d.snapshot.receivedAtUtc) / 1000)
+    if (BigInt(nowUnix) < p.pool.openTime) gate.push(`NOT_APPROVED: open_time ${p.pool.openTime} > now ${nowUnix}`)
+    if (gate.length) return { ...base, amountOutToUser: 0n, vaultInDelta: 0n, vaultOutDelta: 0n, fees: [], priceImpactBps: 0, rejectReasons: gate, math: { gate: gate.join('; ') } }
     let r: M.SwapBaseInputOutcome
     try { r = M.simulateSwapBaseInput(ctx, amountIn) } catch (e) {
       if (e instanceof OverflowError) return { ...base, amountOutToUser: 0n, vaultInDelta: 0n, vaultOutDelta: 0n, fees: [], priceImpactBps: 0, rejectReasons: [`OVERFLOW: ${e.message}`], math: { error: e.message } }
@@ -198,11 +211,12 @@ export class RaydiumCpmmAdapter implements PoolAdapter {
     const src = `amm_config ${p.configAddress.toBase58()} idx ${p.config.index} (raydium_cpmm.md §5.3)`
     const fees: FeeItem[] = [
       // trade_fee = lp share + protocol + fund (§5.3 step 5/8): listed as three disjoint items so that Σ items is exact
-      { name: 'lp_fee', bps: bpsOfRate(p.config.tradeFeeRate), amount: c.tradeFee - c.protocolFee - c.fundFee, mint: inMint.mint, alreadyIncluded: true, recipient: 'lp', source: `${src} trade_fee_rate=${p.config.tradeFeeRate} ceil, minus protocol/fund shares; stays in vault` },
+      // no `bps` on lp_fee: its amount is the LP *share* of the trade fee (trade - protocol - fund), which has no single rate
+      { name: 'lp_fee', amount: c.tradeFee - c.protocolFee - c.fundFee, mint: inMint.mint, alreadyIncluded: true, recipient: 'lp', source: `${src} trade_fee_rate=${p.config.tradeFeeRate} ceil, minus protocol/fund shares; stays in vault` },
       { name: 'protocol_fee', amount: c.protocolFee, mint: inMint.mint, alreadyIncluded: true, recipient: 'protocol', source: `${src} protocol_fee_rate=${p.config.protocolFeeRate} of trade_fee, floor` },
       { name: 'fund_fee', amount: c.fundFee, mint: inMint.mint, alreadyIncluded: true, recipient: 'fund', source: `${src} fund_fee_rate=${p.config.fundFeeRate} of trade_fee, floor` },
     ]
-    if (r.creatorFeeRate > 0n) fees.push({ name: 'creator_fee', bps: bpsOfRate(r.creatorFeeRate), amount: c.creatorFee, mint: r.isCreatorFeeOnInput ? inMint.mint : outMint.mint, alreadyIncluded: true, recipient: 'creator', source: `${src} creator_fee_rate=${r.creatorFeeRate} on ${r.isCreatorFeeOnInput ? 'input (ceil total, floor split)' : 'output (ceil)'}` })
+    if (r.creatorFeeRate > 0n) fees.push({ name: 'creator_fee', ...(r.isCreatorFeeOnInput ? { bps: bpsOfRate(r.creatorFeeRate) } : {}), amount: c.creatorFee, mint: r.isCreatorFeeOnInput ? inMint.mint : outMint.mint, alreadyIncluded: true, recipient: 'creator', source: `${src} creator_fee_rate=${r.creatorFeeRate} on ${r.isCreatorFeeOnInput ? 'input (ceil total, floor split)' : 'output (ceil)'}` })
     if (ctx.inputMint.transferFee) fees.push({ name: 'token2022_transfer_fee_in', bps: M.epochFeeTier(ctx.inputMint.transferFee, ctx.epoch).bps, amount: r.transferFeeIn, mint: inMint.mint, alreadyIncluded: true, recipient: 'token2022_transfer_fee', source: `TransferFeeConfig of ${inMint.mint.toBase58()} at epoch ${ctx.epoch} (token2022.md §4)` })
     if (ctx.outputMint.transferFee) fees.push({ name: 'token2022_transfer_fee_out', bps: M.epochFeeTier(ctx.outputMint.transferFee, ctx.epoch).bps, amount: r.transferFeeOut, mint: outMint.mint, alreadyIncluded: true, recipient: 'token2022_transfer_fee', source: `TransferFeeConfig of ${outMint.mint.toBase58()} at epoch ${ctx.epoch} (token2022.md §4)` })
     // informational: 1 − (out/inLessFees) / (R_out/R_in), in bps, floor

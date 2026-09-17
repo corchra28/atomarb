@@ -66,7 +66,7 @@ describe.each(POOL_FILES.map(f => f.replace('.json', '')))('raydium_cpmm adapter
         expect(q.vaultOutDelta).toBe(swapped - (q.fees.find(f => f.name === 'creator_fee' && f.mint.equals(outMint))?.amount ?? 0n))
         expect(q.amountOutToUser).toBe(q.vaultOutDelta - BigInt(q.math['transferFeeOut']!))
         for (const f of q.fees) expect(f.alreadyIncluded).toBe(true)
-        expect(q.priceImpactBps).toBeGreaterThanOrEqual(0); expect(q.accountsNeeded).toHaveLength(10)
+        expect(q.priceImpactBps).toBeGreaterThanOrEqual(0); expect(new Set(q.accountsNeeded.map(k => k.toBase58())).size).toBe(q.accountsNeeded.length)   // distinct: both sides may share one token program
         // the trade fee (incl. LP share) is exactly ceil(lessFeesInput·rate) with rate = trade (creator off) — §5.2
         const p = d.params as RaydiumCpmmParams
         const tradeFee = q.fees.filter(f => ['lp_fee', 'protocol_fee', 'fund_fee'].includes(f.name)).reduce((s, f) => s + f.amount, 0n)

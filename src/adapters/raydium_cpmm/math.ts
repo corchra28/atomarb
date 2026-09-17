@@ -184,6 +184,7 @@ export function transferFeeCalculateFee(tier: TransferFeeTier, preFeeAmount: big
 /** `TransferFee::calculate_pre_fee_amount` (exact port incl. the maximum_fee branch). */
 export function transferFeeCalculatePreFeeAmount(tier: TransferFeeTier, postFeeAmount: bigint): bigint | null {
   const bps = BigInt(tier.bps)
+  if (bps > MAX_FEE_BASIS_POINTS) return null   // Rust: MAX_FEE_BASIS_POINTS.checked_sub(bps) -> None
   if (bps === 0n) return postFeeAmount
   if (postFeeAmount === 0n) return 0n
   if (bps === MAX_FEE_BASIS_POINTS) { const s = tier.maxFee + postFeeAmount; return s > U64_MAX ? null : s }
