@@ -26,7 +26,9 @@ export interface InventoryReadResult {
   /** sha256 of the gz file actually read */
   inventorySha256: string
   /** provenance.source_mtime_utc when present, else the inventory file's mtime (UTC ISO) */
-  observedAtUtc: string
+  /** null when the provenance sidecar is missing: the age is then UNKNOWN and must be treated as stale */
+  observedAtUtc: string | null
+  fileMtimeUtc: string
   /** PoolRef.source.ref: provenance.source_sha256 when present, else the inventory file sha256 */
   sourceRef: string
   lines: number
@@ -70,7 +72,10 @@ export function readPumpswapInventory(inventoryPath: string, opts: { requireQuot
     provenance = p && typeof p === 'object' ? (p as InventoryProvenance) : null
   }
   const fileMtimeUtc = new Date(statSync(inventoryPath).mtimeMs).toISOString()
-  const observedAtUtc = typeof provenance?.source_mtime_utc === 'string' ? new Date(provenance.source_mtime_utc).toISOString() : fileMtimeUtc
+  // Age comes from the provenance sidecar. A file mtime is NOT provenance (a copy or a checkout resets it), so without the sidecar the age is unknown.
+  const provenanceAgeKnown = typeof provenance?.source_mtime_utc === 'string'
+  const observedAtUtc = provenanceAgeKnown ? new Date(provenance!.source_mtime_utc as string).toISOString() : null
+  void fileMtimeUtc
   const sourceRef = typeof provenance?.source_sha256 === 'string' ? provenance.source_sha256 : inventorySha256
   const pools: PoolRef[] = []; const skipped: InventorySkip[] = []; const seen = new Set<string>(); const duplicateAddresses: string[] = []
   let lines = 0
@@ -86,11 +91,11 @@ export function readPumpswapInventory(inventoryPath: string, opts: { requireQuot
     seen.add(r.pool)
     pools.push({
       adapter: 'pumpswap', address: new PublicKey(r.pool),
-      source: { kind: PUMPSWAP_INVENTORY_SOURCE_KIND, ref: sourceRef, observedAtUtc },
+      source: { kind: PUMPSWAP_INVENTORY_SOURCE_KIND, ref: sourceRef, observedAtUtc: observedAtUtc ?? 'UNKNOWN (no provenance sidecar)' },
       hints: { base_mint: r.base_mint, quote_mint: r.quote_mint, index: r.index, canonical: r.canonical, tvl: null, liquidityHint: 'unknown' },
     })
   }
-  return { pools, inventoryPath, provenancePath: existsSync(provPath) ? provPath : null, provenance, inventorySha256, observedAtUtc, sourceRef, lines, records: pools.length, skipped, duplicateAddresses }
+  return { pools, inventoryPath, provenancePath: existsSync(provPath) ? provPath : null, provenance, inventorySha256, observedAtUtc, fileMtimeUtc, sourceRef, lines, records: pools.length, skipped, duplicateAddresses }
 }
 /** Groups PumpSwap PoolRefs by their base mint hint (insertion order preserved; deterministic for a given file). */
 export function groupByBaseMint(pools: PoolRef[]): Map<string, PoolRef[]> {
@@ -102,6 +107,7 @@ export function groupByBaseMint(pools: PoolRef[]): Map<string, PoolRef[]> {
   return m
 }
 /** Age of the inventory in days relative to `nowUtc` (fractional, 1 decimal). */
-export function inventoryAgeDays(observedAtUtc: string, nowUtc: string): number {
+export function inventoryAgeDays(observedAtUtc: string | null, nowUtc: string): number | null {
+  if (!observedAtUtc) return null
   return Math.round(((Date.parse(nowUtc) - Date.parse(observedAtUtc)) / 86_400_000) * 10) / 10
 }

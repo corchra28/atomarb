@@ -88,8 +88,10 @@ export async function runDiscovery(config: Config, opts: DiscoveryOptions): Prom
       observedAtUtc: inventory.observedAtUtc, ageDays, lines: inventory.lines, records: inventory.records, skippedByReason: countBy(inventory.skipped), duplicateAddresses: inventory.duplicateAddresses.length,
     }
     sourcesUsed.push('local_pumpswap_inventory')
-    notes.push(`PumpSwap inventory ${inventory.inventoryPath} is ${ageDays} days old (source mtime ${inventory.observedAtUtc}); addresses only, unverified until snapshot; pools created/closed since are not reflected.`)
-    if (ageDays > 7) warnings.push(`PUMPSWAP_INVENTORY_STALE: ${ageDays} days old`)
+    notes.push(`PumpSwap inventory ${inventory.inventoryPath} is ${ageDays === null ? 'of UNKNOWN age (no provenance sidecar; the file mtime ' + inventory.fileMtimeUtc + ' is not provenance)' : ageDays + ' days old (source mtime ' + String(inventory.observedAtUtc) + ')'}; addresses only, unverified until snapshot; pools created/closed since are not reflected.`)
+    if (ageDays === null) warnings.push(`PUMPSWAP_INVENTORY_PROVENANCE_MISSING: ${inventory.provenancePath ?? 'no sidecar'} — age unknown, treat the inventory as stale`)
+    else if (ageDays < 0) warnings.push(`PUMPSWAP_INVENTORY_AGE_NEGATIVE: provenance mtime ${String(inventory.observedAtUtc)} is in the future`)
+    else if (ageDays > 7) warnings.push(`PUMPSWAP_INVENTORY_STALE: ${ageDays} days old`)
     log?.info('discovery_inventory', { path: invPath, records: inventory.records, skipped: inventory.skipped.length, ageDays })
   }
   // ---- Raydium API v3 ----
@@ -101,18 +103,29 @@ export async function runDiscovery(config: Config, opts: DiscoveryOptions): Prom
       let version: unknown = null
       try { version = await client.version(); writeJson(join(discoveryDir, VERSION_CACHE_FILE), { fetchedAtUtc: clock(), version }) } catch (e) { warnings.push(`RAYDIUM_VERSION_FAILED: ${(e as Error).message}`) }
       raydiumRun = await client.listStandardPoolsByMint({ endpoint: 'list-v2', cap: listCap, ...(opts.pageSize !== undefined ? { pageSize: opts.pageSize } : {}) })
-      writeJson(cachePath, raydiumRun)
+      // never let a degraded run destroy a good cache: keep the previous file and park the new one beside it
+      const prev = existsSync(cachePath) ? (() => { try { return readJson<ListRun>(cachePath) } catch { return null } })() : null
+      const degraded = raydiumRun.totalItems === 0 || (prev !== null && raydiumRun.totalItems < prev.totalItems / 2) || (!raydiumRun.capped && !raydiumRun.stoppedReason.startsWith('LAST_PAGE'))
+      if (degraded && prev !== null) {
+        const parked = cachePath.replace(/\.json$/, `.rejected_${utcStamp(startedAtUtc)}.json`)
+        writeJson(parked, raydiumRun)
+        warnings.push(`RAYDIUM_LIST_CACHE_KEPT: the fresh listing looked degraded (${raydiumRun.totalItems} pools, ${raydiumRun.stoppedReason}) next to the cached ${prev.totalItems}; the cache was NOT overwritten (new run parked at ${parked})`)
+      } else writeJson(cachePath, raydiumRun)
       sources['raydium_api_v3_version'] = version
     } else {
       if (!existsSync(cachePath)) throw new Error(`NO_CACHE: ${cachePath} missing — run discover once without --no-network`)
       raydiumRun = readJson<ListRun>(cachePath)
       if (raydiumRun.schema !== 'atomarb.raydium_api_cache.v1') throw new Error(`BAD_CACHE_SCHEMA ${String(raydiumRun.schema)} in ${cachePath}`)
-      notes.push(`Raydium listing came from cache ${cachePath} (fetched ${raydiumRun.startedAtUtc}); ${opts.network ? '--reuse-list' : '--no-network'}`)
+      const listAgeDays = inventoryAgeDays(raydiumRun.startedAtUtc, startedAtUtc) ?? 0
+      notes.push(`Raydium listing came from cache ${cachePath} (fetched ${raydiumRun.startedAtUtc}, ${listAgeDays} days old); ${opts.network ? '--reuse-list' : '--no-network'}`)
+      if (listAgeDays > 1) warnings.push(`RAYDIUM_LIST_CACHE_STALE: ${listAgeDays} days old (${raydiumRun.startedAtUtc}); pools created or drained since are not reflected`)
       const vp = join(discoveryDir, VERSION_CACHE_FILE); if (existsSync(vp)) sources['raydium_api_v3_version'] = (readJson<{ version: unknown }>(vp)).version
     }
     const conv = poolRefsFromRun(raydiumRun)
     raydium = conv.refs
     if (raydiumRun.capped) warnings.push(`RAYDIUM_LIST_CAPPED: listing stopped at cap=${raydiumRun.cap} Standard pools (sorted by liquidity desc); CPMM pools below that liquidity rank are NOT covered`)
+    else if (!raydiumRun.stoppedReason.startsWith('LAST_PAGE')) warnings.push(`RAYDIUM_LIST_INCOMPLETE: listing stopped early (${raydiumRun.stoppedReason}) after ${raydiumRun.pages.length} page(s) and ${raydiumRun.totalItems} pools; coverage is unknown, do NOT read the counts as the full population`)
+    if (raydiumRun.duplicateIds > 0) warnings.push(`RAYDIUM_LIST_DUPLICATE_IDS: ${raydiumRun.duplicateIds} repeated pool id(s) across pages were dropped`)
     const ray: Record<string, unknown> = {
       baseUrl: raydiumRun.baseUrl, endpoint: raydiumRun.endpoint, poolType: raydiumRun.poolType, mint: raydiumRun.mint, pageSize: raydiumRun.pageSize, cap: raydiumRun.cap, capped: raydiumRun.capped, stoppedReason: raydiumRun.stoppedReason,
       startedAtUtc: raydiumRun.startedAtUtc, finishedAtUtc: raydiumRun.finishedAtUtc, pages: raydiumRun.pages.length, urls: raydiumRun.pages.map(p => p.url),
@@ -137,7 +150,7 @@ export async function runDiscovery(config: Config, opts: DiscoveryOptions): Prom
   const generatedAtUtc = clock()
   const report = buildPopulation({ raydium, pumpswap, maxPools, maxMints, ...(opts.maxPoolsPerMint !== undefined ? { maxPoolsPerMint: opts.maxPoolsPerMint } : {}), generatedAtUtc, sources, notes, warnings })
   // ---- pool keys (hints) for the Raydium pools on the shortlist ----
-  const rayIds = report.shortlist.filter(s => s.adapter === 'raydium_cpmm').map(s => s.address).slice(0, 100)
+  const rayIds = report.shortlist.filter(s => s.adapter === 'raydium_cpmm').map(s => s.address)   // poolKeysByIds chunks at 100 ids per request
   if (rayIds.length > 0 && config.discovery.sources.includes('raydium_api_v3')) {
     const keysPath = join(discoveryDir, POOL_KEYS_CACHE_FILE)
     let cache: PoolKeysCache | null = null

@@ -63,3 +63,18 @@ describe('population categories, dedup and collisions', () => {
     const r: CandidateRoute[] = e.routes; expect(r).toEqual([])
   })
 })
+
+// Regressions for the adversarial review (docs/agent_runs/workflow_results.json, target "discovery")
+import { buildPopulation as buildPop2 } from '../../src/discovery/population.js'
+import { PublicKey as PK2 } from '@solana/web3.js'
+describe('review regressions: duplicate rows must not depend on input order', () => {
+  const addr = PK2.unique(), mint = PK2.unique(), wsol = new PK2('So11111111111111111111111111111111111111112')
+  const row = (tvl: number) => ({ adapter: 'raydium_cpmm' as const, address: addr, source: { kind: 'raydium_api_v3', ref: 'p', observedAtUtc: 'u' }, hints: { mintA: wsol.toBase58(), mintB: mint.toBase58(), tvl } })
+  const other = { adapter: 'pumpswap' as const, address: PK2.unique(), source: { kind: 'local_pumpswap_inventory', ref: 'i', observedAtUtc: 'u' }, hints: { base_mint: mint.toBase58(), quote_mint: wsol.toBase58(), tvl: null } }
+  it('keeps the same row whichever order the duplicates arrive in', () => {
+    const forward = buildPop2({ raydium: [row(9_000_000), row(3)], pumpswap: [other], maxPools: 10, maxMints: 10, generatedAtUtc: 'g', sources: {}, notes: [], warnings: [] })
+    const reversed = buildPop2({ raydium: [row(3), row(9_000_000)], pumpswap: [other], maxPools: 10, maxMints: 10, generatedAtUtc: 'g', sources: {}, notes: [], warnings: [] })
+    expect(JSON.stringify(reversed)).toBe(JSON.stringify(forward))
+    expect(forward.routes[0]!.liquidityRank).toBe(9_000_000)   // the richer row wins in both orders
+  })
+})

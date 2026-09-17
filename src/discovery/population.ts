@@ -97,13 +97,26 @@ function rankedPairs(category: RouteCategory, mint: string, left: PoolRef[], rig
   return { routes: all.slice(0, cap), truncated: Math.max(0, all.length - cap) }
 }
 /** Dedup by address (first occurrence wins) and index by (adapter, mintA, mintB); pools that are not WSOL pairs are excluded and listed. */
+/** Ranks two rows for the same address so the survivor never depends on the order the rows arrived in. */
+function hintScore(p: PoolRef): string {
+  const h = p.hints ?? {}
+  const nonNull = Object.values(h).filter(v => v !== null && v !== undefined).length
+  const tvl = typeof h['tvl'] === 'number' ? h['tvl'] : -1
+  return `${String(nonNull).padStart(4, '0')}|${String(Math.max(0, Math.round(tvl))).padStart(18, '0')}|${JSON.stringify(h)}`
+}
 function dedupAndIndex(pools: PoolRef[], adapter: AdapterId) {
   const byAddr = new Map<string, { ref: PoolRef; occurrences: number }>()
   const excluded: { adapter: AdapterId; address: string }[] = []
   for (const p of pools) {
     if (p.adapter !== adapter) continue
     const k = p.address.toBase58()
-    const e = byAddr.get(k); if (e) { e.occurrences++; continue }
+    const e = byAddr.get(k)
+    if (e) {
+      e.occurrences++
+      // deterministic winner, independent of input order: richer hints first, then higher tvl, then the lexicographically smaller hint blob
+      if (hintScore(p) > hintScore(e.ref)) e.ref = p
+      continue
+    }
     byAddr.set(k, { ref: p, occurrences: 1 })
   }
   const byMint = new Map<string, PoolRef[]>(); const byPair = new Map<string, PoolRef[]>()

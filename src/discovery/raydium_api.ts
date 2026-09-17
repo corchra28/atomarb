@@ -132,12 +132,13 @@ export class RaydiumApiClient {
       this.usage.total++; this.usage.urls.push(url)
       const t0 = monoMs(); const fetchedAtUtc = this.clock()
       try {
+        // the timeout must cover the BODY too: a server that sends headers and then stalls would otherwise hang forever
         const ctrl = new AbortController(); const timer = setTimeout(() => ctrl.abort(), this.timeoutMs)
-        let res: Response
+        let res: Response; let text: string
         try {
           res = await this.fetchImpl(url, { method: 'GET', headers: { accept: 'application/json', 'user-agent': this.userAgent }, signal: ctrl.signal })
+          text = await Promise.race([res.text(), new Promise<never>((_, rej) => { if (ctrl.signal.aborted) rej(new RaydiumApiError('BODY_TIMEOUT', url, undefined, true)); else ctrl.signal.addEventListener('abort', () => rej(new RaydiumApiError('BODY_TIMEOUT', url, undefined, true)), { once: true }) })])
         } finally { clearTimeout(timer) }
-        const text = await res.text()
         let body: unknown = null
         try { body = JSON.parse(text) } catch { body = null }
         const env = body && typeof body === 'object' ? (body as ApiEnvelope<T>) : null
