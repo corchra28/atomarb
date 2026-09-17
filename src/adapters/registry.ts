@@ -7,9 +7,18 @@ export async function loadAdapters(): Promise<{ adapters: Partial<Record<Adapter
     const spec = ['.', id, 'index.js'].join('/')
     try {
       const m = (await import(spec)) as Record<string, unknown>
-      const cand = [m['adapter'], m['default'], ...Object.values(m)].find(v => v && typeof v === 'object' && (v as PoolAdapter).id === id && typeof (v as PoolAdapter).quoteExactIn === 'function')
+      const values = [m['adapter'], m['default'], ...Object.values(m)]
+      let cand = values.find(v => v && typeof v === 'object' && (v as PoolAdapter).id === id && typeof (v as PoolAdapter).quoteExactIn === 'function') as PoolAdapter | undefined
+      if (!cand) {
+        // exported class: instantiate with no arguments
+        for (const v of values) {
+          if (typeof v === 'function' && v.prototype && typeof v.prototype.quoteExactIn === 'function') {
+            try { const inst = new (v as new () => PoolAdapter)(); if (inst.id === id) { cand = inst; break } } catch { /* not a no-arg constructible adapter */ }
+          }
+        }
+      }
       if (!cand) throw new Error(`module ${spec} exports no PoolAdapter with id=${id}`)
-      adapters[id] = cand as PoolAdapter
+      adapters[id] = cand
     } catch (e) { missing.push({ id, error: (e as Error).message }) }
   }
   return { adapters, missing }

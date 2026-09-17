@@ -1,13 +1,15 @@
-import { PublicKey, VersionedTransaction } from '@solana/web3.js'
+import { PublicKey, VersionedTransaction, AddressLookupTableAccount } from '@solana/web3.js'
 import { address as kitAddress, lamports as kitLamports, type Address, type EncodedAccount, type Transaction, type TransactionMessageBytes, type SignatureBytes, type SignaturesMap } from '@solana/kit'
 import { LiteSVM, FailedTransactionMetadata } from 'litesvm'
+import { randomBytes } from 'node:crypto'
 import type { RawAccount } from '../adapters/types.js'
 import type { RpcClient } from '../state/rpc.js'
-import { readPubkey, readU32LE, writeU64LE } from '../util/bytes.js'
+import { readPubkey, readU32LE, writeU64LE, writeU32LE } from '../util/bytes.js'
 import { TOKEN_PROGRAM_ID, TOKEN_2022_PROGRAM_ID, ACCOUNT_SIZE, SYSTEM_PROGRAM_ID } from '../state/token.js'
 
 export const BPF_LOADER_UPGRADEABLE = new PublicKey('BPFLoaderUpgradeab1e11111111111111111111111')
 export const BPF_LOADER_2 = new PublicKey('BPFLoader2111111111111111111111111111111111')
+export const ADDRESS_LOOKUP_TABLE_PROGRAM_ID = new PublicKey('AddressLookupTab1e1111111111111111111111111')
 const A = (pk: PublicKey): Address => kitAddress(pk.toBase58())
 /** A program ELF dumped from mainnet with provenance (slot at which the programdata account was read). */
 export interface ProgramDump { programId: PublicKey; elf: Uint8Array; programDataAddress: PublicKey | null; slot: number; loader: 'upgradeable' | 'v2' }
@@ -37,7 +39,7 @@ export function toKitTransaction(tx: VersionedTransaction): Transaction {
   for (let i = 0; i < n; i++) {
     const signer = msg.staticAccountKeys[i]!
     const sig = tx.signatures[i]
-    signatures[signer.toBase58()] = (sig && sig.some(b => b !== 0) ? sig : new Uint8Array(64)) as SignatureBytes
+    signatures[signer.toBase58()] = (sig && sig.some(b => b !== 0) ? sig : randomBytes(64)) as SignatureBytes
   }
   return { messageBytes: msg.serialize() as unknown as TransactionMessageBytes, signatures: signatures as SignaturesMap }
 }
@@ -85,6 +87,21 @@ export class LocalSvm {
     this.synthetic.push({ pubkey: addr, note: `${note}: token account mint=${mint.toBase58()} amount=${amount}` })
   }
   rentExempt(dataLen: number): bigint { return this.svm.minimumBalanceForRentExemption(BigInt(dataLen)) }
+  /** Sets the Clock sysvar (slot, epoch, unix timestamp) so that time-gated programs (e.g. Raydium open_time, Token-2022 fee epochs) see the snapshot's time. */
+  setClock(slot: number, unixTimestamp: number, epoch?: number): void {
+    const c = this.svm.getClock(); c.slot = BigInt(slot); c.epoch = BigInt(epoch ?? Math.floor(slot / 432_000)); c.unixTimestamp = BigInt(unixTimestamp); this.svm.setClock(c)
+  }
+  /** Fabricates an ACTIVE address lookup table holding `addresses` (LOCAL ONLY; layout per docs/sources/solana_rpc_tx_fees.md §5). */
+  fabricateAlt(addresses: PublicKey[]): AddressLookupTableAccount {
+    if (addresses.length === 0 || addresses.length > 256) throw new Error(`ALT needs 1..256 addresses, got ${addresses.length}`)
+    const key = PublicKey.unique()
+    const data = new Uint8Array(56 + 32 * addresses.length)
+    data.set(writeU32LE(1), 0); data.set(writeU64LE(2n ** 64n - 1n), 4); data.set(writeU64LE(0n), 12)
+    addresses.forEach((a, i) => data.set(a.toBytes(), 56 + 32 * i))
+    this.set(key, 10_000_000n, data, ADDRESS_LOOKUP_TABLE_PROGRAM_ID)
+    this.synthetic.push({ pubkey: key, note: `fabricated ALT with ${addresses.length} addresses (LOCAL ONLY)` })
+    return new AddressLookupTableAccount({ key, state: { deactivationSlot: 2n ** 64n - 1n, lastExtendedSlot: 0, lastExtendedSlotStartIndex: 0, addresses } })
+  }
   getAccount(pk: PublicKey): { lamports: bigint; data: Uint8Array; owner: PublicKey } | null {
     const a = this.svm.getAccount(A(pk)); if (!a.exists) return null
     return { lamports: BigInt(a.lamports), data: new Uint8Array(a.data), owner: new PublicKey(a.programAddress) }

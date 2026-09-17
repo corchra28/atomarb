@@ -9,7 +9,7 @@ import { loadAdapters, requireAdapters } from '../adapters/registry.js'
 import { snapshotPools } from '../state/snapshot.js'
 import { enumerateCircuits, evaluateCircuit } from '../routing/circuit.js'
 import { parsePoolsFlag, printBlock, fmtLamports } from './common.js'
-import { buildDirectCircuitTx, mainnetSimulate, localProbe, userAccountsFor } from '../simulation/probe.js'
+import { buildDirectCircuitTx, mainnetSimulate, localProbe, localProbeExecutor, userAccountsFor } from '../simulation/probe.js'
 import { nowUtcIso } from '../util/time.js'
 import { jsonReplacer } from '../util/bigint.js'
 /**
@@ -53,6 +53,13 @@ export async function simulate(loaded: LoadedConfig, flags: Record<string, strin
       out['local'] = l
       printBlock('LOCAL_REAL_PROGRAM_SIMULATION', [['ok', l.ok], ['err', l.err], ['units', l.unitsConsumed], ['deltas', l.deltas], ['quoted', l.quoted], ['realised', l.realised], ['accounting', l.accounting.status], ['pnl_after_external', l.accounting.pnlAfterExternal], ['external_costs', l.accounting.externalCosts.map(x => `${x.name}=${x.amount}(${x.status})`)], ['synthetic', l.synthetic.length], ['programs', l.loadedPrograms], ['accounts_loaded', l.accountsLoaded], ['missing_on_chain', l.accountsMissingOnChain], ['snapshot', l.snapshot], ['logs_tail', l.logs.slice(-8)]])
     } catch (e) { out['local'] = { error: (e as Error).message }; console.error(`LOCAL_PROBE_ERROR ${(e as Error).message}`) }
+  }
+  if (!flags['no-local'] && !flags['no-executor']) {
+    try {
+      const x = await localProbeExecutor(rpc, adapters, c, ev.value, config.costs)
+      out['executor'] = x
+      printBlock('LOCAL_REAL_PROGRAM_SIMULATION + ARB_EXECUTOR guard (local build, NOT deployed)', [['executor_sha256', x.executorSha256.slice(0, 16)], ['tx_bytes', x.txBytes], ['used_alt', x.usedAlt], ['verdict', x.verdict], ...x.runs.map((r, i) => [`run${i}_min_profit=${r.minProfit}`, { ok: r.ok, executorError: r.executorError, err: r.err, units: r.unitsConsumed, deltas: r.deltas, logs: r.logsTail }] as [string, unknown]), ['snapshot', x.snapshot], ['missing_on_chain', x.accountsMissingOnChain]])
+    } catch (e) { out['executor'] = { error: (e as Error).message }; console.error(`EXECUTOR_PROBE_ERROR ${(e as Error).message}`) }
   }
   const dirOut = join(config.paths.dataDir, 'simulations'); mkdirSync(dirOut, { recursive: true })
   const file = join(dirOut, `${nowUtcIso().replace(/[:.]/g, '-')}_${c.id.slice(0, 40).replace(/[^A-Za-z0-9]/g, '_')}.json`)
