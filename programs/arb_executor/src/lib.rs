@@ -18,10 +18,10 @@ use solana_program::msg;
 use solana_program::program::invoke;
 use solana_program::pubkey::Pubkey;
 
-use crate::constants::{TOKEN_2022_PROGRAM, TOKEN_PROGRAM};
+use crate::constants::{TOKEN_2022_PROGRAM, TOKEN_PROGRAM, WSOL_MINT};
 use crate::error::ExecutorError;
 use crate::legs::{build_leg_instruction, expected_program, pool_position, validate_leg, AccountView, FixedKeys};
-use crate::params::{check_account_total, check_kind_for_role, parse_execute_circuit, LegRole, FIXED_ACCOUNTS};
+use crate::params::{check_account_total, check_kind_for_role, parse_execute_circuit, LegRole, FIXED_ACCOUNTS, KIND_PUMPSWAP_BUY_EXACT_QUOTE_IN};
 use crate::token::{parse_token_account, read_amount};
 
 #[cfg(not(feature = "no-entrypoint"))]
@@ -42,14 +42,22 @@ pub fn process_instruction(_program_id: &Pubkey, accounts: &[AccountInfo], data:
     if !user.is_signer {
         return Err(ExecutorError::UserNotSigner.into());
     }
-    validate_fixed(user, base_ta, base_mint, base_prog)?;
-    validate_fixed(user, inter_ta, inter_mint, inter_prog)?;
-    if base_mint.key == inter_mint.key {
-        return Err(ExecutorError::SameMint.into());
-    }
     if base_ta.key == inter_ta.key {
         return Err(ExecutorError::Aliasing.into());
     }
+    if base_mint.key == inter_mint.key {
+        return Err(ExecutorError::SameMint.into());
+    }
+    if *base_mint.key != WSOL_MINT {
+        // the guard certifies profit in the accounts[3] token; the engine prices circuits in WSOL, so anything else would certify the wrong thing
+        return Err(ExecutorError::BaseMintNotWsol.into());
+    }
+    if p.leg_a_kind == KIND_PUMPSWAP_BUY_EXACT_QUOTE_IN && p.leg_a_min_out == 0 {
+        // pump_amm rejects min_base_amount_out == 0 with 6001 ZeroBaseAmount; fail here with our own code instead of burning the CPI
+        return Err(ExecutorError::ZeroMinOutForPumpBuy.into());
+    }
+    validate_fixed(user, base_ta, base_mint, base_prog)?;
+    validate_fixed(user, inter_ta, inter_mint, inter_prog)?;
     let fixed = FixedKeys {
         user: user.key,
         base_ta: base_ta.key,
@@ -62,6 +70,7 @@ pub fn process_instruction(_program_id: &Pubkey, accounts: &[AccountInfo], data:
 
     let base0 = amount_of(base_ta)?;
     let inter0 = amount_of(inter_ta)?;
+    let lamports0 = **user.try_borrow_lamports().map_err(|_| ExecutorError::TokenAccountDataInvalid)?;
     guard::check_amount_in(p.amount_in, base0)?;
 
     let a_end = FIXED_ACCOUNTS + p.leg_a_account_count as usize;
@@ -86,8 +95,10 @@ pub fn process_instruction(_program_id: &Pubkey, accounts: &[AccountInfo], data:
     let base1 = amount_of(base_ta)?;
     let inter2 = amount_of(inter_ta)?;
     guard::check_no_leftover(inter0, inter2)?;
+    let lamports1 = **user.try_borrow_lamports().map_err(|_| ExecutorError::TokenAccountDataInvalid)?;
+    let lamports_spent = guard::lamports_spent(lamports0, lamports1, p.max_lamports_spend)?;
     let profit = guard::check_profit(base0, base1, p.min_profit)?;
-    msg!("arb_executor ok base0={} base1={} profit={} inter_delta={} min_profit={}", base0, base1, profit, delta, p.min_profit);
+    msg!("arb_executor ok base0={} base1={} profit={} inter_delta={} min_profit={} lamports_spent={} max={}", base0, base1, profit, delta, p.min_profit, lamports_spent, p.max_lamports_spend);
     Ok(())
 }
 
@@ -104,6 +115,7 @@ fn validate_fixed(user: &AccountInfo, ta: &AccountInfo, mint: &AccountInfo, prog
         return Err(ExecutorError::MintProgramMismatch);
     }
     let data = ta.try_borrow_data().map_err(|_| ExecutorError::TokenAccountDataInvalid)?;
+    crate::token::check_account_type(&data, *prog.key == TOKEN_2022_PROGRAM)?;
     let v = parse_token_account(&data)?;
     if v.owner != *user.key {
         return Err(ExecutorError::TokenAccountOwnerMismatch);

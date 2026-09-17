@@ -38,3 +38,13 @@ fn leftover_and_amount_in() {
     assert_eq!(check_amount_in(11, 10), Err(ExecutorError::InsufficientBaseBalance));
     assert_eq!(check_amount_in(u64::MAX, u64::MAX - 1), Err(ExecutorError::InsufficientBaseBalance));
 }
+
+#[test]
+fn lamport_spend_guard() {
+    use arb_executor::guard::lamports_spent;
+    assert_eq!(lamports_spent(1_000_000, 1_000_000, 0), Ok(0));
+    assert_eq!(lamports_spent(2_000_000, 155_600, 1_844_400), Ok(1_844_400), "exactly the PumpSwap user_volume_accumulator rent");
+    assert_eq!(lamports_spent(2_000_000, 155_600, 1_844_399), Err(ExecutorError::LamportSpendAboveMax), "one lamport over the allowance");
+    assert_eq!(lamports_spent(2_000_000, 2_000_000, 0), Ok(0));
+    assert_eq!(lamports_spent(1_000, 2_000, 0), Ok(0), "a gain is not a spend");
+}

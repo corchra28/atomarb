@@ -35,3 +35,13 @@ pub fn check_amount_in(amount_in: u64, base0: u64) -> Result<(), ExecutorError> 
     }
     Ok(())
 }
+
+/// Native lamports the user lost inside this instruction (rent for accounts the DEXes created, e.g. PumpSwap's user_volume_accumulator).
+/// The transaction fee is charged outside the instruction and is therefore NOT part of this number.
+pub fn lamports_spent(lamports0: u64, lamports1: u64, max_spend: u64) -> Result<u64, ExecutorError> {
+    let spent = lamports0.saturating_sub(lamports1);
+    if spent > max_spend {
+        return Err(ExecutorError::LamportSpendAboveMax);
+    }
+    Ok(spent)
+}

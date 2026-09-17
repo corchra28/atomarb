@@ -131,11 +131,11 @@ function expectCode(r: Run, name: keyof typeof EXECUTOR_ERROR_CODE): void {
 }
 
 describe.skipIf(!haveSo)('arb_executor guard (real ELF in LiteSVM, no DEX loaded)', () => {
-  it('error table is contiguous 1..33 and the data codec round-trips', () => {
-    expect(EXECUTOR_ERRORS.map(e => e.code)).toEqual(Array.from({ length: 33 }, (_, i) => i + 1))
-    const d = encodeExecuteCircuitData(params({ amountIn: 0x0102030405060708n, minProfit: 2n ** 64n - 1n }), 1, 24, 2, 22)
-    expect(d.length).toBe(37); expect(Buffer.from(d.subarray(1, 9)).toString('hex')).toBe('0807060504030201')
-    expect(decodeExecuteCircuitData(d)).toEqual({ amountIn: 0x0102030405060708n, minProfit: 2n ** 64n - 1n, legAMinOut: 1n, legBMinOut: 1n, legAKind: 1, legAAccountCount: 24, legBKind: 2, legBAccountCount: 22 })
+  it('error table is contiguous 1..37 and the data codec round-trips (ABI v2, 45 bytes)', () => {
+    expect(EXECUTOR_ERRORS.map(e => e.code)).toEqual(Array.from({ length: 37 }, (_, i) => i + 1))
+    const d = encodeExecuteCircuitData(params({ amountIn: 0x0102030405060708n, minProfit: 2n ** 64n - 1n, maxLamportsSpend: 1_844_400n }), 1, 24, 2, 22)
+    expect(d.length).toBe(45); expect(Buffer.from(d.subarray(1, 9)).toString('hex')).toBe('0807060504030201')
+    expect(decodeExecuteCircuitData(d)).toEqual({ amountIn: 0x0102030405060708n, minProfit: 2n ** 64n - 1n, legAMinOut: 1n, legBMinOut: 1n, legAKind: 1, legAAccountCount: 24, legBKind: 2, legBAccountCount: 22, maxLamportsSpend: 1_844_400n })
   })
   it('(a) wrong data length -> InvalidDataLength; wrong tag -> InvalidTag', () => {
     const w = world(); const legA = raydiumLeg(w, 'A'), legB = raydiumLeg(w, 'B')
@@ -172,9 +172,23 @@ describe.skipIf(!haveSo)('arb_executor guard (real ELF in LiteSVM, no DEX loaded
     expectCode(run(w, { params: params(), legA: raydiumLeg(w, 'A'), legB: pumpRem }), 'Aliasing')
     const pumpFee = pumpLeg(w, LEG_KIND.PUMPSWAP_SELL); pumpFee.accounts[10] = m(w.ua.userIntermediateTokenAccount, true)
     expectCode(run(w, { params: params(), legA: raydiumLeg(w, 'A'), legB: pumpFee }), 'Aliasing')
-    // accounts[1] == accounts[2]: the fixed checks require mint[4] == WSOL for [2] to parse, so SameMint fires first (the explicit Aliasing check for [1]==[2] is defence in depth)
-    expectCode(run(w, { params: params(), legA: raydiumLeg(w, 'A'), legB, user: { ...w.ua, userIntermediateTokenAccount: w.ua.userBaseTokenAccount, intermediateMint: WSOL_MINT, intermediateTokenProgram: TOKEN_PROGRAM_ID } }), 'SameMint')
-    expectCode(run(w, { params: params(), legA: raydiumLeg(w, 'A'), legB, user: { ...w.ua, userIntermediateTokenAccount: w.ua.userBaseTokenAccount, intermediateMint: kp(), intermediateTokenProgram: TOKEN_PROGRAM_ID } }), 'MintProgramMismatch')
+    // accounts[1] == accounts[2] is now checked BEFORE the per-account validation, so the branch is reachable (review finding: it used to be dead code)
+    expectCode(run(w, { params: params(), legA: raydiumLeg(w, 'A'), legB, user: { ...w.ua, userIntermediateTokenAccount: w.ua.userBaseTokenAccount, intermediateMint: WSOL_MINT, intermediateTokenProgram: TOKEN_PROGRAM_ID } }), 'Aliasing')
+    expectCode(run(w, { params: params(), legA: raydiumLeg(w, 'A'), legB, user: { ...w.ua, userIntermediateTokenAccount: w.ua.userBaseTokenAccount, intermediateMint: kp(), intermediateTokenProgram: TOKEN_PROGRAM_ID } }), 'Aliasing')
+  })
+  it('(new in ABI v2) base mint must be WSOL, a PumpSwap buy needs min_out >= 1, and a non-token-account is refused', () => {
+    const w = world(); const legA = raydiumLeg(w, 'A'), legB = raydiumLeg(w, 'B')
+    // 35: the guard certifies profit in accounts[3]; anything but WSOL would certify the wrong token
+    const otherBase = kp(); w.svm.setRaw(raw(otherBase, TOKEN_PROGRAM_ID, mintBytes()))
+    const otherBaseTa = kp(); w.svm.fundTokenAccount(otherBaseTa, otherBase, w.user, 5_000_000_000n, TOKEN_PROGRAM_ID, 'user other-base ATA')
+    expectCode(run(w, { params: params(), legA, legB, user: { ...w.ua, baseMint: otherBase, userBaseTokenAccount: otherBaseTa } }), 'BaseMintNotWsol')
+    // 36: pump_amm rejects min_base_amount_out == 0 with 6001; we refuse before burning the CPI
+    expectCode(run(w, { params: params({ legAMinOut: 0n }), legA: pumpLeg(w, LEG_KIND.PUMPSWAP_BUY_EXACT_QUOTE_IN), legB }), 'ZeroMinOutForPumpBuy')
+    // 37: a Token-program-owned blob that merely looks like a token account (e.g. the 355-byte multisig size) must not be read as a balance
+    const fake = kp()
+    const blob = new Uint8Array(355); blob.set(WSOL_MINT.toBytes(), 0); blob.set(w.user.toBytes(), 32); blob.set(writeU64LE(1_000_000_000_000n), 64); blob[108] = 1
+    w.svm.setRaw(raw(fake, TOKEN_PROGRAM_ID, blob))
+    expectCode(run(w, { params: params(), legA, legB, user: { ...w.ua, userBaseTokenAccount: fake } }), 'TokenAccountTypeInvalid')
   })
   it('fixed-account checks: signer, counts, token programs, owners, mints, balances', () => {
     const w = world(); const legA = raydiumLeg(w, 'A'), legB = raydiumLeg(w, 'B')
@@ -185,11 +199,15 @@ describe.skipIf(!haveSo)('arb_executor guard (real ELF in LiteSVM, no DEX loaded
     expectCode(run(w, { params: params(), legA, legB, countOverride: { legB: 13 } }), 'AccountCountMismatch')
     expectCode(run(w, { params: params(), legA, legB, user: { ...w.ua, baseTokenProgram: SYSTEM_PROGRAM_ID } }), 'TokenProgramNotAllowed')
     expectCode(run(w, { params: params(), legA, legB, user: { ...w.ua, baseTokenProgram: TOKEN_2022_PROGRAM_ID } }), 'TokenAccountProgramMismatch')
-    expectCode(run(w, { params: params(), legA, legB, user: { ...w.ua, baseMint: w.interMint } }), 'MintProgramMismatch')
+    expectCode(run(w, { params: params(), legA, legB, user: { ...w.ua, baseMint: w.interMint } }), 'SameMint')   // base == intermediate is caught first
+    const splMintForT22Ata = kp(); w.svm.setRaw(raw(splMintForT22Ata, TOKEN_PROGRAM_ID, mintBytes()))   // mint owned by SPL Token while the ATA is Token-2022
+    expectCode(run(w, { params: params(), legA, legB, user: { ...w.ua, intermediateMint: splMintForT22Ata } }), 'MintProgramMismatch')
     const otherWsol = kp(); w.svm.fundTokenAccount(otherWsol, WSOL_MINT, kp(), 1n, TOKEN_PROGRAM_ID, 'someone else WSOL', true)
     expectCode(run(w, { params: params(), legA, legB, user: { ...w.ua, userBaseTokenAccount: otherWsol } }), 'TokenAccountOwnerMismatch')
+    // keep base mint = WSOL (else BaseMintNotWsol fires first) and give the user an ATA of a DIFFERENT mint
     const otherMint = kp(); w.svm.setRaw(raw(otherMint, TOKEN_PROGRAM_ID, mintBytes()))
-    expectCode(run(w, { params: params(), legA, legB, user: { ...w.ua, baseMint: otherMint } }), 'TokenAccountMintMismatch')
+    const ataOfOtherMint = kp(); w.svm.fundTokenAccount(ataOfOtherMint, otherMint, w.user, 1_000n, TOKEN_PROGRAM_ID, 'user ATA of another mint')
+    expectCode(run(w, { params: params(), legA, legB, user: { ...w.ua, userBaseTokenAccount: ataOfOtherMint } }), 'TokenAccountMintMismatch')
     const frozen = kp(); w.svm.fundTokenAccount(frozen, WSOL_MINT, w.user, 1n, TOKEN_PROGRAM_ID, 'frozen', true); const acc = w.svm.getAccount(frozen)!; acc.data[108] = 2; w.svm.setRaw(raw(frozen, TOKEN_PROGRAM_ID, acc.data, acc.lamports))
     expectCode(run(w, { params: params(), legA, legB, user: { ...w.ua, userBaseTokenAccount: frozen } }), 'TokenAccountNotInitialized')
     expectCode(run(w, { params: params(), legA, legB, user: { ...w.ua, userBaseTokenAccount: w.user } }), 'TokenAccountProgramMismatch')

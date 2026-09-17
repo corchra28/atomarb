@@ -10,19 +10,20 @@ reverts as one transaction. This project is read-only research: the program is o
 TS builder: `src/simulation/executor_ix.ts` (`buildExecuteCircuitIx`, `legFromInstruction`, `EXECUTOR_ERRORS`, `parseCustomErrorCode`).
 Rust: `src/params.rs` (data), `src/legs.rs` (leg validation + CPI data), `src/guard.rs` (deltas), `src/error.rs` (codes), `src/constants.rs` (cited addresses/offsets).
 
-## Instruction data — exactly 37 bytes, little-endian
+## Instruction data — exactly 45 bytes, little-endian (ABI v2)
 
 | offset | size | field | notes |
 |------:|-----:|-------|-------|
-| 0 | 1 | `tag` u8 | `0` = ExecuteCircuit (any other tag → `InvalidTag`; any other length → `InvalidDataLength`) |
+| 0 | 1 | `tag` u8 | `0` = ExecuteCircuit (any other tag → `InvalidTag`; any length other than 45 → `InvalidDataLength`; the 37-byte v1 layout is refused) |
 | 1 | 8 | `amount_in` u64 | base units spent by leg A; must be ≤ balance of accounts[1] |
 | 9 | 8 | `min_profit` u64 | require `base_after ≥ base_before + min_profit` |
-| 17 | 8 | `leg_a_min_out` u64 | passed as the DEX's minimum-out for leg A |
+| 17 | 8 | `leg_a_min_out` u64 | passed as the DEX's minimum-out for leg A. **Must be ≥ 1 for kind 1**: pump_amm rejects `min_base_amount_out == 0` with 6001 `ZeroBaseAmount`, so the program refuses it first (`ZeroMinOutForPumpBuy`). |
 | 25 | 8 | `leg_b_min_out` u64 | passed as the DEX's minimum-out for leg B |
 | 33 | 1 | `leg_a_kind` u8 | see kinds |
 | 34 | 1 | `leg_a_account_count` u8 | length of leg A's segment **including** its program-id account (= 1 + CPI accounts) |
 | 35 | 1 | `leg_b_kind` u8 | |
 | 36 | 1 | `leg_b_account_count` u8 | |
+| 37 | 8 | `max_lamports_spend` u64 | the user's NATIVE lamports may fall by at most this much inside the instruction (rent for accounts the DEXes create, e.g. PumpSwap's `user_volume_accumulator` ≈ 1,844,400). The transaction fee is charged outside the instruction and is not counted here. |
 
 Kinds: `0` = RAYDIUM_CPMM_SWAP_BASE_INPUT (either leg), `1` = PUMPSWAP_BUY_EXACT_QUOTE_IN (leg A only: WSOL is the pool *quote*, the intermediate is the pool *base*), `2` = PUMPSWAP_SELL (leg B only). Other values → `LegKindUnknown`; a kind in the wrong leg → `LegKindInvalidForPosition`.
 
@@ -33,9 +34,9 @@ Kinds: `0` = RAYDIUM_CPMM_SWAP_BASE_INPUT (either leg), `1` = PUMPSWAP_BUY_EXACT
 | index | account | flags | checks |
 |------:|---------|-------|--------|
 | 0 | user | signer, writable | `is_signer` (`UserNotSigner`) |
-| 1 | user base token account (WSOL ATA) | writable | owner program == [5]; 165+ bytes; state==1; owner field == user; mint field == [3] |
+| 1 | user base token account (WSOL ATA) | writable | owner program == [5]; a REAL token account of that program (SPL: exactly 165 bytes; Token-2022: ≥165 with account-type byte 2, else `TokenAccountTypeInvalid`); state==1; owner field == user; mint field == [3] |
 | 2 | user intermediate token account | writable | owner program == [6]; same checks with mint == [4] |
-| 3 | base mint (WSOL) | readonly | owner program == [5]; ≠ [4] (`SameMint`) |
+| 3 | base mint (WSOL) | readonly | owner program == [5]; ≠ [4] (`SameMint`); **must be `So11111111111111111111111111111111111111112`** (`BaseMintNotWsol`) — the guard certifies profit in this token |
 | 4 | intermediate mint | readonly | owner program == [6] |
 | 5 | base token program | readonly | ∈ {`Tokenkeg…`, `TokenzQd…`} (`TokenProgramNotAllowed`) |
 | 6 | intermediate token program | readonly | same |
@@ -66,7 +67,7 @@ Segment = program id (`CPMMoo8L3F4NbTegBCKVNunggL7H1ZpdTHKxQB5qKP1C`, else `LegP
 CPI data: `8fbe5adac41e33de` ‖ `amount_in` ‖ `minimum_amount_out` (24 bytes). Leg A: `amount_in`, `leg_a_min_out`; leg B: realised delta, `leg_b_min_out`.
 
 ### Leg segment — kinds 1 / 2 (PumpSwap `buy_exact_quote_in` / `sell`, `docs/sources/pumpswap.md` §6, §2, §1)
-Segment = program id (`pAMMBay6oceH9fJKBRHGP5D4bD4sWpmSwMn52FMfXEA`) + CPI accounts: buy **23..26**, sell **21..24** (named + 0..3 remaining: pool-v2, buyback recipient, buyback ATA). Cashback coins need one more remaining account and are therefore rejected by design (`LegAccountCountInvalid`).
+Segment = program id (`pAMMBay6oceH9fJKBRHGP5D4bD4sWpmSwMn52FMfXEA`) + CPI accounts: buy **23..26**, sell **21..24** (named + 0..3 remaining: pool-v2, buyback recipient, buyback ATA). A cashback coin adds one remaining account to buy and two to sell: a cashback buy on a pool whose `coin_creator` is default still fits (26) and is accepted, a cashback buy with a coin creator (27) and every cashback sell fall outside the ranges and are refused (`LegAccountCountInvalid`).
 
 | cpi # | account | executor check |
 |--:|---------|----------------|

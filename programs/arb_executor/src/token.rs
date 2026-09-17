@@ -34,6 +34,23 @@ pub fn u64_at(data: &[u8], off: usize) -> u64 {
     u64::from_le_bytes(b)
 }
 
+/// Token-2022 account-type byte (docs/sources/token2022.md §3): absolute offset 165, 2 = Account.
+pub const OFF_ACCOUNT_TYPE: usize = 165;
+pub const ACCOUNT_TYPE_ACCOUNT: u8 = 2;
+
+/// Rejects anything that is not a real token account of that program: an SPL Token account is EXACTLY 165 bytes, a Token-2022 account is
+/// 165 bytes or longer with the account-type byte = 2. Without this, any Token-program-owned blob (e.g. a 355-byte multisig) whose first
+/// 109 bytes look like a token account would be accepted and its bytes 64..72 read as a balance.
+pub fn check_account_type(data: &[u8], is_token_2022: bool) -> Result<(), ExecutorError> {
+    if data.len() == TOKEN_ACCOUNT_LEN {
+        return Ok(());
+    }
+    if is_token_2022 && data.len() > TOKEN_ACCOUNT_LEN && data[OFF_ACCOUNT_TYPE] == ACCOUNT_TYPE_ACCOUNT {
+        return Ok(());
+    }
+    Err(ExecutorError::TokenAccountTypeInvalid)
+}
+
 /// Parses the base fields. Does NOT check the owner program (the caller compares `AccountInfo.owner` against accounts[5]/[6]).
 pub fn parse_token_account(data: &[u8]) -> Result<TokenAccountView, ExecutorError> {
     if data.len() < TOKEN_ACCOUNT_LEN {

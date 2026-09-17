@@ -1,4 +1,4 @@
-//! Instruction data layout (little-endian, exactly 37 bytes) — docs/EXECUTOR_ABI.md "Instruction data".
+//! Instruction data layout (little-endian, exactly 45 bytes) — docs/EXECUTOR_ABI.md "Instruction data".
 //! [0]      tag u8            = 0 (ExecuteCircuit)
 //! [1..9]   amount_in u64
 //! [9..17]  min_profit u64
@@ -8,10 +8,12 @@
 //! [34]     leg_a_account_count u8   (includes the leg's program id account)
 //! [35]     leg_b_kind u8
 //! [36]     leg_b_account_count u8
+//! [37..45] max_lamports_spend u64  (native lamports the user may lose inside this instruction: rent for accounts the DEXes create,
+//!                                   e.g. PumpSwap's user_volume_accumulator. The transaction fee itself is charged outside the instruction.)
 use crate::error::ExecutorError;
 
 pub const TAG_EXECUTE_CIRCUIT: u8 = 0;
-pub const EXECUTE_CIRCUIT_DATA_LEN: usize = 37;
+pub const EXECUTE_CIRCUIT_DATA_LEN: usize = 45;
 
 pub const KIND_RAYDIUM_CPMM_SWAP_BASE_INPUT: u8 = 0;
 pub const KIND_PUMPSWAP_BUY_EXACT_QUOTE_IN: u8 = 1;
@@ -30,6 +32,7 @@ pub struct ExecuteCircuitParams {
     pub leg_a_account_count: u8,
     pub leg_b_kind: u8,
     pub leg_b_account_count: u8,
+    pub max_lamports_spend: u64,
 }
 
 #[inline]
@@ -39,7 +42,7 @@ fn u64_at(data: &[u8], off: usize) -> u64 {
     u64::from_le_bytes(b)
 }
 
-/// Parses instruction data. Rejects empty data, unknown tags and any length other than 37.
+/// Parses instruction data. Rejects empty data, unknown tags and any length other than 45.
 pub fn parse_execute_circuit(data: &[u8]) -> Result<ExecuteCircuitParams, ExecutorError> {
     if data.is_empty() {
         return Err(ExecutorError::InvalidDataLength);
@@ -59,6 +62,7 @@ pub fn parse_execute_circuit(data: &[u8]) -> Result<ExecuteCircuitParams, Execut
         leg_a_account_count: data[34],
         leg_b_kind: data[35],
         leg_b_account_count: data[36],
+        max_lamports_spend: u64_at(data, 37),
     })
 }
 

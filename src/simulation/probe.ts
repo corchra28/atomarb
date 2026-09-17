@@ -248,7 +248,7 @@ export async function localProbeExecutor(rpc: RpcClient | null, adapters: Record
     // Leg minimums in this probe: leg A = the quoted output (tight, because the SVM replays the exact snapshot state), leg B = 1 lamport so the ONLY
     // economic gate is the executor's own guard (base_after >= base_before + min_profit). A live deployment would add a margin to leg A's minimum,
     // because between the snapshot and landing the pool can move; that margin is a policy choice, not part of the measurement.
-    const exIx = buildExecuteCircuitIx({ user: { user, userBaseTokenAccount: ua.baseAta, userIntermediateTokenAccount: ua.interAta, baseMint: WSOL_MINT, intermediateMint: c.token, baseTokenProgram: ua.baseTokenProgram, intermediateTokenProgram: ua.interTokenProgram }, params: { amountIn: ev.amountIn, minProfit, legAMinOut: ev.quoteA.amountOutToUser, legBMinOut: 1n }, legA, legB })
+    const exIx = buildExecuteCircuitIx({ user: { user, userBaseTokenAccount: ua.baseAta, userIntermediateTokenAccount: ua.interAta, baseMint: WSOL_MINT, intermediateMint: c.token, baseTokenProgram: ua.baseTokenProgram, intermediateTokenProgram: ua.interTokenProgram }, params: { amountIn: ev.amountIn, minProfit, legAMinOut: ev.quoteA.amountOutToUser, legBMinOut: 1n, maxLamportsSpend: 10_000_000n }, legA, legB })   // allowance covers rent for accounts the DEXes create (PumpSwap user_volume_accumulator ~1,844,400)
     const ixs = [...computeBudgetIxs(cost.computeUnitLimit, cost.computeUnitPriceMicroLamports), createAtaIdempotentIx(user, ua.interAta, user, c.token, ua.interTokenProgram), exIx]
     const lookup = [...new Map(exIx.keys.filter(k => !k.isSigner).map(k => [k.pubkey.toBase58(), k.pubkey])).values()]
     let built = buildV0(user, svm.svm.latestBlockhash(), ixs)

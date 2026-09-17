@@ -73,6 +73,14 @@ pub enum ExecutorError {
     ProfitBelowMin = 32,
     /// checked arithmetic overflowed (base0 + min_profit)
     ArithmeticOverflow = 33,
+    /// the user's native lamports fell by more than max_lamports_spend inside this instruction (rent for accounts the DEXes created)
+    LamportSpendAboveMax = 34,
+    /// accounts[3] (base mint) is not WSOL: the guard certifies profit in the base token, which must be the one the engine prices in
+    BaseMintNotWsol = 35,
+    /// kind 1 (PumpSwap buy_exact_quote_in) with leg_a_min_out == 0: pump_amm rejects it with 6001 ZeroBaseAmount
+    ZeroMinOutForPumpBuy = 36,
+    /// the token account length does not match its program's account type (SPL: exactly 165; Token-2022: 165 or an extended account whose type byte is 2)
+    TokenAccountTypeInvalid = 37,
 }
 
 impl From<ExecutorError> for ProgramError {

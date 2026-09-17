@@ -8,7 +8,7 @@ import { concatBytes, writeU64LE } from '../util/bytes.js'
 import { sha256Hex } from '../util/hash.js'
 
 export const EXECUTE_CIRCUIT_TAG = 0
-export const EXECUTE_CIRCUIT_DATA_LEN = 37
+export const EXECUTE_CIRCUIT_DATA_LEN = 45
 export const FIXED_ACCOUNT_COUNT = 7
 
 export const LEG_KIND = { RAYDIUM_CPMM_SWAP_BASE_INPUT: 0, PUMPSWAP_BUY_EXACT_QUOTE_IN: 1, PUMPSWAP_SELL: 2 } as const
@@ -45,7 +45,11 @@ export interface ExecutorUserAccounts {
   baseTokenProgram: PublicKey
   intermediateTokenProgram: PublicKey
 }
-export interface ExecuteCircuitParams { amountIn: bigint; minProfit: bigint; legAMinOut: bigint; legBMinOut: bigint }
+export interface ExecuteCircuitParams {
+  amountIn: bigint; minProfit: bigint; legAMinOut: bigint; legBMinOut: bigint
+  /** native lamports the user may lose inside the instruction (rent for accounts the DEXes create, e.g. PumpSwap's user_volume_accumulator ≈ 1,844,400) */
+  maxLamportsSpend?: bigint
+}
 
 function u8(v: number, what: string): Uint8Array {
   if (!Number.isInteger(v) || v < 0 || v > 255) throw new RangeError(`${what}=${v} not a u8`)
@@ -54,14 +58,15 @@ function u8(v: number, what: string): Uint8Array {
 /** [0]=tag | [1..9] amount_in | [9..17] min_profit | [17..25] leg_a_min_out | [25..33] leg_b_min_out | [33] a_kind | [34] a_count | [35] b_kind | [36] b_count */
 export function encodeExecuteCircuitData(p: ExecuteCircuitParams, legAKind: number, legAAccountCount: number, legBKind: number, legBAccountCount: number): Uint8Array {
   const d = concatBytes(u8(EXECUTE_CIRCUIT_TAG, 'tag'), writeU64LE(p.amountIn), writeU64LE(p.minProfit), writeU64LE(p.legAMinOut), writeU64LE(p.legBMinOut),
-    u8(legAKind, 'leg_a_kind'), u8(legAAccountCount, 'leg_a_account_count'), u8(legBKind, 'leg_b_kind'), u8(legBAccountCount, 'leg_b_account_count'))
+    u8(legAKind, 'leg_a_kind'), u8(legAAccountCount, 'leg_a_account_count'), u8(legBKind, 'leg_b_kind'), u8(legBAccountCount, 'leg_b_account_count'),
+    writeU64LE(p.maxLamportsSpend ?? 0n))
   if (d.length !== EXECUTE_CIRCUIT_DATA_LEN) throw new Error(`internal: encoded ${d.length} bytes`)
   return d
 }
 export function decodeExecuteCircuitData(d: Uint8Array): ExecuteCircuitParams & { legAKind: number; legAAccountCount: number; legBKind: number; legBAccountCount: number } {
   if (d.length !== EXECUTE_CIRCUIT_DATA_LEN || d[0] !== EXECUTE_CIRCUIT_TAG) throw new Error(`not an ExecuteCircuit payload (len=${d.length}, tag=${d[0]})`)
   const u64 = (o: number) => Buffer.from(d.subarray(o, o + 8)).readBigUInt64LE(0)
-  return { amountIn: u64(1), minProfit: u64(9), legAMinOut: u64(17), legBMinOut: u64(25), legAKind: d[33]!, legAAccountCount: d[34]!, legBKind: d[35]!, legBAccountCount: d[36]! }
+  return { amountIn: u64(1), minProfit: u64(9), legAMinOut: u64(17), legBMinOut: u64(25), legAKind: d[33]!, legAAccountCount: d[34]!, legBKind: d[35]!, legBAccountCount: d[36]!, maxLamportsSpend: u64(37) }
 }
 
 /** Wraps an adapter-built swap instruction as a leg (keys/order/flags are taken verbatim). Throws on program/count mismatch unless `skipChecks`. */
@@ -155,6 +160,10 @@ export const EXECUTOR_ERRORS = [
   { code: 31, name: 'LeftoverIntermediate', description: 'intermediate balance after leg B != before leg A' },
   { code: 32, name: 'ProfitBelowMin', description: 'base balance after leg B < before + min_profit' },
   { code: 33, name: 'ArithmeticOverflow', description: 'checked arithmetic overflowed (base0 + min_profit)' },
+  { code: 34, name: 'LamportSpendAboveMax', description: "the user's native lamports fell by more than max_lamports_spend inside the instruction (rent for accounts the DEXes created)" },
+  { code: 35, name: 'BaseMintNotWsol', description: 'accounts[3] is not So11111111111111111111111111111111111111112; the guard would certify profit in another token' },
+  { code: 36, name: 'ZeroMinOutForPumpBuy', description: 'kind 1 with leg_a_min_out == 0 (pump_amm returns 6001 ZeroBaseAmount)' },
+  { code: 37, name: 'TokenAccountTypeInvalid', description: 'accounts[1]/[2] is not a real token account of its program (SPL: exactly 165 bytes; Token-2022: account-type byte 2)' },
 ] as const
 export type ExecutorErrorName = (typeof EXECUTOR_ERRORS)[number]['name']
 export const EXECUTOR_ERROR_BY_CODE: ReadonlyMap<number, (typeof EXECUTOR_ERRORS)[number]> = new Map(EXECUTOR_ERRORS.map(e => [e.code, e]))

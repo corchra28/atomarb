@@ -66,3 +66,7 @@ pub const PUMP_BUY_MAX_ACCOUNTS: usize = 26;
 /// PumpSwap sell: 21 named + 0..3 remaining (observed 24) — pumpswap.md §6.
 pub const PUMP_SELL_NAMED_ACCOUNTS: usize = 21;
 pub const PUMP_SELL_MAX_ACCOUNTS: usize = 24;
+
+/// So11111111111111111111111111111111111111112 — the base asset every circuit of this engine is denominated in
+/// (docs/sources/token2022.md §1). The guard certifies profit in accounts[3]; requiring WSOL keeps that meaningful.
+pub const WSOL_MINT: Pubkey = solana_program::pubkey!("So11111111111111111111111111111111111111112");
