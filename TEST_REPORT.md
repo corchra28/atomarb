@@ -13,6 +13,7 @@ mainnet_simulation tests: none in the suite (mainnet simulations are produced by
 ## Rust (programs/arb_executor, cargo test)
 
 ```
+cargo test (host): 22 passed, 0 failed across params / guard / legs / constants / token suites
 running 0 tests
 test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
 running 4 tests
