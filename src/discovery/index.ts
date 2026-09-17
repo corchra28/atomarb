@@ -149,6 +149,11 @@ export async function runDiscovery(config: Config, opts: DiscoveryOptions): Prom
   // ---- population + shortlist ----
   const generatedAtUtc = clock()
   const report = buildPopulation({ raydium, pumpswap, maxPools, maxMints, ...(opts.maxPoolsPerMint !== undefined ? { maxPoolsPerMint: opts.maxPoolsPerMint } : {}), generatedAtUtc, sources, notes, warnings })
+  // source-level drops belong in the headline counts, not only in the per-source blocks (review finding: dedup accounting)
+  const c = report.counts as unknown as Record<string, number>
+  c['source_duplicates_dropped'] = (raydiumRun?.duplicateIds ?? 0) + (inventory?.duplicateAddresses.length ?? 0)
+  c['source_rows_skipped'] = inventory?.skipped.length ?? 0
+  if (c['source_duplicates_dropped'] > 0 || c['source_rows_skipped'] > 0) report.notes.push(`Sources dropped ${c['source_duplicates_dropped']} duplicate row(s) and skipped ${c['source_rows_skipped']} unusable row(s) before the population was built.`)
   // ---- pool keys (hints) for the Raydium pools on the shortlist ----
   const rayIds = report.shortlist.filter(s => s.adapter === 'raydium_cpmm').map(s => s.address)   // poolKeysByIds chunks at 100 ids per request
   if (rayIds.length > 0 && config.discovery.sources.includes('raydium_api_v3')) {

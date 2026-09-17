@@ -226,6 +226,7 @@ export function renderPopulationMarkdown(rep: PopulationReport, opts: { maxRoute
     ['(a) pumpswap mints with >=2 pools', c.pumpswap_mints_with_2plus], ['(b) cross-adapter mints (both)', c.cross_adapter_mints], ['(c) raydium mints with >=2 pools', c.raydium_mints_with_2plus],
     ['routes a / b / c', `${c.routes_pumpswap_x2} / ${c.routes_cross_adapter} / ${c.routes_raydium_x2}`], ['routes truncated (per-mint cap)', c.routes_truncated_by_per_mint_cap],
     ['dup addresses / pair collisions / not-WSOL', `${c.duplicate_addresses} / ${c.pair_collisions} / ${c.excluded_not_wsol_pair}`],
+    ['source duplicates dropped / rows skipped', `${(c as unknown as Record<string, number>)['source_duplicates_dropped'] ?? 0} / ${(c as unknown as Record<string, number>)['source_rows_skipped'] ?? 0}`],
     ['shortlist pools / routes / mints', `${c.shortlist_pools} / ${c.shortlist_routes} / ${c.shortlist_mints}`],
     ['limits maxPools / maxMints / perMint', `${rep.limits.maxPools} / ${rep.limits.maxMints} / ${rep.limits.maxPoolsPerMint}`],
   ]

@@ -1,6 +1,6 @@
 {
  "schema": "atomarb.population.v1",
- "generatedAtUtc": "2026-09-17T18:49:08.645Z",
+ "generatedAtUtc": "2026-09-17T18:50:03.700Z",
  "limits": {
   "maxPools": 50,
   "maxMints": 2000,
@@ -107,7 +107,9 @@
   "excluded_not_wsol_pair": 0,
   "shortlist_pools": 50,
   "shortlist_routes": 28,
-  "shortlist_mints": 22
+  "shortlist_mints": 22,
+  "source_duplicates_dropped": 0,
+  "source_rows_skipped": 0
  },
  "dedup": {
   "duplicateAddresses": [],
