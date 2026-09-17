@@ -1,69 +1,365 @@
 {
- "wf_f1a4fac3-f70": {
-  "agents": [],
+ "captured_utc": "2026-09-17T18:39:33.267961+00:00",
+ "wf_1b386fa2-b51": {
+  "agents": [
+   {
+    "agent": "discovery",
+    "status": "DONE",
+    "files_written": [
+     "/home/rares/trading/sol/atomarb/src/discovery/raydium_api.ts",
+     "/home/rares/trading/sol/atomarb/src/discovery/local_inventory.ts",
+     "/home/rares/trading/sol/atomarb/src/discovery/population.ts",
+     "/home/rares/trading/sol/atomarb/src/discovery/index.ts",
+     "/home/rares/trading/sol/atomarb/src/cli/discover.ts",
+     "/home/rares/trading/sol/atomarb/scripts/fetch_discovery_fixtures.ts",
+     "/home/rares/trading/sol/atomarb/tests/unit/discovery_raydium_api.test.ts",
+     "/home/rares/trading/sol/atomarb/tests/unit/discovery_inventory.test.ts",
+     "/home/rares/trading/sol/atomarb/tests/unit/discovery_population.test.ts",
+     "/home/rares/trading/sol/atomarb/tests/unit/discovery_run.test.ts",
+     "/home/rares/trading/sol/atomarb/tests/unit/discovery_network.test.ts",
+     "/home/rares/trading/sol/atomarb/tests/fixtures/discovery/mock_fetch.ts",
+     "/home/rares/trading/sol/atomarb/tests/fixtures/discovery/raydium_listv2_page1.json",
+     "/home/rares/trading/sol/atomarb/tests/fixtures/discovery/raydium_listv2_page2.json",
+     "/home/rares/trading/sol/atomarb/tests/fixtures/discovery/raydium_infomint_page1.json",
+     "/home/rares/trading/sol/atomarb/tests/fixtures/discovery/raydium_infomint_page2.json",
+     "/home/rares/trading/sol/atomarb/tests/fixtures/discovery/raydium_pool_keys.json",
+     "/home/rares/trading/sol/atomarb/tests/fixtures/discovery/raydium_error_pooltype.json",
+     "/home/rares/trading/sol/atomarb/tests/fixtures/discovery/pumpswap_inventory_sample.jsonl.gz",
+     "/home/rares/trading/sol/atomarb/tests/fixtures/discovery/pumpswap_inventory_sample.provenance.json",
+     "/home/rares/trading/sol/atomarb/docs/sources/discovery_apis.md",
+     "/home/rares/trading/sol/atomarb/reports/population_20260917T132609Z.json",
+     "/home/rares/trading/sol/atomarb/reports/population_20260917T132609Z.md",
+     "/home/rares/trading/sol/atomarb/data/discovery/raydium_listv2_wsol_standard.json (gitignored cache, 14 MB)",
+     "/home/rares/trading/sol/atomarb/data/discovery/raydium_infomint_wsol_standard.json (gitignored cache, 14 MB)",
+     "/home/rares/trading/sol/atomarb/data/discovery/raydium_pool_keys.json (gitignored)",
+     "/home/rares/trading/sol/atomarb/data/discovery/raydium_version.json (gitignored)",
+     "/home/rares/trading/sol/atomarb/data/discovery/shortlist.json (gitignored; consumed by quote/simulate/shadow)"
+    ],
+    "tests": {
+     "unit_pass": 30,
+     "unit_fail": 0,
+     "integration_pass": 1,
+     "integration_fail": 0,
+     "skipped": 0,
+     "command": "npx vitest run tests/unit/discovery_raydium_api.test.ts tests/unit/discovery_inventory.test.ts tests/unit/discovery_population.test.ts tests/unit/discovery_run.test.ts tests/unit/discovery_network.test.ts   (the network test runs only with ATOMARB_NETWORK_TESTS=1 and uses exactly 3 HTTPS requests; it is skipped otherwise: 30 pass + 1 skipped)"
+    },
+    "rpc_requests_used": 19,
+    "verified_claims": [
+     "NOTE: no LiteSVM execution belongs to this task (discovery is off-chain); the claims below are verified by live HTTPS responses saved to disk and by unit tests against saved real API responses. Solana RPC requests used: 0. HTTP requests used: 19, all GET https://api-v3.raydium.io (3 curl probes + 12 in the real run + 1 pool-keys re-fetch + 3 in the network test).",
+     "VERIFIED_LIVE 2026-09-17: /pools/info/list-v2?size=1000&mint1=WSOL&poolType=Standard&sortField=liquidity&sortType=desc paginates via data.nextPageId; size=1000 is honored (5 pages x 1000 items, 0 duplicate ids); nextPageId still present after page 5 (more available). Exact URLs recorded in docs/sources/discovery_apis.md section 1.",
+     "VERIFIED_LIVE: /pools/info/mint?mint1=WSOL&poolType=standard&poolSortField=liquidity&sortType=desc&pageSize=1000&page=N paginates via page/hasNextPage; data.count is the item count of the page (3 for pageSize=3), NOT a total. The first 5000 ids are identical to list-v2 (overlap 5000/5000, 0 only-in-either).",
+     "VERIFIED_LIVE: poolType casing differs per endpoint (list-v2 wants 'Standard', /pools/info/mint wants 'standard'); a parameter error comes back as HTTP 500 {success:false,msg:'query poolType type error'} and the client treats it as non-retryable (unit-tested with the real error body).",
+     "VERIFIED_LIVE: among the top-5000 Standard WSOL pools (tvl from $33.2M down to $10,314), 822 have programId CPMMoo8L3F4NbTegBCKVNunggL7H1ZpdTHKxQB5qKP1C; the rest are AMM v4 (675kPX...). Filtering by programId is the only CPMM discriminator (type is 'Standard' for all).",
+     "VERIFIED_LIVE: /pools/key/ids?ids=<17 ids> (839-char URL) returned 17 CPMM key records with vault.A/B, authority, config, observationId, lookupTableAccount, mintLp; attached to the shortlist as keys_* HINTS only.",
+     "VERIFIED by byte-exact read of data/inventory/pumpswap_pools.jsonl.gz (sha256 3865384c...7416, provenance source_sha256 6daeaaf4...eb54, source mtime 2026-09-04T14:12:34.613Z = 13 days old): 25,061 lines, 25,061 valid WSOL-quote records, 0 skipped, 0 duplicate addresses, 24,617 distinct base mints, 123 mints with >=2 pools (pre-count confirmed; distribution 85x2, 15x3, 4x4, 3x5, 3x11, max 51).",
+     "Population report (reports/population_20260917T132609Z.json/.md): (a) 123 PumpSwap mints with >=2 WSOL pools (653 ranked pairs after the 32-per-mint cap, 4501 truncated); (b) 17 mints with BOTH a Raydium CPMM WSOL pool and a PumpSwap WSOL pool (50 pairs); (c) 0 mints with >=2 CPMM WSOL pools; dedup: 0 duplicate addresses, 123 (adapter,mintA,mintB) collision groups (all PumpSwap, listed separately), 0 non-WSOL pairs. Shortlist: 50 pools (17 raydium_cpmm + 33 pumpswap) / 28 routes / 22 mints, deterministic (unit test proves byte-identical output under reversed input order).",
+     "Unit-tested against saved real responses: nextPageId pagination + cross-page dedup + cap flagging (CAP_REACHED), info-mint pagination, repeated-cursor and empty-page guards, CPMM filter, PoolRef conversion (skip codes NOT_CPMM/BAD_POOL_ID/BAD_MINT, never a fake ref), keys chunking at 100 ids + missing ids, User-Agent 'atomarb-research', 2 req/s spacing (rps>2 rejected), retry/backoff on 503/429/AbortError only, request budget, bad envelopes; inventory reader skip reasons (BAD_PUBKEY, QUOTE_NOT_REQUIRED_MINT, BAD_JSON, BAD_INDEX) and duplicate reporting; runDiscovery offline path with 0 HTTP calls and NO_CACHE refusal; markdown <=100 columns; a grep-guard test asserts no RpcClient/state/rpc/sendTransaction/simulateTransaction reference in src/discovery/** or src/cli/discover.ts.",
+     "Live network test (ATOMARB_NETWORK_TESTS=1) passed: /main/version = V3.0.1, one list-v2 page of 5 WSOL Standard pools with nextPageId, /pools/key/ids for 47hq28mcL7q5GhBg7epyGF2dnuJd4MKFt8QhT7CzYUp4 returns programId CPMM with vault/observationId strings; exactly 3 requests."
+    ],
+    "unverified_or_open": [
+     "Every pool address, mint, vault/config/observation key and tvl in the report and shortlist is UNVERIFIED on-chain (API/inventory hints only) until src/state/snapshot.ts + adapters decode and validate them.",
+     "Coverage: the 5,000-pool cap (liquidity desc) means CPMM WSOL pools with tvl below ~$10.3k were never listed; the total number of Standard WSOL pools is unknown (no total-count field). The 17-mint cross-adapter intersection is therefore a lower bound.",
+     "PumpSwap inventory is 13 days old (2026-09-04); pools created/closed since are not reflected; the inventory's 'canonical'/'index' flags are carried as hints and not re-derived.",
+     "Raydium API rate limits are undocumented (self-limited to 2 req/s, serialized; no 429 observed). tvl semantics (USD? price source) unstated; used only for ranking.",
+     "nextPageId cursor validity over time is unknown; cursors are consumed immediately and never reused from cache.",
+     "Project-wide `npx tsc --noEmit` is NOT green because of other agents' files (tests/integration/executor_guard.test.ts:190, tests/unit/raydium_layout.test.ts:88,90, tests/unit/pumpswap_layout.test.ts:84,115,144 \u2014 'Object is possibly undefined'); all files owned by this agent typecheck clean (verified by filtering tsc output)."
+    ],
+    "blockers": [],
+    "notes_for_integrator": "REAL RUN COUNTS (2026-09-17T13:13Z, api-v3.raydium.io, 0 RPC): Standard WSOL pools listed 5000 (cap hit; tvl floor $10,314) -> CPMM WSOL pools 822 (822 mints); PumpSwap inventory 25,061 WSOL pools / 24,617 mints; (a) same-adapter PumpSwap mints with >=2 pools: 123; (b) cross-adapter mints (CPMM AND PumpSwap): 17 (50 pool pairs) \u2014 small, a coverage result, not a failure; (c) same-adapter Raydium mints with >=2 CPMM pools: 0; shortlist 50 pools (17 raydium_cpmm + 33 pumpswap) / 28 routes / 22 mints (all 17 cross mints covered, then 5 PumpSwap-only unknown-liquidity routes). HTTP requests total 19 (3 probes, 12 run incl. info-mint cross-check, 1 keys re-fetch, 3 network test); Solana RPC 0. USAGE: `npm run discover` (network: /main/version + 5 list-v2 pages + 1 keys = 7 requests), `npm run discover -- --no-network` (0 HTTP; needs the gitignored data/discovery cache present on this host), `--reuse-list` (network but reuse cached listing; only re-fetches pool keys), `--cross-check` (adds 5 info-mint pages), `--max-pools N --max-mints N --max-pools-per-mint N (default 6) --cap N (default 5000) --page-size N --inventory path`. OUTPUT for quote/simulate/shadow: data/discovery/shortlist.json = array of {adapter:'raydium_cpmm'|'pumpswap', address, mint (non-WSOL mint), source:{kind:'raydium_api_v3'|'local_pumpswap_inventory', ref:<page URL | provenance sha256>, observedAtUtc}, hints:{...}} \u2014 hints for Raydium include mintA/mintB/tvl/configId/configIndex/tradeFeeRate/openTime and keys_vaultA/keys_vaultB/keys_authority/keys_configId/keys_observationId/keys_lookupTableAccount/keys_mintLp (HINTS ONLY; adapters must derive/validate on-chain); PumpSwap hints are base_mint/quote_mint/index/canonical with tvl:null. The report JSON (608 KB, tracked in reports/) contains full category lists, all 703 ranked routes, dedup/collision lists and source provenance; the .md is a <=100-column summary. Ranking rule: liquidityRank = min(tvlA,tvlB) when both known, Raydium tvl when only that side is known (cross-adapter), unknown last (tie-break: canonical-pool count, mint, addresses); routes capped at 32 per mint; shortlist admits <=maxPoolsPerMint pools per mint so one 34-pool mint cannot consume the list. Fixture builder: `npx tsx scripts/fetch_discovery_fixtures.ts` rebuilds tests/fixtures/discovery/raydium_*.json from the cache (0 requests) or `--live` (2 requests). No program dumps were needed (no on-chain execution in this task). Two files were already tracked at HEAD (an earlier commit picked up my first raydium_api.ts version and the discover.ts stub); the working tree holds the final versions. I did not touch package.json, other agents' files, or ../failtax."
+   },
+   {
+    "agent": "rust_executor",
+    "status": "DONE",
+    "files_written": [
+     "/home/rares/trading/sol/atomarb/programs/arb_executor/Cargo.toml",
+     "/home/rares/trading/sol/atomarb/programs/arb_executor/Cargo.lock",
+     "/home/rares/trading/sol/atomarb/programs/arb_executor/src/lib.rs",
+     "/home/rares/trading/sol/atomarb/programs/arb_executor/src/error.rs",
+     "/home/rares/trading/sol/atomarb/programs/arb_executor/src/params.rs",
+     "/home/rares/trading/sol/atomarb/programs/arb_executor/src/token.rs",
+     "/home/rares/trading/sol/atomarb/programs/arb_executor/src/constants.rs",
+     "/home/rares/trading/sol/atomarb/programs/arb_executor/src/legs.rs",
+     "/home/rares/trading/sol/atomarb/programs/arb_executor/src/guard.rs",
+     "/home/rares/trading/sol/atomarb/programs/arb_executor/tests/common/mod.rs",
+     "/home/rares/trading/sol/atomarb/programs/arb_executor/tests/params.rs",
+     "/home/rares/trading/sol/atomarb/programs/arb_executor/tests/guard.rs",
+     "/home/rares/trading/sol/atomarb/programs/arb_executor/tests/legs.rs",
+     "/home/rares/trading/sol/atomarb/programs/arb_executor/tests/constants.rs",
+     "/home/rares/trading/sol/atomarb/programs/arb_executor/tests/token.rs",
+     "/home/rares/trading/sol/atomarb/scripts/install_toolchain.sh",
+     "/home/rares/trading/sol/atomarb/scripts/build_executor.sh",
+     "/home/rares/trading/sol/atomarb/src/simulation/executor_ix.ts",
+     "/home/rares/trading/sol/atomarb/tests/integration/executor_guard.test.ts",
+     "/home/rares/trading/sol/atomarb/tests/fixtures/programs/arb_executor.so",
+     "/home/rares/trading/sol/atomarb/tests/fixtures/programs/arb_executor.json",
+     "/home/rares/trading/sol/atomarb/docs/EXECUTOR_ABI.md",
+     "/home/rares/trading/sol/atomarb/docs/sources/toolchain.md",
+     "/home/rares/trading/sol/atomarb/docs/sources/solana_rpc_tx_fees.md (APPENDED one subsection '### ALT account byte layout' before \u00a76, per the brief's append rule; nothing else touched)"
+    ],
+    "tests": {
+     "unit_pass": 22,
+     "unit_fail": 0,
+     "integration_pass": 9,
+     "integration_fail": 0,
+     "skipped": 0,
+     "command": "cd programs/arb_executor && cargo test   (22 host tests: params 4, guard 4, legs 9, constants 4, token 1)  ||  cd /home/rares/trading/sol/atomarb && npx tsc -p tsconfig.json --noEmit && npx vitest run tests/integration/executor_guard.test.ts   (9 tests, ~45 assertions, real ELF in LiteSVM, no network, no env var needed)"
+    },
+    "rpc_requests_used": 0,
+    "verified_claims": [
+     "Toolchain installed and working (scripts/install_toolchain.sh, 35 s): rustup 1.29.1, rustc/cargo 1.98.1 stable (minimal profile), Agave solana-cli 4.2.2 (commit e29e5d91) with cargo-build-sbf 4.1.0 + platform-tools v1.54 (rustc 1.89.0-dev), solana-test-validator 4.2.2 present but never run; no keypair configured; disk: rustup 577 MB, cargo 99 MB, agave 250 MB, platform-tools 1.6 GB, crate target 515 MB.",
+     "cargo build-sbf produced tests/fixtures/programs/arb_executor.so: 41,192 bytes, sha256 8a4203346c1407fa1f2b0f18bf931e4de87444a8c5954500397d509b80b8892d, byte-identical on a second run of scripts/build_executor.sh (reproducible); sidecar arb_executor.json has sha256/bytes/built_at_utc/rustc_host/rustc_platform_tools/cargo_build_sbf/solana_program_crate 4.1.0/source_hash_sha256 (871398325880776baef47ba60fa3eabb3edf671b60ffbef6fe8d0c8a87ef5476 = sha256 of src/*.rs concatenated in C-locale order).",
+     "The REAL compiled ELF loads into litesvm 1.4.1 via LocalSvm.addProgram (upgradeable-loader path, default SBPF v0 arch, no --arch v3 needed) and executes: every rejection code 1-29 is returned as ProgramError::Custom(code) exactly as expected in tests/integration/executor_guard.test.ts: (a) wrong data length 36/38/1/0 bytes -> Custom(1) InvalidDataLength, wrong tag -> Custom(2); (b) leg program not allowlisted (random key, PumpSwap id declared as kind 0, Raydium id declared as kind 2) -> Custom(17); (c) pool owned by the wrong program (Raydium pool owned by pAMM, PumpSwap pool owned by random) -> Custom(19); (d) aliasing: user WSOL account at input_vault, user intermediate at observation_state, swapped user accounts, user accounts in PumpSwap remaining/fee positions -> Custom(14); plus UserNotSigner(3), AccountCountMismatch(5), TokenProgramNotAllowed(6), TokenAccountProgramMismatch(7), TokenAccountNotInitialized(9, frozen), TokenAccountOwnerMismatch(10), TokenAccountMintMismatch(11), MintProgramMismatch(12), SameMint(13), LegKindUnknown(15), LegKindInvalidForPosition(16), LegAccountCountInvalid(18, incl. 27 buy / 25 sell accounts and empty segment), PoolDataInvalid(20, bad disc and 636-byte pool), LegUserMismatch(21), LegUserTokenAccountMismatch(22), LegVaultMismatch(23), LegMintMismatch(24, incl. a pool of two foreign mints), LegTokenProgramMismatch(25), LegFixedAccountMismatch(26: authority, amm_config, observation, fee_config), GlobalConfigMismatch(27), FeeProgramMismatch(28, buy@22 and sell@20), InsufficientBaseBalance(29).",
+     "Fully consistent segments (raydium->raydium, pump buy->raydium, raydium->pump sell, pump buy->pump sell with 0 and 3 remaining accounts) pass ALL executor validation and fail only at invoke() with InstructionError UnsupportedProgramId (no DEX loaded), 11,651 CU consumed for a 2x13-account circuit; LiteSVM's inner-instruction record proves the CPI was issued with byte-exact data: Raydium [143,190,90,218,196,30,51,222, 0,202,154,59,0,0,0,0, 1,0,0,0,0,0,0,0] (disc 8fbe5adac41e33de + amount_in 1e9 LE + min_out 1 LE) over exactly 13 accounts; PumpSwap buy [198,46,21,82,180,217,232,112, ..., 1] (disc c62e1552b4d9e870 + amounts + track_volume 0x01) over 23..26 accounts. Leg B is never invoked when leg A fails, and both legs are validated before any CPI (a bad leg B produces no 'leg A' log).",
+     "A Raydium->Raydium ExecuteCircuit fits in one v0 transaction without a lookup table (659 bytes); any circuit with a PumpSwap leg exceeds 1232 bytes and needs an ALT \u2014 the test fabricates a LOCAL-ONLY active ALT (layout from solana-sdk@8e8e679 state.rs, appended to docs/sources/solana_rpc_tx_fees.md) and litesvm resolves it; all rejection paths were exercised through the ALT path.",
+     "Host cargo test (22 tests) proves: 37-byte little-endian data parsing and exact-length rejection; account-total arithmetic (7+a+b, u8 counts); kind-per-position rules; guard arithmetic incl. checked overflow (base0=u64::MAX, min_profit=1 -> ArithmeticOverflow, never a wrap), min_profit boundary (base1 == base0+min_profit passes, one less fails, a loss fails even with min_profit 0), delta rules (decrease or zero -> LegANoOutput), leftover rule; the complete leg-validation matrix on fabricated views for both Raydium token orders and PumpSwap buy/sell with 0..3 remaining accounts; every baked PDA re-derives from its documented seeds (global_config bump 255, event_authority, fee_config bump 255 under pfee, Raydium authority bump 253); all five discriminators equal sha256('global:..'/'account:..')[..8]; CPI data encodings byte-for-byte; AccountMeta flags copied from the outer instruction.",
+     "Every offset/discriminator/address used (Raydium PoolState amm_config@8, token_0_vault@72, token_1_vault@104, token_0_mint@168, token_1_mint@200, token_0_program@232, token_1_program@264, observation_key@296, LEN 637, disc f7ede3f5d7c3de46; PumpSwap Pool base_mint@43, quote_mint@75, pool_base_token_account@139, pool_quote_token_account@171, min len 211, disc f19a6d0411b16dbc; account lists 13 / 23+0..3 / 21+0..3; token account mint@0 owner@32 amount@64 state@108) was re-checked against docs/sources/raydium_cpmm.md \u00a71/\u00a72/\u00a76, pumpswap.md \u00a71/\u00a72/\u00a76 and token2022.md \u00a72.2 and is cited in code comments.",
+     "Read-only rules kept: 0 HTTP requests to any RPC (no RpcClient instantiated in any owned file), no sendTransaction/deploy, no keypairs (all identities are Keypair.generate().publicKey or synthetic LiteSVM accounts), no validator started, ../failtax untouched, no git commit."
+    ],
+    "unverified_or_open": [
+     "Positive path with the real Raydium CPMM / PumpSwap ELFs and real pool state was NOT executed (integrator's task per brief); the DEX ELFs are already dumped by other agents in tests/fixtures/programs/ (CPMMoo8\u2026so 793,824 B, pAMMBay6\u2026so 10,485,715 B, pfeeUxB6\u2026so 948,944 B). Error codes 30-33 (LegANoOutput, LeftoverIntermediate, ProfitBelowMin, ArithmeticOverflow) are therefore proven only by host unit tests of guard.rs, not through a real CPI.",
+     "Compute cost of a full successful circuit is unknown; validation of both legs costs ~11.6k CU (Raydium x2) before the first CPI; the msg! format strings add a few k CU on success.",
+     "PumpSwap cashback coins are rejected by design (their extra remaining account pushes buy to 27 / sell to 25 accounts, outside the brief's 23..26 / 21..24 ranges) \u2014 if the integrator needs them, widen PUMP_*_MAX_ACCOUNTS in constants.rs and CPI_ACCOUNT_COUNT in executor_ix.ts (both cited to pumpswap.md \u00a76).",
+     "Whether omitting the trailing track_volume byte is accepted by PumpSwap is not relevant here (the executor always sends 0x01 as observed live), but the exact on-chain rounding of buy_exact_quote_in remains open in pumpswap.md; the executor uses realised balance deltas so it does not depend on it.",
+     "ALT-loaded accounts: the fabricated ALT in the test uses authority None and last_extended_slot 0; a real mainnet ALT for the integrator must be created/extended by transactions (out of scope, read-only project)."
+    ],
+    "blockers": [],
+    "notes_for_integrator": "Compose: legA = legFromInstruction(LEG_KIND.X, adapter.buildSwapInstruction(pool, params).instruction) (only the account list + flags are used; the executor writes its own CPI data from the typed params), then buildExecuteCircuitIx({ user: {...}, params: { amountIn, minProfit, legAMinOut, legBMinOut }, legA, legB }) with programId defaulting to ARB_EXECUTOR_LOCAL_PROGRAM_ID; load the ELF with svm.addProgram({ programId: ARB_EXECUTOR_LOCAL_PROGRAM_ID, elf: readFileSync(ARB_EXECUTOR_SO_PATH), programDataAddress: null, slot: 0, loader: 'upgradeable' }). The user's WSOL ATA must be accounts[1] and appear in the leg lists exactly at Raydium input/output positions 4/5 and PumpSwap user_quote_token_account position 6 (user_base_token_account position 5 = intermediate); any other occurrence is rejected as Aliasing. Kind 1 (buy_exact_quote_in) is leg A only, kind 2 (sell) leg B only, kind 0 anywhere. Count bytes in the data = 1 + CPI accounts (the leg program id is segment[0]); executor_ix.ts computes them. Errors: parseCustomErrorCode(err + logs) -> code, EXECUTOR_ERRORS table; codes >= 6000 are the DEX's Anchor errors. Circuits containing a PumpSwap leg need an address lookup table (fabricateAlt in tests/integration/executor_guard.test.ts shows a LOCAL-ONLY table; layout appended to docs/sources/solana_rpc_tx_fees.md \u00a75). Stable log lines for parsing: 'arb_executor leg A kind=..', 'arb_executor leg B kind=..', 'arb_executor ok base0=.. base1=.. profit=.. inter_delta=.. min_profit=..'. Toolchain note: the Agave installer's first run appended one PATH line to ~/.profile; I removed that line the same minute and the script now passes --no-modify-path (documented in docs/sources/toolchain.md); PATH must be exported per shell: export PATH=\\\"$HOME/.cargo/bin:$HOME/.local/share/solana/install/active_release/bin:$PATH\\\". Rebuild after any src change with scripts/build_executor.sh (runs cargo test first; SKIP_HOST_TESTS=1 to skip; ARCH=v3 if a future litesvm requires SBPFv3). Nothing was committed."
+   },
+   {
+    "agent": "raydium_cpmm_adapter",
+    "status": "DONE",
+    "files_written": [
+     "/home/rares/trading/sol/atomarb/src/adapters/raydium_cpmm/layout.ts",
+     "/home/rares/trading/sol/atomarb/src/adapters/raydium_cpmm/math.ts",
+     "/home/rares/trading/sol/atomarb/src/adapters/raydium_cpmm/adapter.ts",
+     "/home/rares/trading/sol/atomarb/src/adapters/raydium_cpmm/index.ts",
+     "/home/rares/trading/sol/atomarb/scripts/fetch_fixtures_raydium.ts",
+     "/home/rares/trading/sol/atomarb/tests/unit/raydium_layout.test.ts",
+     "/home/rares/trading/sol/atomarb/tests/unit/raydium_math.test.ts",
+     "/home/rares/trading/sol/atomarb/tests/unit/raydium_adapter.test.ts",
+     "/home/rares/trading/sol/atomarb/tests/integration/raydium_local_program.test.ts",
+     "/home/rares/trading/sol/atomarb/tests/fixtures/raydium_cpmm/47hq28mcL7q5GhBg7epyGF2dnuJd4MKFt8QhT7CzYUp4.json",
+     "/home/rares/trading/sol/atomarb/tests/fixtures/raydium_cpmm/Q2sPHPdUWFMg7M7wwrQKLrn619cAucfRsmhVJffodSp.json",
+     "/home/rares/trading/sol/atomarb/tests/fixtures/raydium_cpmm/9vQSDkK4HUSX7gJRVEqPu4wXmU6N7KtKx58EysDwCPCA.json",
+     "/home/rares/trading/sol/atomarb/tests/fixtures/raydium_cpmm/A3URwhZE2YyVNKL9CmSvU9VG1oJoZS78kX4AdK5faDud.json",
+     "/home/rares/trading/sol/atomarb/tests/fixtures/raydium_cpmm/3ceKnrpPPUuz9FVsDJuYfTqbK5ia6KND7SQwcnRJ38KC.json",
+     "/home/rares/trading/sol/atomarb/tests/fixtures/raydium_cpmm/epoch.json",
+     "/home/rares/trading/sol/atomarb/tests/fixtures/raydium_cpmm/index.json",
+     "/home/rares/trading/sol/atomarb/tests/fixtures/programs/CPMMoo8L3F4NbTegBCKVNunggL7H1ZpdTHKxQB5qKP1C.so",
+     "/home/rares/trading/sol/atomarb/tests/fixtures/programs/CPMMoo8L3F4NbTegBCKVNunggL7H1ZpdTHKxQB5qKP1C.json",
+     "/home/rares/trading/sol/atomarb/docs/sources/raydium_cpmm.md (appended \u00a712.1-12.4 only)"
+    ],
+    "tests": {
+     "unit_pass": 82,
+     "unit_fail": 0,
+     "integration_pass": 11,
+     "integration_fail": 0,
+     "skipped": 0,
+     "command": "cd /home/rares/trading/sol/atomarb && npx tsc -p tsconfig.json --noEmit && npx vitest run tests/unit/raydium_layout.test.ts tests/unit/raydium_math.test.ts tests/unit/raydium_adapter.test.ts tests/integration/raydium_local_program.test.ts"
+    },
+    "rpc_requests_used": 14,
+    "verified_claims": [
+     "REAL-PROGRAM EXECUTION (LiteSVM, mainnet ELF sha256 36537be95ba35605\u2026, 793,824 bytes, programdata DMawCQzb\u2026 read at slot 447803095): swap_base_input WSOL\u2192token executed successfully on all 5 fixture pools with minimum_amount_out == adapter quote; output ATA delta == quote.amountOutToUser EXACTLY and WSOL ATA delta == amountIn EXACTLY: 47hq28mc (SOL/USDC) in 284,379,279 \u2192 out 25,980,056; Q2sPHPdU (WSOL/USELESS) in 500,000,000 \u2192 out 197,088,971; A3URwhZE (WSOL/LOOP, Token-2022 3% transfer fee) in 500,000,000 \u2192 out 9,202,849,069,087; 3ceKnrpP (WSOL/SolARBa, Token-2022 fee tier switched to 0 bps) in 500,000,000 \u2192 out 8,604,275; 9vQSDkK4 (WSOL/BERN, Token-2022 2.69% fee, degenerate reserves) in 81 \u2192 out 832. CU 24k\u201330k per swap.",
+     "REAL-PROGRAM: the quote is TIGHT \u2014 simulating the same swap with minimum_amount_out = quote + 1 fails with ExceededSlippage (custom error 6005) on all 5 pools.",
+     "REAL-PROGRAM: applySwap's predicted post-state (vault amounts, protocol/fund/creator fee counters, fee-adjusted reserves) equals the on-chain accounts decoded from the SVM after each swap, for both swaps on all 5 pools; the next quote computed from the predicted state equals the quote from the actual SVM state (swap-back amounts matched exactly).",
+     "REAL-PROGRAM: swap back token\u2192WSOL executed with exact WSOL credit == quote; roundtrip never profited (e.g. 0.5 SOL \u2192 0.4975 SOL on 0.25%-fee pools; 0.5 \u2192 0.468 SOL on the 3% Token-2022 transfer-fee pool).",
+     "REAL-PROGRAM: the \u00a74 gate is real \u2014 with LiteSVM's default Clock (unix_timestamp 0 < open_time) the program rejects with NotApproved (6000); setting Clock{slot, epoch=floor(slot/432000), unix_timestamp=fetched_at_utc} makes the swap pass.",
+     "REAL-PROGRAM Token-2022 path: transfer_checked through Token-2022 with a fabricated destination ATA carrying ImmutableOwner+TransferFeeAmount succeeded; user received amount_out \u2212 ceil(amount_out\u00b7300/10000) on LOOP exactly as quoted; on SolARBa the newer 0-bps tier applied (fee item amount 0) as quoted.",
+     "BYTE-EXACT FIXTURES: PoolState (637 bytes, disc f7ede3f5d7c3de46) and AmmConfig (236 bytes, disc daf42168cbcb2b6f, creator_fee_rate @108) decode from 5 live pools; every PDA re-derives (pool, vaults, lp mint, observation, config by BE u16 index); discriminators equal sha256('account:\u2026')[..8] and sha256('global:swap_base_input')[..8] = 8fbe5adac41e33de.",
+     "swap_base_input instruction encoding (13 accounts, flags, data) is byte-identical to @raydium-io/raydium-sdk-v2 makeSwapCpmmBaseInInstruction on all fixture pools.",
+     "Math vs SDK CurveCalculator on 300 seeded random states across 10 fee tiers: swapBaseInput identical whenever the creator fee is off or on the output side (180 states); swapBaseOutput identical in all 300 states; documented deviation (note \u00a75.6) for creator-fee-on-input: SDK total fee exceeds the program's ceil(sum)+floor-split by exactly 1 unit in 64/120 states.",
+     "Fee double-count regression: \u03a3(input-mint fee items) + curve input == amountIn and curve output == \u03a3(output-mint fee items) + amountOutToUser hold exactly on all pools/directions/sizes; lp_fee+protocol_fee+fund_fee == ceil(actual_in\u00b7trade_fee_rate).",
+     "Validation rejects verified on mutated fixtures: POOL_OWNER, VAULT_PDA_MISMATCH, VAULT_OWNER, VAULT_FROZEN, SWAP_DISABLED (bit2; bits 0/1 only warn), NOT_OPEN (wall-clock receivedAtUtc / params.nowUnix, never slot-derived), TOKEN_PROGRAM_MISMATCH, INVALID_FEE_MODEL, AUTH_BUMP, QUOTE_NOT_WSOL, TOKEN2022_EXTENSION (PermanentDelegate, TransferHook), UNKNOWN_LAYOUT for wrong length/discriminator, ACCOUNTS_MISSING.",
+     "Overflow detection: amountIn \u2265 2^64 \u2192 U64_OVERFLOW reject; amountIn that would overflow the vault u64 \u2192 U64_OVERFLOW_VAULT; u128 checked ops return null (ZeroTradingTokens) and unwrap() sites throw OverflowError, surfaced as rejects/unsupported, never a fake quote.",
+     "Read-only: no sendTransaction/sendRawTransaction/sendBundle calls; no private keys (users are random PublicKeys, sigverify off); total HTTP requests 14 = 11 RPC (getMultipleAccounts \u00d77, getEpochSchedule, getEpochInfo, program+programdata dump) + 3 Raydium API v3 GETs; RpcClient limits 4 rps / 2 concurrent / 40 max per script run."
+    ],
+    "unverified_or_open": [
+     "Creator-fee path (enable_creator_fee=true) is NOT verified against the real program: all 5 fixture pools have enable_creator_fee=false (USELESS is launchMigratePool:true in the API but the on-chain flag is false). The ceil(total)+floor-split rule and the direction-dependent creator_fee_on rule are ported from the Rust source and unit-tested (also cross-checked vs SDK with the documented 1-unit deviation) only.",
+     "swap_base_output (\u00a75.4) is implemented (adapter.quoteExactOut / math.simulateSwapBaseOutput) and unit-tested vs SDK + inverse-consistency, but was not executed in LiteSVM.",
+     "SupportMintAssociated whitelist is not modelled: a whitelisted Token-2022 mint with a disallowed extension would be rejected conservatively (TOKEN2022_EXTENSION).",
+     "Token-2022 epoch tier selection: the adapter derives Clock.epoch from the snapshot slot via the live-fetched mainnet epoch schedule (432000 slots/epoch, no warm-up; matches getEpochInfo epoch 1036). LiteSVM was given the same epoch, so tier switching at an epoch boundary was not independently verified on-chain; LOOP has equal tiers and SolARBa's newer tier (0 bps) was the one exercised.",
+     "The brief called 47hq28mc\u2026 a 'large' SOL/USDC pool; on-chain it holds only ~2.85 SOL / 287 USDC (the CPMM SOL/USDC liquidity is small). Large fixtures are WSOL/USELESS (~24,743 SOL), WSOL/LOOP (~1,143 SOL) and WSOL/SolARBa (~1,117 SOL). No pump.fun-suffixed mint CPMM pool appeared in the top-200 WSOL Standard pools (pump tokens migrate to PumpSwap); USELESS is a bonk.fun (LaunchLab) token.",
+     "WSOL/BERN pool 9vQSDkK4 is degenerate: fee-adjusted reserves are 811 lamports / 9,640 units (vaults are almost entirely accrued protocol+fund fees); it still executed correctly for an 81-lamport swap.",
+     "Deployed binary vs GitHub 59fb845: the executed ELF is the real mainnet one and its swap math matched the port exactly on 10 swaps, but the exact source commit remains unpublished (note \u00a711).",
+     "src/state/token.ts transferFeeInverse (not my file) lacks Token-2022's maximum_fee branch; the adapter uses its own exact port (math.ts) \u2014 flagged in note \u00a712.4."
+    ],
+    "blockers": [],
+    "notes_for_integrator": "Entry point: `import { RaydiumCpmmAdapter } from './adapters/raydium_cpmm/index.js'; const adapter = new RaydiumCpmmAdapter()` (options: epochSchedule, programId). requiredAccounts needs the pool RawAccount (2-step fetch) and returns [pool, amm_config, vault0, vault1, mint0, mint1]; observation_state is NOT required for quoting but is needed by the ix \u2014 it is available as `(decoded.params as RaydiumCpmmParams).pool.observationKey` and in `quote.accountsNeeded` (10 keys: authority, config, pool, vaults, token programs, mints, observation). buildSwapInstruction: pass `inputMint` (type RaydiumSwapIxParams) or use the user's ATAs for both mints so the direction can be inferred; payer is a non-writable signer. Fee items: lp_fee, protocol_fee, fund_fee are DISJOINT parts of the trade fee (their sum is ceil(actual_in\u00b7trade_fee_rate)); creator_fee (only when enabled; mint depends on creator_fee_on and direction); token2022_transfer_fee_in/out (present iff the mint has TransferFeeConfig, amount may be 0). Exact identities: amountIn = \u03a3 input-mint fees + curve input; curve output = \u03a3 output-mint fees + amountOutToUser; vaultInDelta = amountIn \u2212 transfer_fee_in; vaultOutDelta = gross amount_out (incl. output transfer fee). Program-deterministic failures (dust \u2192 REQUIRE_GT_VIOLATED, u64/vault overflow, ZeroTradingTokens) come back as a Quote with rejectReasons and amountOutToUser 0 (not Unsupported); applySwap refuses rejected quotes, mismatched stateHash, or quotes that no longer reproduce. validatePool uses now = params.nowUnix ?? Date.parse(snapshot.receivedAtUtc); params.epoch = floor(maxSlot/432000) via MAINNET_EPOCH_SCHEDULE (patch params.epoch to test other tiers). For LiteSVM probes: set Clock (unix_timestamp \u2265 open_time, epoch) before executing (note \u00a712.3) and give fabricated Token-2022 output accounts the TransferFeeAmount extension; give each unsigned tx a random 64-byte signature so LiteSVM's history check does not report AlreadyProcessed. Fixture script: `npx tsx scripts/fetch_fixtures_raydium.ts [--skip-program] [--skip-epoch] [--only id,id] [--discover]` (\u226440 requests, 8 for a full run). Repo-wide tsc is clean at hand-off; tests/fixtures/programs also contains other agents' dumps (arb_executor, pAMM\u2026, pfee\u2026) which I did not touch. The CPMM swap consumes ~24k\u201330k CU."
+   },
+   {
+    "agent": "pumpswap_adapter",
+    "status": "DONE",
+    "files_written": [
+     "/home/rares/trading/sol/atomarb/src/adapters/pumpswap/layout.ts",
+     "/home/rares/trading/sol/atomarb/src/adapters/pumpswap/fees.ts",
+     "/home/rares/trading/sol/atomarb/src/adapters/pumpswap/math.ts",
+     "/home/rares/trading/sol/atomarb/src/adapters/pumpswap/adapter.ts",
+     "/home/rares/trading/sol/atomarb/src/adapters/pumpswap/index.ts",
+     "/home/rares/trading/sol/atomarb/scripts/fetch_fixtures_pumpswap.ts",
+     "/home/rares/trading/sol/atomarb/tests/unit/pumpswap_math.test.ts",
+     "/home/rares/trading/sol/atomarb/tests/unit/pumpswap_layout.test.ts",
+     "/home/rares/trading/sol/atomarb/tests/unit/pumpswap_fees.test.ts",
+     "/home/rares/trading/sol/atomarb/tests/unit/pumpswap_adapter.test.ts",
+     "/home/rares/trading/sol/atomarb/tests/unit/pumpswap_sdk_crosscheck.test.ts",
+     "/home/rares/trading/sol/atomarb/tests/integration/pumpswap_local_program.test.ts",
+     "/home/rares/trading/sol/atomarb/tests/integration/pumpswap_network.test.ts",
+     "/home/rares/trading/sol/atomarb/tests/fixtures/pumpswap/global.json",
+     "/home/rares/trading/sol/atomarb/tests/fixtures/pumpswap/pool_canonical.json",
+     "/home/rares/trading/sol/atomarb/tests/fixtures/pumpswap/pool_boosted.json",
+     "/home/rares/trading/sol/atomarb/tests/fixtures/pumpswap/pool_noncanonical.json",
+     "/home/rares/trading/sol/atomarb/tests/fixtures/pumpswap/manifest.json",
+     "/home/rares/trading/sol/atomarb/tests/fixtures/programs/pAMMBay6oceH9fJKBRHGP5D4bD4sWpmSwMn52FMfXEA.so",
+     "/home/rares/trading/sol/atomarb/tests/fixtures/programs/pAMMBay6oceH9fJKBRHGP5D4bD4sWpmSwMn52FMfXEA.json",
+     "/home/rares/trading/sol/atomarb/tests/fixtures/programs/pfeeUxB6jkeY1Hxd7CsFCAjcbHA9rWtchMGdZ6VojVZ.so",
+     "/home/rares/trading/sol/atomarb/tests/fixtures/programs/pfeeUxB6jkeY1Hxd7CsFCAjcbHA9rWtchMGdZ6VojVZ.json",
+     "/home/rares/trading/sol/atomarb/docs/sources/pumpswap.md (appended \u00a711 only)"
+    ],
+    "tests": {
+     "unit_pass": 48,
+     "unit_fail": 0,
+     "integration_pass": 8,
+     "integration_fail": 0,
+     "skipped": 1,
+     "command": "npx tsc -p tsconfig.json --noEmit && npx vitest run tests/unit/pumpswap_math.test.ts tests/unit/pumpswap_layout.test.ts tests/unit/pumpswap_fees.test.ts tests/unit/pumpswap_adapter.test.ts tests/unit/pumpswap_sdk_crosscheck.test.ts tests/integration/pumpswap_local_program.test.ts tests/integration/pumpswap_network.test.ts   # 56 passed, 1 skipped (network); ATOMARB_NETWORK_TESTS=1 run of pumpswap_network.test.ts: 1 passed with 2 RPC requests"
+    },
+    "rpc_requests_used": 10,
+    "verified_claims": [
+     "REAL pump_amm ELF (programdata 6naEzKeUuFh1Jeeu51NXQgr5qkXgXtc9WKNct4xynVJc, slot 447804243, sha256 feb2ec72199f35999bbfd26ada811a37d297464ab265c78593b2d4717d7d42b5) + REAL pump_fees ELF (sha256 4a6e66093305f8a7cb9ca6e4f47c7de726b590dd2be0d5413ce408feba27c8a5) executed in LiteSVM against real fixture accounts from slot 447804242: buy_exact_quote_in via my buildSwapInstruction succeeds on all three pools (canonical GseMAnN\u2026, boosted FruHjS1\u2026 with Token-2022 base, non-canonical 1nk4YGrr\u2026).",
+     "buy_exact_quote_in(10,000,000): user base ATA delta == quote.amountOutToUser EXACTLY (50,313,230,241 / 5,277,919 / 18,855,623,888); WSOL ATA delta == quote.amountIn EXACTLY; pool quote vault delta == effective_quote + lp_fee (LP fee stays in the pool); pool base vault delta == base_out; protocol_fee_recipient ATA + buyback ATA == protocol_fee (buyback = floor(protocol*5000/10000)); coin_creator_vault_ata == creator fee.",
+     "Relation holds over 6 sizes on the canonical pool (1e6, 3,333,333, 1e7, 5e7, 123,456,789, 4e8): chain base_out == quote and chain debit == amountIn; base_out = floor(B*(E-1)/(effQ+E-1)) with E = floor(S*1e4/(1e4+f)) \u2014 the '-1' is on-chain behaviour (min_base_amount_out = quote+1 fails with custom error 6040 BuySlippageBelowMinBaseAmountOut).",
+     "Gap case (E + fees == S - 1) executed at 5 budgets on 3 pools: the program debits exactly E + lp + protocol + creator (one lamport below spendable_quote_in), base_out/vault deltas unchanged; the program requires the WSOL balance to cover only the debit (executed with balance == debit and spendable == debit + 1: success, ATA left at 0). Quote.amountIn therefore = debit; buildSwapInstruction re-derives spendable_quote_in as the largest of {amountIn, amountIn+1} with modelled debit <= amountIn (verified to reproduce the quote over 7 sizes).",
+     "sell(base received) on the same pool: WSOL delta == sell quote amountOutToUser EXACTLY (9,753,083 / 9,940,171 / \u2026), pool quote vault delta == quote_out - lp_fee, base vault delta == base_in; applySwap reserves equal the post-execution vault balances after both legs; buy+sell roundtrip on the same pool ends with less WSOL (-246,917 / -59,829 lamports on 1e7 in).",
+     "Effective quote reserve (raw vault + virtual_quote_reserves = 17,584,505,289) is what the real program prices with on both legs (boosted pool), and the Token-2022 base mint (410-byte mint, MetadataPointer/TokenMetadata) trades through a base ATA created by the real ATA program (170 bytes, rent 2,074,080).",
+     "On-chain fee schedule: canonical pool with market cap \u2248196 SOL charged tier 0 = 2/93/30 bps (fee-program CPI GetFeesWithQuoteMint return data 02..5d..1e); non-canonical pool charged flat 25/5/0 (coin_creator = default \u2192 creator fee 0).",
+     "user_volume_accumulator init_if_needed: 137 bytes, rent 1,844,400 lamports paid by the user on the first buy (user SOL delta = -5,000 - 1,844,400); sells cost only the 5,000 fee. coin_creator_vault_ata is also init_if_needed (user paid 2,039,280 when the fixture lacked it) \u2014 the fetch script now always includes it. pool-v2 remaining account passed as NULL is accepted. CU: 79,216 / 86,053 / 97,439 for buy_exact_quote_in incl. UVA init.",
+     "Layout decoding byte-exact vs fixtures: Pool 300/301 bytes, GlobalConfig 949 bytes (all \u00a73 values incl. buyback 5000, creator_fee_configurable=1, max 300), FeeConfig 4097 bytes (flat 25/5/0, 25 SOL tiers with tier0 2/93/30 and tier24 20/5/5 at 98,240 SOL, 25 stable tiers, exotic 20/5/5, decodedEnd 2097); historical pool lengths 211/243/244/245/261/270/271 default trailing fields; GlobalConfig 907/940 and FeeConfig 4073/2512 prefixes decode; every other length / discriminator / overrunning Vec => UNKNOWN_LAYOUT.",
+     "Math reproduces the three live BuyEvents (quote_in 1,439,176 / lp 2,879 / protocol 720 / creator 720; 4,257,974/8,516/2,129; 457,385/915/229) and both live SellEvents (11,738,771 / 29,347 / 5,870 / 11,703,554; 309,852,388/774,631/154,927/308,922,830); without the virtual reserve the event is NOT reproduced.",
+     "Cross-check vs @pump-fun/pump-swap-sdk 1.20.0 offline functions on 200 seeded random states (138 canonical, 134 with coin creator, 80 boosted, 30 per-pool overrides, 20 mayhem): fee schedule, buyQuoteInput (base + internalQuoteWithoutFees), buyBaseInput (uiQuote + internalQuoteAmount), sellBaseInput (uiQuote + internalQuoteAmountOut) agree with ZERO differences; the single SDK throw ('Insufficient real quote reserves') maps to my BOOST_REAL_RESERVE_CAP reject.",
+     "Validation rejects (unit): swapped vaults, pool not owned by pump_amm, vault owned by the wrong token program, forged owners, non-WSOL quote, pool PDA mismatch, disable_flags bits 3/4 (validate + quote + build), negative virtual reserves, frozen vault, Token-2022 NonTransferable / TransferHook(program) / Pausable(paused) / DefaultAccountState(frozen). buildSwapInstruction: 26/24 accounts (with coin creator), 25/23 (without), 27/26 (cashback), documented order incl. pool-v2 == live tx account [23], data 25/24 bytes with the \u00a76 discriminators; refuses non-ATA user accounts.",
+     "Network smoke (ATOMARB_NETWORK_TESTS=1): snapshotPools \u2192 decode \u2192 validate \u2192 quote on live FruHjS1\u2026 at slot 447807416 in 2 RPC requests, single-batch snapshot, tier 24 (20/5/5), 990-byte v0 tx built (never signed/sent).",
+     "RPC accounting: fetch script 6 + re-run 2 + network test 2 = 10 HTTP requests total, all read-only getMultipleAccounts on https://api.mainnet-beta.solana.com (RpcClient limits 4 rps / \u22642 concurrent)."
+    ],
+    "unverified_or_open": [
+     "Token-2022 base mints WITH TransferFeeConfig or a TransferHook were not executed (no such pool fixture). The adapter applies the transfer fee conservatively (buy: out net of fee; sell: prices on base_in net of fee using the larger of older/newer TransferFee since it has no Clock) and rejects hooks; whether the on-chain program prices sells on gross or net base is UNKNOWN (token2022.md \u00a78).",
+     "Sell BOOST cap (real vault < quote_out - lp_fee => IDL error 6063) is mirrored from the SDK check + error text; it was not triggered on the real program (would require a near-empty real vault fixture).",
+     "Mayhem-mode pools (reserved_fee_recipient), cashback coins (extra remaining accounts), holder-reward pools, USDC/exotic quotes: account lists and fee routing are implemented per the SDK/IDL and unit-tested, but not executed on the real program (no fixtures; this adapter rejects non-WSOL quotes anyway).",
+     "Omitting the pool-v2 remaining account when coin_creator != default was not tested (it is always passed, as a NULL account on mainnet \u2014 accepted).",
+     "The base-exact `buy` instruction (disc 66063d12\u2026) is not built by the adapter; its math (buyBaseInput) is verified only against the three live BuyEvents and the SDK.",
+     "LiteSVM Clock was set approximately (slot 447804242, unix \u2248 1789652255 extrapolated at 0.4 s/slot, epoch 1036); no Token-2022 epoch-dependent fee was exercised so the approximation had no effect.",
+     "Fee schedule selection for the exact on-chain Pool::market_cap() basis is inferred from the SDK (effective quote reserve \u00d7 base mint supply / base reserve); it produced the correct tier on both canonical fixtures (tier 0 and tier 24) but intermediate tiers were not exercised on-chain.",
+     "tests/fixtures/pumpswap/manifest.json 'missing_dependents' also lists pool-v2 / candidate keys of non-saved candidate pools (7P8gpKJm\u2026, AsidVXRb\u2026) \u2014 informational only."
+    ],
+    "blockers": [],
+    "notes_for_integrator": "Wiring: import { pumpswapAdapter } from 'src/adapters/pumpswap/index.js' (class PumpswapAdapter, id 'pumpswap', programId pAMMBay6\u2026); params are typed via pumpswapParams(decoded). Nothing outside src/adapters/pumpswap imports it yet. IMPORTANT semantics: for WSOL->base quotes, Quote.amountIn is the ACTUAL WSOL debit (effective_quote + fees), which can be 1 lamport below the requested amount; quote.math.spendable_quote_in / unspent_budget record the budget. buildSwapInstruction(amountIn = quote.amountIn) re-derives spendable_quote_in (largest of {amountIn, amountIn+1} with modelled debit <= amountIn) so the quoted base_out is reproduced exactly; pass minimumAmountOut = quote.amountOutToUser (it is tight: +1 fails on-chain with 6040). Vault transitions: buy: quote vault += effective_quote + lp_fee, base vault -= base_out; sell: base vault += base_in, quote vault -= quote_out - lp_fee (protocol/buyback/creator fees leave the pool) \u2014 verified on the real program and encoded in Quote.vaultInDelta/vaultOutDelta + applySwap. Fee recipients: FIRST protocol_fee_recipients entry (62qc2C\u2026; mayhem pools: reserved_fee_recipient) and FIRST buyback_fee_recipients entry (5YxQFd\u2026), deterministic for reproducible account sets (the SDK randomises only to spread write locks). Buyers pay 1,844,400 lamports rent for user_volume_accumulator on their first PumpSwap buy (init_if_needed) \u2014 account for it in PnL for a fresh identity; also protocol_fee_recipient ATA / coin_creator_vault_ata are init_if_needed (exist on mainnet for the fixture pools). Fixtures: re-run `npx tsx scripts/fetch_fixtures_pumpswap.ts [--refresh-programs]` (\u22482 requests when ELFs are present, 6 with dumps); ELFs are 10.5 MB (pump_amm programdata is padded) and 0.95 MB with sidecar JSON {programId, programDataAddress, slot, sha256, fetched_at_utc, bytes, loader, source}. A CPMMoo8L\u2026 dump in tests/fixtures/programs belongs to the raydium agent (untouched). docs/sources/pumpswap.md: appended \u00a711 (real-program execution facts; answers Open questions 2 and part of 1/3) \u2014 no existing text changed. Note: vitest's default reporter hides console output of passing tests; use --reporter=verbose to see the delta tables. Project-wide `npx tsc -p tsconfig.json --noEmit` exits 0 at hand-off. Real-program log excerpt (buy_exact_quote_in): 'Program pAMMBay6\u2026 invoke [1]' / 'Program log: Instruction: BuyExactQuoteIn' / 'Program 11111111111111111111111111111111 invoke [2] \u2026 success' (UVA init) / 'Program pfeeUxB6\u2026 invoke [2]' / 'Program log: Instruction: GetFeesWithQuoteMint' / 'Program pfeeUxB6\u2026 consumed 6121 of 159256 compute units' / 'Program return: pfeeUxB6\u2026 AgAAAAAAAABdAAAAAAAAAB4AAAAAAAAA' (= lp 2, protocol 93, creator 30) / BuyEvent 'Program data: \u2026' (ix_name buy_exact_quote_in, quote_amount_in = spendable, user_quote_amount_in = effective_quote) / success with 79,216 CU; tight case: 'AnchorError \u2026 Error Code: BuySlippageBelowMinBaseAmountOut. Error Number: 6040'."
+   }
+  ],
   "events": [
    {
     "type": "launched"
    },
    {
     "type": "started",
-    "agentId": "a82a8d2746c2efe16",
-    "label": "review:pumpswap",
-    "phase": "Verify"
+    "agentId": "ae25f81a7ad957f38",
+    "label": "impl:pumpswap",
+    "phase": "Implement"
    },
    {
     "type": "started",
-    "agentId": "a4cf5ce7b78f07a18",
-    "label": "review:raydium",
-    "phase": "Verify"
+    "agentId": "a5999969ee38dfdaa",
+    "label": "impl:discovery",
+    "phase": "Implement"
    },
    {
     "type": "started",
-    "agentId": "a828a6f1369150897",
+    "agentId": "a676bcf39197c9a2c",
+    "label": "impl:raydium",
+    "phase": "Implement"
+   },
+   {
+    "type": "started",
+    "agentId": "ae43cfd538fca6360",
+    "label": "impl:executor",
+    "phase": "Implement"
+   },
+   {
+    "type": "failed",
+    "agentId": "ae43cfd538fca6360"
+   },
+   {
+    "type": "failed",
+    "agentId": "a676bcf39197c9a2c"
+   },
+   {
+    "type": "failed",
+    "agentId": "ae25f81a7ad957f38"
+   },
+   {
+    "type": "failed",
+    "agentId": "a5999969ee38dfdaa"
+   },
+   {
+    "type": "started",
+    "agentId": "ac3ea9b0970c52da9",
+    "label": "impl:discovery",
+    "phase": "Implement"
+   },
+   {
+    "type": "started",
+    "agentId": "a3c8884a0b08f0b01",
+    "label": "impl:pumpswap",
+    "phase": "Implement"
+   },
+   {
+    "type": "started",
+    "agentId": "ae9f7c182d31d7524",
+    "label": "impl:raydium",
+    "phase": "Implement"
+   },
+   {
+    "type": "started",
+    "agentId": "adc26cb88f3593610",
+    "label": "impl:executor",
+    "phase": "Implement"
+   },
+   {
+    "type": "started",
+    "agentId": "ac83be83b69a4b43c",
     "label": "review:discovery",
     "phase": "Verify"
    },
    {
     "type": "started",
-    "agentId": "a5c5335bd0a2dbbf4",
-    "label": "review:executor",
+    "agentId": "a3e3b621aa0adbb71",
+    "label": "review:rust_executor",
+    "phase": "Verify"
+   },
+   {
+    "type": "started",
+    "agentId": "abb0b9d36da1e3063",
+    "label": "review:raydium_cpmm_adapter",
+    "phase": "Verify"
+   },
+   {
+    "type": "started",
+    "agentId": "ad6590f748dc30958",
+    "label": "review:pumpswap_adapter",
     "phase": "Verify"
    },
    {
     "type": "failed",
-    "agentId": "a828a6f1369150897"
+    "agentId": "ad6590f748dc30958"
    },
    {
     "type": "failed",
-    "agentId": "a5c5335bd0a2dbbf4"
+    "agentId": "a3e3b621aa0adbb71"
    },
    {
     "type": "failed",
-    "agentId": "a4cf5ce7b78f07a18"
+    "agentId": "abb0b9d36da1e3063"
    },
    {
-    "type": "started",
-    "agentId": "a41d8901c73c1bc89",
-    "label": "review:pumpswap",
-    "phase": "Verify"
-   },
-   {
-    "type": "started",
-    "agentId": "a794fc1f1b94f85ec",
-    "label": "review:raydium",
-    "phase": "Verify"
-   },
-   {
-    "type": "started",
-    "agentId": "a172967015965b14d",
-    "label": "review:discovery",
-    "phase": "Verify"
-   },
-   {
-    "type": "started",
-    "agentId": "a812d629d8d6d9a5c",
-    "label": "review:executor",
-    "phase": "Verify"
+    "type": "failed",
+    "agentId": "ac83be83b69a4b43c"
    }
   ]
  },
@@ -2031,366 +2327,71 @@
    }
   ]
  },
- "wf_1b386fa2-b51": {
-  "agents": [
-   {
-    "agent": "discovery",
-    "status": "DONE",
-    "files_written": [
-     "/home/rares/trading/sol/atomarb/src/discovery/raydium_api.ts",
-     "/home/rares/trading/sol/atomarb/src/discovery/local_inventory.ts",
-     "/home/rares/trading/sol/atomarb/src/discovery/population.ts",
-     "/home/rares/trading/sol/atomarb/src/discovery/index.ts",
-     "/home/rares/trading/sol/atomarb/src/cli/discover.ts",
-     "/home/rares/trading/sol/atomarb/scripts/fetch_discovery_fixtures.ts",
-     "/home/rares/trading/sol/atomarb/tests/unit/discovery_raydium_api.test.ts",
-     "/home/rares/trading/sol/atomarb/tests/unit/discovery_inventory.test.ts",
-     "/home/rares/trading/sol/atomarb/tests/unit/discovery_population.test.ts",
-     "/home/rares/trading/sol/atomarb/tests/unit/discovery_run.test.ts",
-     "/home/rares/trading/sol/atomarb/tests/unit/discovery_network.test.ts",
-     "/home/rares/trading/sol/atomarb/tests/fixtures/discovery/mock_fetch.ts",
-     "/home/rares/trading/sol/atomarb/tests/fixtures/discovery/raydium_listv2_page1.json",
-     "/home/rares/trading/sol/atomarb/tests/fixtures/discovery/raydium_listv2_page2.json",
-     "/home/rares/trading/sol/atomarb/tests/fixtures/discovery/raydium_infomint_page1.json",
-     "/home/rares/trading/sol/atomarb/tests/fixtures/discovery/raydium_infomint_page2.json",
-     "/home/rares/trading/sol/atomarb/tests/fixtures/discovery/raydium_pool_keys.json",
-     "/home/rares/trading/sol/atomarb/tests/fixtures/discovery/raydium_error_pooltype.json",
-     "/home/rares/trading/sol/atomarb/tests/fixtures/discovery/pumpswap_inventory_sample.jsonl.gz",
-     "/home/rares/trading/sol/atomarb/tests/fixtures/discovery/pumpswap_inventory_sample.provenance.json",
-     "/home/rares/trading/sol/atomarb/docs/sources/discovery_apis.md",
-     "/home/rares/trading/sol/atomarb/reports/population_20260917T132609Z.json",
-     "/home/rares/trading/sol/atomarb/reports/population_20260917T132609Z.md",
-     "/home/rares/trading/sol/atomarb/data/discovery/raydium_listv2_wsol_standard.json (gitignored cache, 14 MB)",
-     "/home/rares/trading/sol/atomarb/data/discovery/raydium_infomint_wsol_standard.json (gitignored cache, 14 MB)",
-     "/home/rares/trading/sol/atomarb/data/discovery/raydium_pool_keys.json (gitignored)",
-     "/home/rares/trading/sol/atomarb/data/discovery/raydium_version.json (gitignored)",
-     "/home/rares/trading/sol/atomarb/data/discovery/shortlist.json (gitignored; consumed by quote/simulate/shadow)"
-    ],
-    "tests": {
-     "unit_pass": 30,
-     "unit_fail": 0,
-     "integration_pass": 1,
-     "integration_fail": 0,
-     "skipped": 0,
-     "command": "npx vitest run tests/unit/discovery_raydium_api.test.ts tests/unit/discovery_inventory.test.ts tests/unit/discovery_population.test.ts tests/unit/discovery_run.test.ts tests/unit/discovery_network.test.ts   (the network test runs only with ATOMARB_NETWORK_TESTS=1 and uses exactly 3 HTTPS requests; it is skipped otherwise: 30 pass + 1 skipped)"
-    },
-    "rpc_requests_used": 19,
-    "verified_claims": [
-     "NOTE: no LiteSVM execution belongs to this task (discovery is off-chain); the claims below are verified by live HTTPS responses saved to disk and by unit tests against saved real API responses. Solana RPC requests used: 0. HTTP requests used: 19, all GET https://api-v3.raydium.io (3 curl probes + 12 in the real run + 1 pool-keys re-fetch + 3 in the network test).",
-     "VERIFIED_LIVE 2026-09-17: /pools/info/list-v2?size=1000&mint1=WSOL&poolType=Standard&sortField=liquidity&sortType=desc paginates via data.nextPageId; size=1000 is honored (5 pages x 1000 items, 0 duplicate ids); nextPageId still present after page 5 (more available). Exact URLs recorded in docs/sources/discovery_apis.md section 1.",
-     "VERIFIED_LIVE: /pools/info/mint?mint1=WSOL&poolType=standard&poolSortField=liquidity&sortType=desc&pageSize=1000&page=N paginates via page/hasNextPage; data.count is the item count of the page (3 for pageSize=3), NOT a total. The first 5000 ids are identical to list-v2 (overlap 5000/5000, 0 only-in-either).",
-     "VERIFIED_LIVE: poolType casing differs per endpoint (list-v2 wants 'Standard', /pools/info/mint wants 'standard'); a parameter error comes back as HTTP 500 {success:false,msg:'query poolType type error'} and the client treats it as non-retryable (unit-tested with the real error body).",
-     "VERIFIED_LIVE: among the top-5000 Standard WSOL pools (tvl from $33.2M down to $10,314), 822 have programId CPMMoo8L3F4NbTegBCKVNunggL7H1ZpdTHKxQB5qKP1C; the rest are AMM v4 (675kPX...). Filtering by programId is the only CPMM discriminator (type is 'Standard' for all).",
-     "VERIFIED_LIVE: /pools/key/ids?ids=<17 ids> (839-char URL) returned 17 CPMM key records with vault.A/B, authority, config, observationId, lookupTableAccount, mintLp; attached to the shortlist as keys_* HINTS only.",
-     "VERIFIED by byte-exact read of data/inventory/pumpswap_pools.jsonl.gz (sha256 3865384c...7416, provenance source_sha256 6daeaaf4...eb54, source mtime 2026-09-04T14:12:34.613Z = 13 days old): 25,061 lines, 25,061 valid WSOL-quote records, 0 skipped, 0 duplicate addresses, 24,617 distinct base mints, 123 mints with >=2 pools (pre-count confirmed; distribution 85x2, 15x3, 4x4, 3x5, 3x11, max 51).",
-     "Population report (reports/population_20260917T132609Z.json/.md): (a) 123 PumpSwap mints with >=2 WSOL pools (653 ranked pairs after the 32-per-mint cap, 4501 truncated); (b) 17 mints with BOTH a Raydium CPMM WSOL pool and a PumpSwap WSOL pool (50 pairs); (c) 0 mints with >=2 CPMM WSOL pools; dedup: 0 duplicate addresses, 123 (adapter,mintA,mintB) collision groups (all PumpSwap, listed separately), 0 non-WSOL pairs. Shortlist: 50 pools (17 raydium_cpmm + 33 pumpswap) / 28 routes / 22 mints, deterministic (unit test proves byte-identical output under reversed input order).",
-     "Unit-tested against saved real responses: nextPageId pagination + cross-page dedup + cap flagging (CAP_REACHED), info-mint pagination, repeated-cursor and empty-page guards, CPMM filter, PoolRef conversion (skip codes NOT_CPMM/BAD_POOL_ID/BAD_MINT, never a fake ref), keys chunking at 100 ids + missing ids, User-Agent 'atomarb-research', 2 req/s spacing (rps>2 rejected), retry/backoff on 503/429/AbortError only, request budget, bad envelopes; inventory reader skip reasons (BAD_PUBKEY, QUOTE_NOT_REQUIRED_MINT, BAD_JSON, BAD_INDEX) and duplicate reporting; runDiscovery offline path with 0 HTTP calls and NO_CACHE refusal; markdown <=100 columns; a grep-guard test asserts no RpcClient/state/rpc/sendTransaction/simulateTransaction reference in src/discovery/** or src/cli/discover.ts.",
-     "Live network test (ATOMARB_NETWORK_TESTS=1) passed: /main/version = V3.0.1, one list-v2 page of 5 WSOL Standard pools with nextPageId, /pools/key/ids for 47hq28mcL7q5GhBg7epyGF2dnuJd4MKFt8QhT7CzYUp4 returns programId CPMM with vault/observationId strings; exactly 3 requests."
-    ],
-    "unverified_or_open": [
-     "Every pool address, mint, vault/config/observation key and tvl in the report and shortlist is UNVERIFIED on-chain (API/inventory hints only) until src/state/snapshot.ts + adapters decode and validate them.",
-     "Coverage: the 5,000-pool cap (liquidity desc) means CPMM WSOL pools with tvl below ~$10.3k were never listed; the total number of Standard WSOL pools is unknown (no total-count field). The 17-mint cross-adapter intersection is therefore a lower bound.",
-     "PumpSwap inventory is 13 days old (2026-09-04); pools created/closed since are not reflected; the inventory's 'canonical'/'index' flags are carried as hints and not re-derived.",
-     "Raydium API rate limits are undocumented (self-limited to 2 req/s, serialized; no 429 observed). tvl semantics (USD? price source) unstated; used only for ranking.",
-     "nextPageId cursor validity over time is unknown; cursors are consumed immediately and never reused from cache.",
-     "Project-wide `npx tsc --noEmit` is NOT green because of other agents' files (tests/integration/executor_guard.test.ts:190, tests/unit/raydium_layout.test.ts:88,90, tests/unit/pumpswap_layout.test.ts:84,115,144 \u2014 'Object is possibly undefined'); all files owned by this agent typecheck clean (verified by filtering tsc output)."
-    ],
-    "blockers": [],
-    "notes_for_integrator": "REAL RUN COUNTS (2026-09-17T13:13Z, api-v3.raydium.io, 0 RPC): Standard WSOL pools listed 5000 (cap hit; tvl floor $10,314) -> CPMM WSOL pools 822 (822 mints); PumpSwap inventory 25,061 WSOL pools / 24,617 mints; (a) same-adapter PumpSwap mints with >=2 pools: 123; (b) cross-adapter mints (CPMM AND PumpSwap): 17 (50 pool pairs) \u2014 small, a coverage result, not a failure; (c) same-adapter Raydium mints with >=2 CPMM pools: 0; shortlist 50 pools (17 raydium_cpmm + 33 pumpswap) / 28 routes / 22 mints (all 17 cross mints covered, then 5 PumpSwap-only unknown-liquidity routes). HTTP requests total 19 (3 probes, 12 run incl. info-mint cross-check, 1 keys re-fetch, 3 network test); Solana RPC 0. USAGE: `npm run discover` (network: /main/version + 5 list-v2 pages + 1 keys = 7 requests), `npm run discover -- --no-network` (0 HTTP; needs the gitignored data/discovery cache present on this host), `--reuse-list` (network but reuse cached listing; only re-fetches pool keys), `--cross-check` (adds 5 info-mint pages), `--max-pools N --max-mints N --max-pools-per-mint N (default 6) --cap N (default 5000) --page-size N --inventory path`. OUTPUT for quote/simulate/shadow: data/discovery/shortlist.json = array of {adapter:'raydium_cpmm'|'pumpswap', address, mint (non-WSOL mint), source:{kind:'raydium_api_v3'|'local_pumpswap_inventory', ref:<page URL | provenance sha256>, observedAtUtc}, hints:{...}} \u2014 hints for Raydium include mintA/mintB/tvl/configId/configIndex/tradeFeeRate/openTime and keys_vaultA/keys_vaultB/keys_authority/keys_configId/keys_observationId/keys_lookupTableAccount/keys_mintLp (HINTS ONLY; adapters must derive/validate on-chain); PumpSwap hints are base_mint/quote_mint/index/canonical with tvl:null. The report JSON (608 KB, tracked in reports/) contains full category lists, all 703 ranked routes, dedup/collision lists and source provenance; the .md is a <=100-column summary. Ranking rule: liquidityRank = min(tvlA,tvlB) when both known, Raydium tvl when only that side is known (cross-adapter), unknown last (tie-break: canonical-pool count, mint, addresses); routes capped at 32 per mint; shortlist admits <=maxPoolsPerMint pools per mint so one 34-pool mint cannot consume the list. Fixture builder: `npx tsx scripts/fetch_discovery_fixtures.ts` rebuilds tests/fixtures/discovery/raydium_*.json from the cache (0 requests) or `--live` (2 requests). No program dumps were needed (no on-chain execution in this task). Two files were already tracked at HEAD (an earlier commit picked up my first raydium_api.ts version and the discover.ts stub); the working tree holds the final versions. I did not touch package.json, other agents' files, or ../failtax."
-   },
-   {
-    "agent": "rust_executor",
-    "status": "DONE",
-    "files_written": [
-     "/home/rares/trading/sol/atomarb/programs/arb_executor/Cargo.toml",
-     "/home/rares/trading/sol/atomarb/programs/arb_executor/Cargo.lock",
-     "/home/rares/trading/sol/atomarb/programs/arb_executor/src/lib.rs",
-     "/home/rares/trading/sol/atomarb/programs/arb_executor/src/error.rs",
-     "/home/rares/trading/sol/atomarb/programs/arb_executor/src/params.rs",
-     "/home/rares/trading/sol/atomarb/programs/arb_executor/src/token.rs",
-     "/home/rares/trading/sol/atomarb/programs/arb_executor/src/constants.rs",
-     "/home/rares/trading/sol/atomarb/programs/arb_executor/src/legs.rs",
-     "/home/rares/trading/sol/atomarb/programs/arb_executor/src/guard.rs",
-     "/home/rares/trading/sol/atomarb/programs/arb_executor/tests/common/mod.rs",
-     "/home/rares/trading/sol/atomarb/programs/arb_executor/tests/params.rs",
-     "/home/rares/trading/sol/atomarb/programs/arb_executor/tests/guard.rs",
-     "/home/rares/trading/sol/atomarb/programs/arb_executor/tests/legs.rs",
-     "/home/rares/trading/sol/atomarb/programs/arb_executor/tests/constants.rs",
-     "/home/rares/trading/sol/atomarb/programs/arb_executor/tests/token.rs",
-     "/home/rares/trading/sol/atomarb/scripts/install_toolchain.sh",
-     "/home/rares/trading/sol/atomarb/scripts/build_executor.sh",
-     "/home/rares/trading/sol/atomarb/src/simulation/executor_ix.ts",
-     "/home/rares/trading/sol/atomarb/tests/integration/executor_guard.test.ts",
-     "/home/rares/trading/sol/atomarb/tests/fixtures/programs/arb_executor.so",
-     "/home/rares/trading/sol/atomarb/tests/fixtures/programs/arb_executor.json",
-     "/home/rares/trading/sol/atomarb/docs/EXECUTOR_ABI.md",
-     "/home/rares/trading/sol/atomarb/docs/sources/toolchain.md",
-     "/home/rares/trading/sol/atomarb/docs/sources/solana_rpc_tx_fees.md (APPENDED one subsection '### ALT account byte layout' before \u00a76, per the brief's append rule; nothing else touched)"
-    ],
-    "tests": {
-     "unit_pass": 22,
-     "unit_fail": 0,
-     "integration_pass": 9,
-     "integration_fail": 0,
-     "skipped": 0,
-     "command": "cd programs/arb_executor && cargo test   (22 host tests: params 4, guard 4, legs 9, constants 4, token 1)  ||  cd /home/rares/trading/sol/atomarb && npx tsc -p tsconfig.json --noEmit && npx vitest run tests/integration/executor_guard.test.ts   (9 tests, ~45 assertions, real ELF in LiteSVM, no network, no env var needed)"
-    },
-    "rpc_requests_used": 0,
-    "verified_claims": [
-     "Toolchain installed and working (scripts/install_toolchain.sh, 35 s): rustup 1.29.1, rustc/cargo 1.98.1 stable (minimal profile), Agave solana-cli 4.2.2 (commit e29e5d91) with cargo-build-sbf 4.1.0 + platform-tools v1.54 (rustc 1.89.0-dev), solana-test-validator 4.2.2 present but never run; no keypair configured; disk: rustup 577 MB, cargo 99 MB, agave 250 MB, platform-tools 1.6 GB, crate target 515 MB.",
-     "cargo build-sbf produced tests/fixtures/programs/arb_executor.so: 41,192 bytes, sha256 8a4203346c1407fa1f2b0f18bf931e4de87444a8c5954500397d509b80b8892d, byte-identical on a second run of scripts/build_executor.sh (reproducible); sidecar arb_executor.json has sha256/bytes/built_at_utc/rustc_host/rustc_platform_tools/cargo_build_sbf/solana_program_crate 4.1.0/source_hash_sha256 (871398325880776baef47ba60fa3eabb3edf671b60ffbef6fe8d0c8a87ef5476 = sha256 of src/*.rs concatenated in C-locale order).",
-     "The REAL compiled ELF loads into litesvm 1.4.1 via LocalSvm.addProgram (upgradeable-loader path, default SBPF v0 arch, no --arch v3 needed) and executes: every rejection code 1-29 is returned as ProgramError::Custom(code) exactly as expected in tests/integration/executor_guard.test.ts: (a) wrong data length 36/38/1/0 bytes -> Custom(1) InvalidDataLength, wrong tag -> Custom(2); (b) leg program not allowlisted (random key, PumpSwap id declared as kind 0, Raydium id declared as kind 2) -> Custom(17); (c) pool owned by the wrong program (Raydium pool owned by pAMM, PumpSwap pool owned by random) -> Custom(19); (d) aliasing: user WSOL account at input_vault, user intermediate at observation_state, swapped user accounts, user accounts in PumpSwap remaining/fee positions -> Custom(14); plus UserNotSigner(3), AccountCountMismatch(5), TokenProgramNotAllowed(6), TokenAccountProgramMismatch(7), TokenAccountNotInitialized(9, frozen), TokenAccountOwnerMismatch(10), TokenAccountMintMismatch(11), MintProgramMismatch(12), SameMint(13), LegKindUnknown(15), LegKindInvalidForPosition(16), LegAccountCountInvalid(18, incl. 27 buy / 25 sell accounts and empty segment), PoolDataInvalid(20, bad disc and 636-byte pool), LegUserMismatch(21), LegUserTokenAccountMismatch(22), LegVaultMismatch(23), LegMintMismatch(24, incl. a pool of two foreign mints), LegTokenProgramMismatch(25), LegFixedAccountMismatch(26: authority, amm_config, observation, fee_config), GlobalConfigMismatch(27), FeeProgramMismatch(28, buy@22 and sell@20), InsufficientBaseBalance(29).",
-     "Fully consistent segments (raydium->raydium, pump buy->raydium, raydium->pump sell, pump buy->pump sell with 0 and 3 remaining accounts) pass ALL executor validation and fail only at invoke() with InstructionError UnsupportedProgramId (no DEX loaded), 11,651 CU consumed for a 2x13-account circuit; LiteSVM's inner-instruction record proves the CPI was issued with byte-exact data: Raydium [143,190,90,218,196,30,51,222, 0,202,154,59,0,0,0,0, 1,0,0,0,0,0,0,0] (disc 8fbe5adac41e33de + amount_in 1e9 LE + min_out 1 LE) over exactly 13 accounts; PumpSwap buy [198,46,21,82,180,217,232,112, ..., 1] (disc c62e1552b4d9e870 + amounts + track_volume 0x01) over 23..26 accounts. Leg B is never invoked when leg A fails, and both legs are validated before any CPI (a bad leg B produces no 'leg A' log).",
-     "A Raydium->Raydium ExecuteCircuit fits in one v0 transaction without a lookup table (659 bytes); any circuit with a PumpSwap leg exceeds 1232 bytes and needs an ALT \u2014 the test fabricates a LOCAL-ONLY active ALT (layout from solana-sdk@8e8e679 state.rs, appended to docs/sources/solana_rpc_tx_fees.md) and litesvm resolves it; all rejection paths were exercised through the ALT path.",
-     "Host cargo test (22 tests) proves: 37-byte little-endian data parsing and exact-length rejection; account-total arithmetic (7+a+b, u8 counts); kind-per-position rules; guard arithmetic incl. checked overflow (base0=u64::MAX, min_profit=1 -> ArithmeticOverflow, never a wrap), min_profit boundary (base1 == base0+min_profit passes, one less fails, a loss fails even with min_profit 0), delta rules (decrease or zero -> LegANoOutput), leftover rule; the complete leg-validation matrix on fabricated views for both Raydium token orders and PumpSwap buy/sell with 0..3 remaining accounts; every baked PDA re-derives from its documented seeds (global_config bump 255, event_authority, fee_config bump 255 under pfee, Raydium authority bump 253); all five discriminators equal sha256('global:..'/'account:..')[..8]; CPI data encodings byte-for-byte; AccountMeta flags copied from the outer instruction.",
-     "Every offset/discriminator/address used (Raydium PoolState amm_config@8, token_0_vault@72, token_1_vault@104, token_0_mint@168, token_1_mint@200, token_0_program@232, token_1_program@264, observation_key@296, LEN 637, disc f7ede3f5d7c3de46; PumpSwap Pool base_mint@43, quote_mint@75, pool_base_token_account@139, pool_quote_token_account@171, min len 211, disc f19a6d0411b16dbc; account lists 13 / 23+0..3 / 21+0..3; token account mint@0 owner@32 amount@64 state@108) was re-checked against docs/sources/raydium_cpmm.md \u00a71/\u00a72/\u00a76, pumpswap.md \u00a71/\u00a72/\u00a76 and token2022.md \u00a72.2 and is cited in code comments.",
-     "Read-only rules kept: 0 HTTP requests to any RPC (no RpcClient instantiated in any owned file), no sendTransaction/deploy, no keypairs (all identities are Keypair.generate().publicKey or synthetic LiteSVM accounts), no validator started, ../failtax untouched, no git commit."
-    ],
-    "unverified_or_open": [
-     "Positive path with the real Raydium CPMM / PumpSwap ELFs and real pool state was NOT executed (integrator's task per brief); the DEX ELFs are already dumped by other agents in tests/fixtures/programs/ (CPMMoo8\u2026so 793,824 B, pAMMBay6\u2026so 10,485,715 B, pfeeUxB6\u2026so 948,944 B). Error codes 30-33 (LegANoOutput, LeftoverIntermediate, ProfitBelowMin, ArithmeticOverflow) are therefore proven only by host unit tests of guard.rs, not through a real CPI.",
-     "Compute cost of a full successful circuit is unknown; validation of both legs costs ~11.6k CU (Raydium x2) before the first CPI; the msg! format strings add a few k CU on success.",
-     "PumpSwap cashback coins are rejected by design (their extra remaining account pushes buy to 27 / sell to 25 accounts, outside the brief's 23..26 / 21..24 ranges) \u2014 if the integrator needs them, widen PUMP_*_MAX_ACCOUNTS in constants.rs and CPI_ACCOUNT_COUNT in executor_ix.ts (both cited to pumpswap.md \u00a76).",
-     "Whether omitting the trailing track_volume byte is accepted by PumpSwap is not relevant here (the executor always sends 0x01 as observed live), but the exact on-chain rounding of buy_exact_quote_in remains open in pumpswap.md; the executor uses realised balance deltas so it does not depend on it.",
-     "ALT-loaded accounts: the fabricated ALT in the test uses authority None and last_extended_slot 0; a real mainnet ALT for the integrator must be created/extended by transactions (out of scope, read-only project)."
-    ],
-    "blockers": [],
-    "notes_for_integrator": "Compose: legA = legFromInstruction(LEG_KIND.X, adapter.buildSwapInstruction(pool, params).instruction) (only the account list + flags are used; the executor writes its own CPI data from the typed params), then buildExecuteCircuitIx({ user: {...}, params: { amountIn, minProfit, legAMinOut, legBMinOut }, legA, legB }) with programId defaulting to ARB_EXECUTOR_LOCAL_PROGRAM_ID; load the ELF with svm.addProgram({ programId: ARB_EXECUTOR_LOCAL_PROGRAM_ID, elf: readFileSync(ARB_EXECUTOR_SO_PATH), programDataAddress: null, slot: 0, loader: 'upgradeable' }). The user's WSOL ATA must be accounts[1] and appear in the leg lists exactly at Raydium input/output positions 4/5 and PumpSwap user_quote_token_account position 6 (user_base_token_account position 5 = intermediate); any other occurrence is rejected as Aliasing. Kind 1 (buy_exact_quote_in) is leg A only, kind 2 (sell) leg B only, kind 0 anywhere. Count bytes in the data = 1 + CPI accounts (the leg program id is segment[0]); executor_ix.ts computes them. Errors: parseCustomErrorCode(err + logs) -> code, EXECUTOR_ERRORS table; codes >= 6000 are the DEX's Anchor errors. Circuits containing a PumpSwap leg need an address lookup table (fabricateAlt in tests/integration/executor_guard.test.ts shows a LOCAL-ONLY table; layout appended to docs/sources/solana_rpc_tx_fees.md \u00a75). Stable log lines for parsing: 'arb_executor leg A kind=..', 'arb_executor leg B kind=..', 'arb_executor ok base0=.. base1=.. profit=.. inter_delta=.. min_profit=..'. Toolchain note: the Agave installer's first run appended one PATH line to ~/.profile; I removed that line the same minute and the script now passes --no-modify-path (documented in docs/sources/toolchain.md); PATH must be exported per shell: export PATH=\\\"$HOME/.cargo/bin:$HOME/.local/share/solana/install/active_release/bin:$PATH\\\". Rebuild after any src change with scripts/build_executor.sh (runs cargo test first; SKIP_HOST_TESTS=1 to skip; ARCH=v3 if a future litesvm requires SBPFv3). Nothing was committed."
-   },
-   {
-    "agent": "raydium_cpmm_adapter",
-    "status": "DONE",
-    "files_written": [
-     "/home/rares/trading/sol/atomarb/src/adapters/raydium_cpmm/layout.ts",
-     "/home/rares/trading/sol/atomarb/src/adapters/raydium_cpmm/math.ts",
-     "/home/rares/trading/sol/atomarb/src/adapters/raydium_cpmm/adapter.ts",
-     "/home/rares/trading/sol/atomarb/src/adapters/raydium_cpmm/index.ts",
-     "/home/rares/trading/sol/atomarb/scripts/fetch_fixtures_raydium.ts",
-     "/home/rares/trading/sol/atomarb/tests/unit/raydium_layout.test.ts",
-     "/home/rares/trading/sol/atomarb/tests/unit/raydium_math.test.ts",
-     "/home/rares/trading/sol/atomarb/tests/unit/raydium_adapter.test.ts",
-     "/home/rares/trading/sol/atomarb/tests/integration/raydium_local_program.test.ts",
-     "/home/rares/trading/sol/atomarb/tests/fixtures/raydium_cpmm/47hq28mcL7q5GhBg7epyGF2dnuJd4MKFt8QhT7CzYUp4.json",
-     "/home/rares/trading/sol/atomarb/tests/fixtures/raydium_cpmm/Q2sPHPdUWFMg7M7wwrQKLrn619cAucfRsmhVJffodSp.json",
-     "/home/rares/trading/sol/atomarb/tests/fixtures/raydium_cpmm/9vQSDkK4HUSX7gJRVEqPu4wXmU6N7KtKx58EysDwCPCA.json",
-     "/home/rares/trading/sol/atomarb/tests/fixtures/raydium_cpmm/A3URwhZE2YyVNKL9CmSvU9VG1oJoZS78kX4AdK5faDud.json",
-     "/home/rares/trading/sol/atomarb/tests/fixtures/raydium_cpmm/3ceKnrpPPUuz9FVsDJuYfTqbK5ia6KND7SQwcnRJ38KC.json",
-     "/home/rares/trading/sol/atomarb/tests/fixtures/raydium_cpmm/epoch.json",
-     "/home/rares/trading/sol/atomarb/tests/fixtures/raydium_cpmm/index.json",
-     "/home/rares/trading/sol/atomarb/tests/fixtures/programs/CPMMoo8L3F4NbTegBCKVNunggL7H1ZpdTHKxQB5qKP1C.so",
-     "/home/rares/trading/sol/atomarb/tests/fixtures/programs/CPMMoo8L3F4NbTegBCKVNunggL7H1ZpdTHKxQB5qKP1C.json",
-     "/home/rares/trading/sol/atomarb/docs/sources/raydium_cpmm.md (appended \u00a712.1-12.4 only)"
-    ],
-    "tests": {
-     "unit_pass": 82,
-     "unit_fail": 0,
-     "integration_pass": 11,
-     "integration_fail": 0,
-     "skipped": 0,
-     "command": "cd /home/rares/trading/sol/atomarb && npx tsc -p tsconfig.json --noEmit && npx vitest run tests/unit/raydium_layout.test.ts tests/unit/raydium_math.test.ts tests/unit/raydium_adapter.test.ts tests/integration/raydium_local_program.test.ts"
-    },
-    "rpc_requests_used": 14,
-    "verified_claims": [
-     "REAL-PROGRAM EXECUTION (LiteSVM, mainnet ELF sha256 36537be95ba35605\u2026, 793,824 bytes, programdata DMawCQzb\u2026 read at slot 447803095): swap_base_input WSOL\u2192token executed successfully on all 5 fixture pools with minimum_amount_out == adapter quote; output ATA delta == quote.amountOutToUser EXACTLY and WSOL ATA delta == amountIn EXACTLY: 47hq28mc (SOL/USDC) in 284,379,279 \u2192 out 25,980,056; Q2sPHPdU (WSOL/USELESS) in 500,000,000 \u2192 out 197,088,971; A3URwhZE (WSOL/LOOP, Token-2022 3% transfer fee) in 500,000,000 \u2192 out 9,202,849,069,087; 3ceKnrpP (WSOL/SolARBa, Token-2022 fee tier switched to 0 bps) in 500,000,000 \u2192 out 8,604,275; 9vQSDkK4 (WSOL/BERN, Token-2022 2.69% fee, degenerate reserves) in 81 \u2192 out 832. CU 24k\u201330k per swap.",
-     "REAL-PROGRAM: the quote is TIGHT \u2014 simulating the same swap with minimum_amount_out = quote + 1 fails with ExceededSlippage (custom error 6005) on all 5 pools.",
-     "REAL-PROGRAM: applySwap's predicted post-state (vault amounts, protocol/fund/creator fee counters, fee-adjusted reserves) equals the on-chain accounts decoded from the SVM after each swap, for both swaps on all 5 pools; the next quote computed from the predicted state equals the quote from the actual SVM state (swap-back amounts matched exactly).",
-     "REAL-PROGRAM: swap back token\u2192WSOL executed with exact WSOL credit == quote; roundtrip never profited (e.g. 0.5 SOL \u2192 0.4975 SOL on 0.25%-fee pools; 0.5 \u2192 0.468 SOL on the 3% Token-2022 transfer-fee pool).",
-     "REAL-PROGRAM: the \u00a74 gate is real \u2014 with LiteSVM's default Clock (unix_timestamp 0 < open_time) the program rejects with NotApproved (6000); setting Clock{slot, epoch=floor(slot/432000), unix_timestamp=fetched_at_utc} makes the swap pass.",
-     "REAL-PROGRAM Token-2022 path: transfer_checked through Token-2022 with a fabricated destination ATA carrying ImmutableOwner+TransferFeeAmount succeeded; user received amount_out \u2212 ceil(amount_out\u00b7300/10000) on LOOP exactly as quoted; on SolARBa the newer 0-bps tier applied (fee item amount 0) as quoted.",
-     "BYTE-EXACT FIXTURES: PoolState (637 bytes, disc f7ede3f5d7c3de46) and AmmConfig (236 bytes, disc daf42168cbcb2b6f, creator_fee_rate @108) decode from 5 live pools; every PDA re-derives (pool, vaults, lp mint, observation, config by BE u16 index); discriminators equal sha256('account:\u2026')[..8] and sha256('global:swap_base_input')[..8] = 8fbe5adac41e33de.",
-     "swap_base_input instruction encoding (13 accounts, flags, data) is byte-identical to @raydium-io/raydium-sdk-v2 makeSwapCpmmBaseInInstruction on all fixture pools.",
-     "Math vs SDK CurveCalculator on 300 seeded random states across 10 fee tiers: swapBaseInput identical whenever the creator fee is off or on the output side (180 states); swapBaseOutput identical in all 300 states; documented deviation (note \u00a75.6) for creator-fee-on-input: SDK total fee exceeds the program's ceil(sum)+floor-split by exactly 1 unit in 64/120 states.",
-     "Fee double-count regression: \u03a3(input-mint fee items) + curve input == amountIn and curve output == \u03a3(output-mint fee items) + amountOutToUser hold exactly on all pools/directions/sizes; lp_fee+protocol_fee+fund_fee == ceil(actual_in\u00b7trade_fee_rate).",
-     "Validation rejects verified on mutated fixtures: POOL_OWNER, VAULT_PDA_MISMATCH, VAULT_OWNER, VAULT_FROZEN, SWAP_DISABLED (bit2; bits 0/1 only warn), NOT_OPEN (wall-clock receivedAtUtc / params.nowUnix, never slot-derived), TOKEN_PROGRAM_MISMATCH, INVALID_FEE_MODEL, AUTH_BUMP, QUOTE_NOT_WSOL, TOKEN2022_EXTENSION (PermanentDelegate, TransferHook), UNKNOWN_LAYOUT for wrong length/discriminator, ACCOUNTS_MISSING.",
-     "Overflow detection: amountIn \u2265 2^64 \u2192 U64_OVERFLOW reject; amountIn that would overflow the vault u64 \u2192 U64_OVERFLOW_VAULT; u128 checked ops return null (ZeroTradingTokens) and unwrap() sites throw OverflowError, surfaced as rejects/unsupported, never a fake quote.",
-     "Read-only: no sendTransaction/sendRawTransaction/sendBundle calls; no private keys (users are random PublicKeys, sigverify off); total HTTP requests 14 = 11 RPC (getMultipleAccounts \u00d77, getEpochSchedule, getEpochInfo, program+programdata dump) + 3 Raydium API v3 GETs; RpcClient limits 4 rps / 2 concurrent / 40 max per script run."
-    ],
-    "unverified_or_open": [
-     "Creator-fee path (enable_creator_fee=true) is NOT verified against the real program: all 5 fixture pools have enable_creator_fee=false (USELESS is launchMigratePool:true in the API but the on-chain flag is false). The ceil(total)+floor-split rule and the direction-dependent creator_fee_on rule are ported from the Rust source and unit-tested (also cross-checked vs SDK with the documented 1-unit deviation) only.",
-     "swap_base_output (\u00a75.4) is implemented (adapter.quoteExactOut / math.simulateSwapBaseOutput) and unit-tested vs SDK + inverse-consistency, but was not executed in LiteSVM.",
-     "SupportMintAssociated whitelist is not modelled: a whitelisted Token-2022 mint with a disallowed extension would be rejected conservatively (TOKEN2022_EXTENSION).",
-     "Token-2022 epoch tier selection: the adapter derives Clock.epoch from the snapshot slot via the live-fetched mainnet epoch schedule (432000 slots/epoch, no warm-up; matches getEpochInfo epoch 1036). LiteSVM was given the same epoch, so tier switching at an epoch boundary was not independently verified on-chain; LOOP has equal tiers and SolARBa's newer tier (0 bps) was the one exercised.",
-     "The brief called 47hq28mc\u2026 a 'large' SOL/USDC pool; on-chain it holds only ~2.85 SOL / 287 USDC (the CPMM SOL/USDC liquidity is small). Large fixtures are WSOL/USELESS (~24,743 SOL), WSOL/LOOP (~1,143 SOL) and WSOL/SolARBa (~1,117 SOL). No pump.fun-suffixed mint CPMM pool appeared in the top-200 WSOL Standard pools (pump tokens migrate to PumpSwap); USELESS is a bonk.fun (LaunchLab) token.",
-     "WSOL/BERN pool 9vQSDkK4 is degenerate: fee-adjusted reserves are 811 lamports / 9,640 units (vaults are almost entirely accrued protocol+fund fees); it still executed correctly for an 81-lamport swap.",
-     "Deployed binary vs GitHub 59fb845: the executed ELF is the real mainnet one and its swap math matched the port exactly on 10 swaps, but the exact source commit remains unpublished (note \u00a711).",
-     "src/state/token.ts transferFeeInverse (not my file) lacks Token-2022's maximum_fee branch; the adapter uses its own exact port (math.ts) \u2014 flagged in note \u00a712.4."
-    ],
-    "blockers": [],
-    "notes_for_integrator": "Entry point: `import { RaydiumCpmmAdapter } from './adapters/raydium_cpmm/index.js'; const adapter = new RaydiumCpmmAdapter()` (options: epochSchedule, programId). requiredAccounts needs the pool RawAccount (2-step fetch) and returns [pool, amm_config, vault0, vault1, mint0, mint1]; observation_state is NOT required for quoting but is needed by the ix \u2014 it is available as `(decoded.params as RaydiumCpmmParams).pool.observationKey` and in `quote.accountsNeeded` (10 keys: authority, config, pool, vaults, token programs, mints, observation). buildSwapInstruction: pass `inputMint` (type RaydiumSwapIxParams) or use the user's ATAs for both mints so the direction can be inferred; payer is a non-writable signer. Fee items: lp_fee, protocol_fee, fund_fee are DISJOINT parts of the trade fee (their sum is ceil(actual_in\u00b7trade_fee_rate)); creator_fee (only when enabled; mint depends on creator_fee_on and direction); token2022_transfer_fee_in/out (present iff the mint has TransferFeeConfig, amount may be 0). Exact identities: amountIn = \u03a3 input-mint fees + curve input; curve output = \u03a3 output-mint fees + amountOutToUser; vaultInDelta = amountIn \u2212 transfer_fee_in; vaultOutDelta = gross amount_out (incl. output transfer fee). Program-deterministic failures (dust \u2192 REQUIRE_GT_VIOLATED, u64/vault overflow, ZeroTradingTokens) come back as a Quote with rejectReasons and amountOutToUser 0 (not Unsupported); applySwap refuses rejected quotes, mismatched stateHash, or quotes that no longer reproduce. validatePool uses now = params.nowUnix ?? Date.parse(snapshot.receivedAtUtc); params.epoch = floor(maxSlot/432000) via MAINNET_EPOCH_SCHEDULE (patch params.epoch to test other tiers). For LiteSVM probes: set Clock (unix_timestamp \u2265 open_time, epoch) before executing (note \u00a712.3) and give fabricated Token-2022 output accounts the TransferFeeAmount extension; give each unsigned tx a random 64-byte signature so LiteSVM's history check does not report AlreadyProcessed. Fixture script: `npx tsx scripts/fetch_fixtures_raydium.ts [--skip-program] [--skip-epoch] [--only id,id] [--discover]` (\u226440 requests, 8 for a full run). Repo-wide tsc is clean at hand-off; tests/fixtures/programs also contains other agents' dumps (arb_executor, pAMM\u2026, pfee\u2026) which I did not touch. The CPMM swap consumes ~24k\u201330k CU."
-   },
-   {
-    "agent": "pumpswap_adapter",
-    "status": "DONE",
-    "files_written": [
-     "/home/rares/trading/sol/atomarb/src/adapters/pumpswap/layout.ts",
-     "/home/rares/trading/sol/atomarb/src/adapters/pumpswap/fees.ts",
-     "/home/rares/trading/sol/atomarb/src/adapters/pumpswap/math.ts",
-     "/home/rares/trading/sol/atomarb/src/adapters/pumpswap/adapter.ts",
-     "/home/rares/trading/sol/atomarb/src/adapters/pumpswap/index.ts",
-     "/home/rares/trading/sol/atomarb/scripts/fetch_fixtures_pumpswap.ts",
-     "/home/rares/trading/sol/atomarb/tests/unit/pumpswap_math.test.ts",
-     "/home/rares/trading/sol/atomarb/tests/unit/pumpswap_layout.test.ts",
-     "/home/rares/trading/sol/atomarb/tests/unit/pumpswap_fees.test.ts",
-     "/home/rares/trading/sol/atomarb/tests/unit/pumpswap_adapter.test.ts",
-     "/home/rares/trading/sol/atomarb/tests/unit/pumpswap_sdk_crosscheck.test.ts",
-     "/home/rares/trading/sol/atomarb/tests/integration/pumpswap_local_program.test.ts",
-     "/home/rares/trading/sol/atomarb/tests/integration/pumpswap_network.test.ts",
-     "/home/rares/trading/sol/atomarb/tests/fixtures/pumpswap/global.json",
-     "/home/rares/trading/sol/atomarb/tests/fixtures/pumpswap/pool_canonical.json",
-     "/home/rares/trading/sol/atomarb/tests/fixtures/pumpswap/pool_boosted.json",
-     "/home/rares/trading/sol/atomarb/tests/fixtures/pumpswap/pool_noncanonical.json",
-     "/home/rares/trading/sol/atomarb/tests/fixtures/pumpswap/manifest.json",
-     "/home/rares/trading/sol/atomarb/tests/fixtures/programs/pAMMBay6oceH9fJKBRHGP5D4bD4sWpmSwMn52FMfXEA.so",
-     "/home/rares/trading/sol/atomarb/tests/fixtures/programs/pAMMBay6oceH9fJKBRHGP5D4bD4sWpmSwMn52FMfXEA.json",
-     "/home/rares/trading/sol/atomarb/tests/fixtures/programs/pfeeUxB6jkeY1Hxd7CsFCAjcbHA9rWtchMGdZ6VojVZ.so",
-     "/home/rares/trading/sol/atomarb/tests/fixtures/programs/pfeeUxB6jkeY1Hxd7CsFCAjcbHA9rWtchMGdZ6VojVZ.json",
-     "/home/rares/trading/sol/atomarb/docs/sources/pumpswap.md (appended \u00a711 only)"
-    ],
-    "tests": {
-     "unit_pass": 48,
-     "unit_fail": 0,
-     "integration_pass": 8,
-     "integration_fail": 0,
-     "skipped": 1,
-     "command": "npx tsc -p tsconfig.json --noEmit && npx vitest run tests/unit/pumpswap_math.test.ts tests/unit/pumpswap_layout.test.ts tests/unit/pumpswap_fees.test.ts tests/unit/pumpswap_adapter.test.ts tests/unit/pumpswap_sdk_crosscheck.test.ts tests/integration/pumpswap_local_program.test.ts tests/integration/pumpswap_network.test.ts   # 56 passed, 1 skipped (network); ATOMARB_NETWORK_TESTS=1 run of pumpswap_network.test.ts: 1 passed with 2 RPC requests"
-    },
-    "rpc_requests_used": 10,
-    "verified_claims": [
-     "REAL pump_amm ELF (programdata 6naEzKeUuFh1Jeeu51NXQgr5qkXgXtc9WKNct4xynVJc, slot 447804243, sha256 feb2ec72199f35999bbfd26ada811a37d297464ab265c78593b2d4717d7d42b5) + REAL pump_fees ELF (sha256 4a6e66093305f8a7cb9ca6e4f47c7de726b590dd2be0d5413ce408feba27c8a5) executed in LiteSVM against real fixture accounts from slot 447804242: buy_exact_quote_in via my buildSwapInstruction succeeds on all three pools (canonical GseMAnN\u2026, boosted FruHjS1\u2026 with Token-2022 base, non-canonical 1nk4YGrr\u2026).",
-     "buy_exact_quote_in(10,000,000): user base ATA delta == quote.amountOutToUser EXACTLY (50,313,230,241 / 5,277,919 / 18,855,623,888); WSOL ATA delta == quote.amountIn EXACTLY; pool quote vault delta == effective_quote + lp_fee (LP fee stays in the pool); pool base vault delta == base_out; protocol_fee_recipient ATA + buyback ATA == protocol_fee (buyback = floor(protocol*5000/10000)); coin_creator_vault_ata == creator fee.",
-     "Relation holds over 6 sizes on the canonical pool (1e6, 3,333,333, 1e7, 5e7, 123,456,789, 4e8): chain base_out == quote and chain debit == amountIn; base_out = floor(B*(E-1)/(effQ+E-1)) with E = floor(S*1e4/(1e4+f)) \u2014 the '-1' is on-chain behaviour (min_base_amount_out = quote+1 fails with custom error 6040 BuySlippageBelowMinBaseAmountOut).",
-     "Gap case (E + fees == S - 1) executed at 5 budgets on 3 pools: the program debits exactly E + lp + protocol + creator (one lamport below spendable_quote_in), base_out/vault deltas unchanged; the program requires the WSOL balance to cover only the debit (executed with balance == debit and spendable == debit + 1: success, ATA left at 0). Quote.amountIn therefore = debit; buildSwapInstruction re-derives spendable_quote_in as the largest of {amountIn, amountIn+1} with modelled debit <= amountIn (verified to reproduce the quote over 7 sizes).",
-     "sell(base received) on the same pool: WSOL delta == sell quote amountOutToUser EXACTLY (9,753,083 / 9,940,171 / \u2026), pool quote vault delta == quote_out - lp_fee, base vault delta == base_in; applySwap reserves equal the post-execution vault balances after both legs; buy+sell roundtrip on the same pool ends with less WSOL (-246,917 / -59,829 lamports on 1e7 in).",
-     "Effective quote reserve (raw vault + virtual_quote_reserves = 17,584,505,289) is what the real program prices with on both legs (boosted pool), and the Token-2022 base mint (410-byte mint, MetadataPointer/TokenMetadata) trades through a base ATA created by the real ATA program (170 bytes, rent 2,074,080).",
-     "On-chain fee schedule: canonical pool with market cap \u2248196 SOL charged tier 0 = 2/93/30 bps (fee-program CPI GetFeesWithQuoteMint return data 02..5d..1e); non-canonical pool charged flat 25/5/0 (coin_creator = default \u2192 creator fee 0).",
-     "user_volume_accumulator init_if_needed: 137 bytes, rent 1,844,400 lamports paid by the user on the first buy (user SOL delta = -5,000 - 1,844,400); sells cost only the 5,000 fee. coin_creator_vault_ata is also init_if_needed (user paid 2,039,280 when the fixture lacked it) \u2014 the fetch script now always includes it. pool-v2 remaining account passed as NULL is accepted. CU: 79,216 / 86,053 / 97,439 for buy_exact_quote_in incl. UVA init.",
-     "Layout decoding byte-exact vs fixtures: Pool 300/301 bytes, GlobalConfig 949 bytes (all \u00a73 values incl. buyback 5000, creator_fee_configurable=1, max 300), FeeConfig 4097 bytes (flat 25/5/0, 25 SOL tiers with tier0 2/93/30 and tier24 20/5/5 at 98,240 SOL, 25 stable tiers, exotic 20/5/5, decodedEnd 2097); historical pool lengths 211/243/244/245/261/270/271 default trailing fields; GlobalConfig 907/940 and FeeConfig 4073/2512 prefixes decode; every other length / discriminator / overrunning Vec => UNKNOWN_LAYOUT.",
-     "Math reproduces the three live BuyEvents (quote_in 1,439,176 / lp 2,879 / protocol 720 / creator 720; 4,257,974/8,516/2,129; 457,385/915/229) and both live SellEvents (11,738,771 / 29,347 / 5,870 / 11,703,554; 309,852,388/774,631/154,927/308,922,830); without the virtual reserve the event is NOT reproduced.",
-     "Cross-check vs @pump-fun/pump-swap-sdk 1.20.0 offline functions on 200 seeded random states (138 canonical, 134 with coin creator, 80 boosted, 30 per-pool overrides, 20 mayhem): fee schedule, buyQuoteInput (base + internalQuoteWithoutFees), buyBaseInput (uiQuote + internalQuoteAmount), sellBaseInput (uiQuote + internalQuoteAmountOut) agree with ZERO differences; the single SDK throw ('Insufficient real quote reserves') maps to my BOOST_REAL_RESERVE_CAP reject.",
-     "Validation rejects (unit): swapped vaults, pool not owned by pump_amm, vault owned by the wrong token program, forged owners, non-WSOL quote, pool PDA mismatch, disable_flags bits 3/4 (validate + quote + build), negative virtual reserves, frozen vault, Token-2022 NonTransferable / TransferHook(program) / Pausable(paused) / DefaultAccountState(frozen). buildSwapInstruction: 26/24 accounts (with coin creator), 25/23 (without), 27/26 (cashback), documented order incl. pool-v2 == live tx account [23], data 25/24 bytes with the \u00a76 discriminators; refuses non-ATA user accounts.",
-     "Network smoke (ATOMARB_NETWORK_TESTS=1): snapshotPools \u2192 decode \u2192 validate \u2192 quote on live FruHjS1\u2026 at slot 447807416 in 2 RPC requests, single-batch snapshot, tier 24 (20/5/5), 990-byte v0 tx built (never signed/sent).",
-     "RPC accounting: fetch script 6 + re-run 2 + network test 2 = 10 HTTP requests total, all read-only getMultipleAccounts on https://api.mainnet-beta.solana.com (RpcClient limits 4 rps / \u22642 concurrent)."
-    ],
-    "unverified_or_open": [
-     "Token-2022 base mints WITH TransferFeeConfig or a TransferHook were not executed (no such pool fixture). The adapter applies the transfer fee conservatively (buy: out net of fee; sell: prices on base_in net of fee using the larger of older/newer TransferFee since it has no Clock) and rejects hooks; whether the on-chain program prices sells on gross or net base is UNKNOWN (token2022.md \u00a78).",
-     "Sell BOOST cap (real vault < quote_out - lp_fee => IDL error 6063) is mirrored from the SDK check + error text; it was not triggered on the real program (would require a near-empty real vault fixture).",
-     "Mayhem-mode pools (reserved_fee_recipient), cashback coins (extra remaining accounts), holder-reward pools, USDC/exotic quotes: account lists and fee routing are implemented per the SDK/IDL and unit-tested, but not executed on the real program (no fixtures; this adapter rejects non-WSOL quotes anyway).",
-     "Omitting the pool-v2 remaining account when coin_creator != default was not tested (it is always passed, as a NULL account on mainnet \u2014 accepted).",
-     "The base-exact `buy` instruction (disc 66063d12\u2026) is not built by the adapter; its math (buyBaseInput) is verified only against the three live BuyEvents and the SDK.",
-     "LiteSVM Clock was set approximately (slot 447804242, unix \u2248 1789652255 extrapolated at 0.4 s/slot, epoch 1036); no Token-2022 epoch-dependent fee was exercised so the approximation had no effect.",
-     "Fee schedule selection for the exact on-chain Pool::market_cap() basis is inferred from the SDK (effective quote reserve \u00d7 base mint supply / base reserve); it produced the correct tier on both canonical fixtures (tier 0 and tier 24) but intermediate tiers were not exercised on-chain.",
-     "tests/fixtures/pumpswap/manifest.json 'missing_dependents' also lists pool-v2 / candidate keys of non-saved candidate pools (7P8gpKJm\u2026, AsidVXRb\u2026) \u2014 informational only."
-    ],
-    "blockers": [],
-    "notes_for_integrator": "Wiring: import { pumpswapAdapter } from 'src/adapters/pumpswap/index.js' (class PumpswapAdapter, id 'pumpswap', programId pAMMBay6\u2026); params are typed via pumpswapParams(decoded). Nothing outside src/adapters/pumpswap imports it yet. IMPORTANT semantics: for WSOL->base quotes, Quote.amountIn is the ACTUAL WSOL debit (effective_quote + fees), which can be 1 lamport below the requested amount; quote.math.spendable_quote_in / unspent_budget record the budget. buildSwapInstruction(amountIn = quote.amountIn) re-derives spendable_quote_in (largest of {amountIn, amountIn+1} with modelled debit <= amountIn) so the quoted base_out is reproduced exactly; pass minimumAmountOut = quote.amountOutToUser (it is tight: +1 fails on-chain with 6040). Vault transitions: buy: quote vault += effective_quote + lp_fee, base vault -= base_out; sell: base vault += base_in, quote vault -= quote_out - lp_fee (protocol/buyback/creator fees leave the pool) \u2014 verified on the real program and encoded in Quote.vaultInDelta/vaultOutDelta + applySwap. Fee recipients: FIRST protocol_fee_recipients entry (62qc2C\u2026; mayhem pools: reserved_fee_recipient) and FIRST buyback_fee_recipients entry (5YxQFd\u2026), deterministic for reproducible account sets (the SDK randomises only to spread write locks). Buyers pay 1,844,400 lamports rent for user_volume_accumulator on their first PumpSwap buy (init_if_needed) \u2014 account for it in PnL for a fresh identity; also protocol_fee_recipient ATA / coin_creator_vault_ata are init_if_needed (exist on mainnet for the fixture pools). Fixtures: re-run `npx tsx scripts/fetch_fixtures_pumpswap.ts [--refresh-programs]` (\u22482 requests when ELFs are present, 6 with dumps); ELFs are 10.5 MB (pump_amm programdata is padded) and 0.95 MB with sidecar JSON {programId, programDataAddress, slot, sha256, fetched_at_utc, bytes, loader, source}. A CPMMoo8L\u2026 dump in tests/fixtures/programs belongs to the raydium agent (untouched). docs/sources/pumpswap.md: appended \u00a711 (real-program execution facts; answers Open questions 2 and part of 1/3) \u2014 no existing text changed. Note: vitest's default reporter hides console output of passing tests; use --reporter=verbose to see the delta tables. Project-wide `npx tsc -p tsconfig.json --noEmit` exits 0 at hand-off. Real-program log excerpt (buy_exact_quote_in): 'Program pAMMBay6\u2026 invoke [1]' / 'Program log: Instruction: BuyExactQuoteIn' / 'Program 11111111111111111111111111111111 invoke [2] \u2026 success' (UVA init) / 'Program pfeeUxB6\u2026 invoke [2]' / 'Program log: Instruction: GetFeesWithQuoteMint' / 'Program pfeeUxB6\u2026 consumed 6121 of 159256 compute units' / 'Program return: pfeeUxB6\u2026 AgAAAAAAAABdAAAAAAAAAB4AAAAAAAAA' (= lp 2, protocol 93, creator 30) / BuyEvent 'Program data: \u2026' (ix_name buy_exact_quote_in, quote_amount_in = spendable, user_quote_amount_in = effective_quote) / success with 79,216 CU; tight case: 'AnchorError \u2026 Error Code: BuySlippageBelowMinBaseAmountOut. Error Number: 6040'."
-   }
-  ],
+ "wf_f1a4fac3-f70": {
+  "agents": [],
   "events": [
    {
     "type": "launched"
    },
    {
     "type": "started",
-    "agentId": "ae25f81a7ad957f38",
-    "label": "impl:pumpswap",
-    "phase": "Implement"
+    "agentId": "a82a8d2746c2efe16",
+    "label": "review:pumpswap",
+    "phase": "Verify"
    },
    {
     "type": "started",
-    "agentId": "a5999969ee38dfdaa",
-    "label": "impl:discovery",
-    "phase": "Implement"
+    "agentId": "a4cf5ce7b78f07a18",
+    "label": "review:raydium",
+    "phase": "Verify"
    },
    {
     "type": "started",
-    "agentId": "a676bcf39197c9a2c",
-    "label": "impl:raydium",
-    "phase": "Implement"
-   },
-   {
-    "type": "started",
-    "agentId": "ae43cfd538fca6360",
-    "label": "impl:executor",
-    "phase": "Implement"
-   },
-   {
-    "type": "failed",
-    "agentId": "ae43cfd538fca6360"
-   },
-   {
-    "type": "failed",
-    "agentId": "a676bcf39197c9a2c"
-   },
-   {
-    "type": "failed",
-    "agentId": "ae25f81a7ad957f38"
-   },
-   {
-    "type": "failed",
-    "agentId": "a5999969ee38dfdaa"
-   },
-   {
-    "type": "started",
-    "agentId": "ac3ea9b0970c52da9",
-    "label": "impl:discovery",
-    "phase": "Implement"
-   },
-   {
-    "type": "started",
-    "agentId": "a3c8884a0b08f0b01",
-    "label": "impl:pumpswap",
-    "phase": "Implement"
-   },
-   {
-    "type": "started",
-    "agentId": "ae9f7c182d31d7524",
-    "label": "impl:raydium",
-    "phase": "Implement"
-   },
-   {
-    "type": "started",
-    "agentId": "adc26cb88f3593610",
-    "label": "impl:executor",
-    "phase": "Implement"
-   },
-   {
-    "type": "started",
-    "agentId": "ac83be83b69a4b43c",
+    "agentId": "a828a6f1369150897",
     "label": "review:discovery",
     "phase": "Verify"
    },
    {
     "type": "started",
-    "agentId": "a3e3b621aa0adbb71",
-    "label": "review:rust_executor",
+    "agentId": "a5c5335bd0a2dbbf4",
+    "label": "review:executor",
+    "phase": "Verify"
+   },
+   {
+    "type": "failed",
+    "agentId": "a828a6f1369150897"
+   },
+   {
+    "type": "failed",
+    "agentId": "a5c5335bd0a2dbbf4"
+   },
+   {
+    "type": "failed",
+    "agentId": "a4cf5ce7b78f07a18"
+   },
+   {
+    "type": "started",
+    "agentId": "a41d8901c73c1bc89",
+    "label": "review:pumpswap",
     "phase": "Verify"
    },
    {
     "type": "started",
-    "agentId": "abb0b9d36da1e3063",
-    "label": "review:raydium_cpmm_adapter",
+    "agentId": "a794fc1f1b94f85ec",
+    "label": "review:raydium",
     "phase": "Verify"
    },
    {
     "type": "started",
-    "agentId": "ad6590f748dc30958",
-    "label": "review:pumpswap_adapter",
+    "agentId": "a172967015965b14d",
+    "label": "review:discovery",
     "phase": "Verify"
    },
    {
-    "type": "failed",
-    "agentId": "ad6590f748dc30958"
-   },
-   {
-    "type": "failed",
-    "agentId": "a3e3b621aa0adbb71"
-   },
-   {
-    "type": "failed",
-    "agentId": "abb0b9d36da1e3063"
-   },
-   {
-    "type": "failed",
-    "agentId": "ac83be83b69a4b43c"
+    "type": "started",
+    "agentId": "a812d629d8d6d9a5c",
+    "label": "review:executor",
+    "phase": "Verify"
    }
   ]
  }
