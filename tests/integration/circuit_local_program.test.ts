@@ -64,6 +64,24 @@ for (const R of ROUTES) {
       expect(lying.realised!.pnl).toBe(honest.deltas!.baseAta)            // realised is the measured delta
       expect(lying.realised!.matchesQuote).toBe(false)                    // ... and it does not match the tampered quote
     }, 120_000)
+    it('leg A succeeds, leg B fails: the whole transaction reverts, token balances are untouched and only the fee is lost', async () => {
+      const adapters = await adaptersP; const bundle = bundleFromFixture(loadFixture(path))
+      const [c] = enumerateCircuits(decodeRoute(adapters, bundle, R.pools))
+      const ev = evaluateCircuit(adapters, c!, R.amount); expect(ev.ok).toBe(true); if (!ev.ok) return
+      // ask leg B for one lamport more than it can produce: leg A lands, leg B trips its slippage guard
+      const impossible = { ...ev.value, quoteB: { ...ev.value.quoteB, amountOutToUser: ev.value.quoteB.amountOutToUser + 1n } }
+      const l = await localProbe(null, adapters, c!, impossible, COST, { bundle })
+      expect(l.ok).toBe(false)
+      expect(l.deltas).toBeNull()
+      expect(l.balances.after.baseAta).toBe(l.balances.before.baseAta)      // WSOL untouched
+      expect(l.balances.after.interAta).toBe(l.balances.before.interAta)    // no intermediate inventory left behind
+      expect(l.balances.before.interAta).toBe(0n)
+      const lamportsLost = l.balances.before.userLamports - l.balances.after.userLamports
+      expect(lamportsLost).toBeGreaterThan(0n)                              // the attempt still costs the network fee
+      expect(lamportsLost).toBeLessThanOrEqual(5000n + 4000n)               // base fee + prioritisation only, no rent for accounts that were never created
+      expect(l.accounting.status).toBe('ACCOUNTING_INCOMPLETE')
+      expect(l.accounting.notes.join(' ') + (l.err ?? '')).toMatch(/.+/)
+    }, 120_000)
     it('executor: guard reverts the losing circuit with ProfitBelowMin after both real CPIs (leg A min-out == quote is accepted)', async () => {
       const adapters = await adaptersP; const bundle = bundleFromFixture(loadFixture(path))
       const [c] = enumerateCircuits(decodeRoute(adapters, bundle, R.pools))
