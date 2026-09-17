@@ -18,6 +18,21 @@ Last updated: see `git log -1 --format=%cI PROGRESS.md`. Everything below is rec
 | Docs | README, ARCHITECTURE, SECURITY_MODEL, ACCOUNTING, FLASH_LOANS, EXECUTOR_ABI, BLOCKERS, DECISION, CHANGELOG | repository root and `docs/` |
 | Agent transcripts | every subagent's structured result and the workflow scripts | `docs/agent_runs/` |
 
+## Review findings applied (adversarial reviewer, target: discovery — verdict ACCEPT_WITH_FIXES)
+
+| Severity | Defect (reproduced by the reviewer) | Fix |
+|---|---|---|
+| MAJOR | only the pool cap was warned about; every other early stop (empty page, no new items, repeated cursor, max pages) reported a truncated population as complete | `RAYDIUM_LIST_INCOMPLETE` warning on any stop that is not the last page |
+| MAJOR | a degraded live run overwrote a good listing cache, poisoning every later offline run | the cache is kept and the degraded run is parked beside it with a warning |
+| MAJOR | inventory age silently fell back to the file mtime, so a copied file looked fresh | age comes only from the provenance sidecar; a missing sidecar is `PUMPSWAP_INVENTORY_PROVENANCE_MISSING` and counts as stale |
+| MAJOR | the pool-keys fetch was sliced at 100 ids while the attach loop iterated all, emitting a false `POOL_KEYS_MISSING` per pool | all ids are chunked by the client |
+| MINOR | source-level duplicates and skipped rows never reached the headline counts | `source_duplicates_dropped` / `source_rows_skipped` in the counts and the markdown |
+| MINOR | the request timeout did not cover the response body | the abort signal now covers header and body |
+| MINOR | the surviving row for a duplicated address depended on input order | deterministic winner (richest hints, then tvl) plus a regression test |
+| MINOR | the 2 req/s limit was per client, so two runs doubled it | a lock file refuses a second concurrent `discover` |
+
+Coverage improved while fixing this: raising the listing cap from 5,000 to 25,000 pools took Raydium CPMM WSOL pools from 822 to **3,107**, cross-adapter mints from 17 to **24**, and Raydium-only pairs from 0 to **5**. The listing is still capped, so these remain lower bounds.
+
 ## Running when this was written
 
 - **60-minute shadow smoke test** on 50 shortlist pools / 22 routes. Journal: `data/atomarb.db` (table `runs`, `candidates`, `simulations`, `checkpoints`, `events`); progress readable at any time with `npm run report`. Result so far: thousands of circuit evaluations, **zero positive**.
