@@ -46,12 +46,18 @@ Coverage improved while fixing this: raising the listing cap from 5,000 to 25,00
 | MINOR | `accountsNeeded` double-counted a shared token program, and a test pinned the wrong length | deduplicated, test asserts distinctness |
 | MINOR | `FeeItem.bps` on the LP share and on output-side fees did not match its documented meaning | the rate is omitted where no single rate applies |
 
-## Running when this was written
+## Finished
 
-- **60-minute shadow smoke test** on 50 shortlist pools / 22 routes. Journal: `data/atomarb.db` (table `runs`, `candidates`, `simulations`, `checkpoints`, `events`); progress readable at any time with `npm run report`. Result so far: thousands of circuit evaluations, **zero positive**.
-- **Four adversarial reviewers** (PumpSwap, Raydium, discovery, executor). Their findings land in `docs/agent_runs/workflow_results.json` once complete.
+- **60-minute prospective run** (`shadow_2026-09-17T18-09-25-841Z_32a7b818`): 50 pools validated on-chain, 22 routes, 17,676 circuit evaluations over the sizing grid, **zero positive**; stopped on the 10,000-request budget at 55 min; snapshot latency p50 349 ms; no data gaps.
+- **Route diagnostic** (80 circuits, one snapshot each): 1 circuit positive, worth 986 lamports at 0.0001 SOL against a 9,000-lamport network fee; median best −420 bps; 54 of 80 routes have a thinner side below 0.01 SOL.
+- **Four adversarial reviews** received and applied (see the tables above and `docs/agent_runs/workflow_results.json`); the executor ABI moved to v2 and its binary was rebuilt.
+- Final artefacts: `TERMINAL_SUMMARY.txt`, `DECISION.md`, `TEST_REPORT.md`, `reports/runs/<id>/RUN_REPORT.{json,md}`, `reports/route_gaps_*.{json,md}`, `reports/fault_injection.json`, `ARTIFACT_HASHES.txt`.
 
-## Remaining steps (in order)
+## What a next session would do
+
+1. Rebuild the PumpSwap inventory from the chain and lift the Raydium listing cap (coverage is the biggest lever; raising it from 5,000 to 25,000 already took the intersection from 17 to 24 mints and Raydium-only pairs from 0 to 5).
+2. Re-run `npm run shadow` with a private endpoint so the run is not cut by the public rate limit, ideally with `SOLANA_WSS_URL` set so decisions follow vault notifications instead of a 4-second poll.
+3. Only then revisit the blockers in `BLOCKERS.md` (funded simulation identity, mainnet lookup table).
 
 1. Wait for the shadow run to end (deadline or HTTP budget), then `npm run report -- --run <id>` and copy `reports/runs/<id>/RUN_REPORT.{json,md}`.
 2. `npx tsx scripts/route_gaps.ts` (needs ~60 RPC requests) for the per-route distance to break-even and the thin-side liquidity.
