@@ -39,7 +39,7 @@ if command -v cargo-build-sbf >/dev/null 2>&1; then
   log "cargo-build-sbf present: $(cargo-build-sbf --version 2>&1 | head -1)"
 else
   log "installing Agave CLI channel=$AGAVE_CHANNEL from https://release.anza.xyz/$AGAVE_CHANNEL/install"
-  install_agave() { curl -sSfL "https://release.anza.xyz/$AGAVE_CHANNEL/install" -o "$HOME/.agave-install.sh" && sh "$HOME/.agave-install.sh"; }
+  install_agave() { curl -sSfL "https://release.anza.xyz/$AGAVE_CHANNEL/install" -o "$HOME/.agave-install.sh" && sh "$HOME/.agave-install.sh" --no-modify-path; }
   retry3 "agave install" install_agave || { log "agave install failed"; AGAVE_FAILED=1; }
   rm -f "$HOME/.agave-install.sh"
 fi

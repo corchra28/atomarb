@@ -1,0 +1,28 @@
+[package]
+name = "arb_executor"
+version = "0.1.0"
+edition = "2021"
+rust-version = "1.89"
+description = "atomarb research executor: two-leg atomic circuit (Raydium CPMM / PumpSwap) with on-chain profit guard. Local simulation only; never deployed by this project."
+publish = false
+
+[lib]
+name = "arb_executor"
+crate-type = ["cdylib", "lib"]
+
+[features]
+default = []
+no-entrypoint = []
+
+[dependencies]
+# solana-program 4.1.0: rust-version 1.89.0 (cargo info, 2026-09-17); platform-tools v1.54 ships rustc 1.89.0-dev (docs/sources/toolchain.md).
+solana-program = "4.1.0"
+
+[lints.rust]
+unexpected_cfgs = { level = "warn", check-cfg = ['cfg(target_os, values("solana"))', 'cfg(feature, values("custom-heap", "custom-panic", "frozen-abi", "no-entrypoint"))'] }
+
+[profile.release]
+overflow-checks = true
+lto = "fat"
+codegen-units = 1
+opt-level = 3
