@@ -61,7 +61,7 @@ So a fair prediction is that **candidates will appear that the old adapter set c
 routes pairing a Whirlpool or a DLMM against a constant-product pool. Whether any is net
 positive at a size worth taking is a separate question, and the census already constrains the
 answer: the median winning trade takes home $0.0026, the largest capital deployed in a winning
-trade anywhere in the sample was $1,538, and 101 of 104 winners paid for block position.
+trade anywhere in the sample was $1,538 (later remeasured at $34,126, with saturation at ~100 SOL — see CAPITAL_AND_TARGETS.md §3), and 101 of 104 winners paid for block position.
 
 **A better adapter set does not make the market enterable.** If the measurement produces positive
 gross candidates, that is a correction to the engine's coverage, not a reversal of
