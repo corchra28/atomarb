@@ -38,7 +38,9 @@ MARKET_SIZE_MEASURED        = ~$124,000/day (1,102 SOL) for all atomic arbitrage
                               STABLE ACROSS EVERY SAMPLE (this is what the conclusions rest on):
                                 median trade $0.00075 | top 10 trades carry 65% of all profit
                                 91-100% of operators seen in one window reappear in the next
-                                capital saturates near $1,538 — largest deployed in any winning trade observed
+                                capital saturates near 100 SOL (~$11,000): returns flat at 20-55 bps below it,
+                                  0.1 bps above; 84% of all profit made with 1-100 SOL deployed
+                                  (largest single deployment observed: 302 SOL = $34,126, earning \$0.30 median)
                                 101 of 104 winners pay for block position
 TRANSACTIONS_BROADCAST      = 0
 KEYPAIRS_READ               = 0

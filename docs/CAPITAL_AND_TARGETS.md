@@ -98,3 +98,59 @@ Two of these are on personal accounts rather than protocol organisations — `ky
 `docs/WHERE_THE_OPPORTUNITY_IS.md` presented DEX integration as recurring contract work. The ownership evidence weakens that: of 59 repositories, nearly all sit under the protocol's own organisation, so the work is normally in-house. Two individual-owned repositories are the only counter-evidence found, and no price for the work was located anywhere.
 
 The honest revision: this is **a credential, not a market.** It is evidence for a conversation with one of the roughly twenty protocols that are alive and doing this work, at the rates measured in `WHERE_THE_OPPORTUNITY_IS.md` ($50/hour for a Romania-based senior, $70k–180k salaried), rather than a stream of integration contracts to bid on.
+
+---
+
+## 3. The capital figure, remeasured — and the answer is different
+
+§1 said capital saturates near **$1,538**, from 96 transactions in a 120-block census. That is the
+same single-short-sample weakness that made the market-size number wrong by sixfold, and it
+matters more here because the claim is load-bearing: it is the reason this repository says more
+money buys nothing.
+
+Remeasured against the 3,000-block census — every circuit taking home more than 1,000,000 lamports
+(all 259 of them) plus a systematic sample of the rest, 641 transactions fetched in total:
+
+| | 96 transactions | **641 transactions** |
+|---|---:|---:|
+| median capital deployed | 0.0235 SOL = $2.49 | 0.0616 SOL = **$6.96** |
+| 90th percentile | 0.9885 SOL | 2.944 SOL |
+| **largest observed** | 14.54 SOL = $1,538 | **302.18 SOL = $34,126** |
+
+**The old maximum was twenty-one times too low.** People do deploy tens of thousands of dollars.
+
+### And the conclusion is stronger, not weaker
+
+Median return, by how much capital the trade put at risk:
+
+| capital | trades | median return | share of all profit |
+|---|---:|---:|---:|
+| under 0.01 SOL | 242 | 41.9 bps | 0.1% |
+| 0.01 – 0.1 | 104 | 22.7 bps | 1.2% |
+| 0.1 – 1 | 171 | 53.6 bps | 9.7% |
+| **1 – 10** | 82 | 42.4 bps | **51.6%** |
+| **10 – 100** | 18 | 41.6 bps | **32.0%** |
+| over 100 SOL | 24 | **0.1 bps** | 5.4% |
+
+Returns sit between 20 and 55 basis points across four orders of magnitude of size — and then
+**collapse to a tenth of a basis point above 100 SOL.** The twenty-four largest deployments, each
+around $34,000, earned a median of thirty cents.
+
+So the saturation point is **about 100 SOL, roughly $11,000** — not $1,538 — and **84% of all
+profit is made with between 1 and 100 SOL** of capital. Below 1 SOL the returns are just as good
+in percentage terms but the absolute amounts are negligible; above 100 SOL the percentage
+evaporates.
+
+### A detail worth noticing
+
+The trades above 100 SOL cluster at almost exactly the same size: 302.178, 302.183, 302.184 SOL,
+fourteen distinct values across twenty-four trades. That is not a wallet balance, it is a fixed
+parameter — most plausibly a flash-loan size. Somebody is borrowing three hundred SOL per attempt
+and clearing thirty cents on it.
+
+### What this changes
+
+The number in §1 is corrected from $1,538 to about $11,000, and the shape of the argument
+survives intact: **beyond the saturation point more capital buys nothing at all**, and the
+saturation point is low enough that it is not the binding constraint on entering this market.
+Latency is.

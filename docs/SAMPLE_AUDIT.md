@@ -15,8 +15,8 @@ Sorting every quantitative claim in the repository by that test:
 
 | claim | sample it rests on | status |
 |---|---|---|
-| Total Jito tips ≈ $68,600/day (`REAL_WORLD_MEV.md` §8) | **150 blocks**, top 50 tips carry 70.6% | remeasured at 3,000 blocks — see §8's update |
-| "Capital saturates near $1,538" (`CAPITAL_AND_TARGETS.md`) | **96 transactions** from the 120-block census | remeasured against 4,548 circuits |
+| ~~Total Jito tips ≈ $68,600/day~~ | **150 blocks**, top 50 tips carry 70.6% | **RESOLVED** — $147,960/day over 3,000 blocks and 88,658 tip-paying transactions, top 50 down to 40.2%. `REAL_WORLD_MEV.md` §13 |
+| ~~"Capital saturates near $1,538"~~ | **96 transactions** from the 120-block census | **RESOLVED** — remeasured over 641 transactions: the maximum was 21x too low ($34,126), but the saturation point is ~100 SOL and the conclusion is stronger. `CAPITAL_AND_TARGETS.md` §3 |
 
 Both are sums or maxima over heavy tails, both came from windows an order of magnitude too short,
 and the second is load-bearing: it is the reason the repository says more money buys nothing.
