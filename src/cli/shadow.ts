@@ -63,20 +63,30 @@ export async function shadow(loaded: LoadedConfig, flags: Record<string, string 
   const routes = [...groups.entries()].filter(([, g]) => g.length >= 2)
   log.info('shadow_routes', { valid: valid.length, dropped: dropped.length, routes: routes.length })
   db.checkpoint(runId, 'setup', nowUtcIso(), { valid: valid.map(v => v.address.toBase58()), dropped, routes: routes.map(([t, g]) => ({ token: t, pools: g.map(p => p.address.toBase58()) })) })
-  // optional WSS: vault subscriptions trigger an immediate re-poll of the affected route
-  const dirty = new Set<string>(); const gaps: { fromUtc: string; toUtc: string; reason: string }[] = []
+  // optional WSS: vault notifications drive the loop. A route is re-polled when one of its vaults changed; the per-key revision lets us detect a
+  // notification that arrived WHILE the route was being processed, so it is re-polled instead of being cleared (audit note on the old dirty set).
+  const gaps: { fromUtc: string; toUtc: string; reason: string }[] = []
   let wss: WssManager | null = null
   const vaultToToken = new Map<string, string>()
   for (const o of first.outcomes) if (o.decoded) { const t = tokenOf.get(o.pool.address.toBase58())!; vaultToToken.set(o.decoded.vaultA.address.toBase58(), t); vaultToToken.set(o.decoded.vaultB.address.toBase58(), t) }
   if (ep.wssUrl) {
-    wss = new WssManager(ep.wssUrl, config.rpc.commitment, { onAccount: n => { const t = vaultToToken.get(n.account.pubkey.toBase58()); if (t) dirty.add(t); db.event(runId, n.account.receivedAtUtc, n.account.receivedMonoMs, 'wss_account', n.account.pubkey.toBase58(), n.account.contextSlot, { identity: n.identity, lamports: n.account.lamports }) }, onGap: g => { gaps.push(g); db.event(runId, nowUtcIso(), monoMs(), 'wss_gap', null, null, g) } }, log)
+    wss = new WssManager(ep.wssUrl, config.rpc.commitment, { onAccount: n => { db.event(runId, n.account.receivedAtUtc, n.account.receivedMonoMs, 'wss_account', n.account.pubkey.toBase58(), n.account.contextSlot, { identity: n.identity, lamports: n.account.lamports }) }, onGap: g => { gaps.push(g); db.event(runId, nowUtcIso(), monoMs(), 'wss_gap', null, null, g) } }, log)
     try { await wss.start(); wss.subscribe([...vaultToToken.keys()].map(k => new PublicKey(k))) } catch (e) { log.warn('wss_unavailable', { error: (e as Error).message }); wss = null }
   }
   // state age is measured at every stage that matters, from the snapshot's receive time: one number taken right after the snapshot measures nothing (audit finding F2)
   const lat = { snapshot: [] as number[], quote: [] as number[], build: [] as number[], sim: [] as number[], ageAtQuote: [] as number[], ageAtDecision: [] as number[], ageAtBuild: [] as number[], ageAtSim: [] as number[] }
   const episodes = new Map<string, Episode>()
-  const counters = { capitalRejected: 0, capitalResized: 0, sizingCapExhausted: 0, polls: 0, routePolls: 0, snapshotIncomplete: 0, circuitsEvaluated: 0, positiveEvaluations: 0, candidates: 0, simsAttempted: 0, simsOk: 0, localAttempted: 0, localOk: 0, localMatch: 0, stale: 0, staleAtDecision: 0, staleAtSimulation: 0, errors: 0 }
+  const counters = { revisionRacesObserved: 0, wssDrivenPolls: 0, capitalRejected: 0, capitalResized: 0, sizingCapExhausted: 0, polls: 0, routePolls: 0, snapshotIncomplete: 0, circuitsEvaluated: 0, positiveEvaluations: 0, candidates: 0, simsAttempted: 0, simsOk: 0, localAttempted: 0, localOk: 0, localMatch: 0, stale: 0, staleAtDecision: 0, staleAtSimulation: 0, errors: 0 }
   const simTimes: number[] = []
+  const vaultsOfToken = new Map<string, string[]>()
+  for (const [v, t] of vaultToToken) { const a = vaultsOfToken.get(t) ?? []; a.push(v); vaultsOfToken.set(t, a) }
+  /** Routes whose vaults changed since we last looked at them, newest change first; empty means nothing moved. */
+  const dirtyRoutes = (): string[] => {
+    if (!wss) return []
+    const seen = new Set<string>()
+    for (const key of wss.drainDirty()) { const t = vaultToToken.get(key); if (t) seen.add(t) }
+    return [...seen]
+  }
   // capital budget, pending positions and concurrency for prospective probes (hypothetical mode: probe PnLs never change capital)
   const ledger = new CapitalLedger({ capitalLamports: BigInt(config.sizing.maxCapitalLamports), maxEpisodeFrac: 0.2, maxAggregateOpenFrac: 0.4, reserveFrac: 0.3, maxConcurrent: 3, hypothetical: true })
   // external costs do not depend on the size (they come from config): one estimate for the whole run. `total` = definitive costs (base fee + priority + tip),
@@ -94,7 +104,10 @@ export async function shadow(loaded: LoadedConfig, flags: Record<string, string 
   outer: while (true) {
     const stop = control.check(rpc.usage.total); if (stop) { stopReason = stop; break }
     counters.polls++
-    for (const [token, poolRefs] of routes) {
+    const pending = wss ? dirtyRoutes() : []
+    const order = pending.length ? [...routes].sort((a, b) => (pending.includes(b[0]) ? 1 : 0) - (pending.includes(a[0]) ? 1 : 0)) : routes
+    for (const [token, poolRefs] of order) {
+      const revBefore = wss ? wss.maxRevisionOf(vaultsOfToken.get(token) ?? []) : 0
       const stop2 = control.check(rpc.usage.total); if (stop2) { stopReason = stop2; break outer }
       const t0 = monoMs()
       let snap
@@ -104,7 +117,7 @@ export async function shadow(loaded: LoadedConfig, flags: Record<string, string 
       for (const o of snap.outcomes) { if (o.status === 'OK' && o.decoded) decoded.push(o.decoded); else if (o.status === 'SNAPSHOT_INCOMPLETE') counters.snapshotIncomplete++ }
       const bundle = snap.bundle
       const receivedMonoMs = bundleReceivedMonoMs(bundle)   // the OLDEST account decides the age; no bundle => freshness cannot be attested
-      const clock = receivedMonoMs === null ? null : newDecisionClock(receivedMonoMs)   // every stage below is timed against this receive instant
+      const routeClock = receivedMonoMs === null ? null : newDecisionClock(receivedMonoMs)   // every stage below is timed against this receive instant
       const circuits = enumerateCircuits(decoded)
       const t1 = monoMs()
       const evals: { c: Circuit; best: CircuitEval | null; points: number; cap: bigint }[] = []
@@ -119,7 +132,7 @@ export async function shadow(loaded: LoadedConfig, flags: Record<string, string 
         for (const e of s.evaluated) if (e.pnl !== null) { const bps = Number((e.pnl * 1_000_000n) / e.amountIn) / 100; const prev = closest.get(c.id); if (prev === undefined || bps > prev.bps) closest.set(c.id, { bps, amountIn: e.amountIn, utc: nowUtcIso(), category: c.category }) }
       }
       lat.quote.push(monoMs() - t1)
-      if (clock) lat.ageAtQuote.push(markStage(clock, 'quoteDone', monoMs()))   // stage 1: receive -> quote done
+      if (routeClock) lat.ageAtQuote.push(markStage(routeClock, 'quoteDone', monoMs()))   // stage 1: receive -> quote done
       const nowIso = nowUtcIso()
       for (const { c, best, cap: sizingCap } of evals) {
         const ep0 = episodes.get(c.id)
@@ -130,6 +143,7 @@ export async function shadow(loaded: LoadedConfig, flags: Record<string, string 
         const isCandidate = txPnl >= BigInt(config.costs.minNetProfitLamports)
         if (isCandidate) counters.candidates++
         // F2 stage 2: the age is measured HERE, when the decision is recorded — quoting and sizing already happened since the snapshot
+        const clock = routeClock ? { ...routeClock } : null   // one clock per decision, sharing this snapshot's receive and quote-done marks
         const decisionMonoMs = monoMs()
         const atDecision = clock ? stalenessGate(clock.receivedMonoMs, decisionMonoMs, stalenessMaxMs) : null
         if (clock) lat.ageAtDecision.push(markStage(clock, 'decision', decisionMonoMs))
@@ -194,12 +208,19 @@ export async function shadow(loaded: LoadedConfig, flags: Record<string, string 
           }
         } else if (ep0 && ep0.open) { ep0.open = false; db.event(runId, nowIso, monoMs(), 'episode_end', c.id, snap.bundle?.maxSlot ?? null, ep0) }
       }
-      dirty.delete(token)
+      if (wss) {
+        const revAfter = wss.maxRevisionOf(vaultsOfToken.get(token) ?? [])
+        if (revAfter !== revBefore) { counters.revisionRacesObserved++; db.event(runId, nowUtcIso(), monoMs(), 'route_changed_during_processing', token, snap.bundle?.maxSlot ?? null, { revBefore, revAfter }) }
+      }
     }
     db.checkpoint(runId, 'progress', nowUtcIso(), { counters, rpc: rpc.usage.total, episodes: [...episodes.values()].map(e => ({ ...e })), elapsedMs: control.elapsedMs() })
     // wait for the next poll (or a WSS-dirty route)
     const until = monoMs() + pollMs
-    while (monoMs() < until) { if (dirty.size) break; await sleep(200); const s = control.check(rpc.usage.total); if (s) { stopReason = s; break outer } }
+    while (monoMs() < until) {
+      if (wss && wss.dirtyCount > 0) { counters.wssDrivenPolls++; break }   // a vault moved: start the next pass now instead of sleeping it out
+      await sleep(wss ? 50 : 200)
+      const s = control.check(rpc.usage.total); if (s) { stopReason = s; break outer }
+    }
   }
   wss?.stop()
   const pct = (xs: number[]) => { const s = [...xs].sort((a, b) => a - b); return { n: s.length, p50: percentile(s, 50), p95: percentile(s, 95), p99: percentile(s, 99) } }

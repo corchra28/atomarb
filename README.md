@@ -26,6 +26,8 @@ npm run discover -- --no-network                              # same, from the c
 npm run quote    -- --pools pumpswap:<POOL>,raydium_cpmm:<POOL> --amount 10000000 [--sizing]
 npm run simulate -- --pools pumpswap:<POOL>,pumpswap:<POOL2> --amount 10000000 [--direction 0|1] [--no-mainnet] [--no-local] [--no-executor] [--identity <pubkey>] [--landing-check]
 npm run shadow   -- --duration 60m --config config/config.example.json [--pools-file data/discovery/shortlist.json] [--max-sims-per-minute 2]
+#   with a private endpoint (25 req/s, 400 pools, WebSocket-driven):
+#   export SOLANA_RPC_URL=... SOLANA_WSS_URL=...   &&  npm run shadow -- --duration 60m --config config/config.fast.example.json
 npm run report   -- --run <runId>
 npm run stop                                          # writes data/STOP; loops exit at the next checkpoint
 scripts/long_run.sh 24h|48h                           # explicit, bounded collection (NOT launched by default; needs SOLANA_RPC_URL)

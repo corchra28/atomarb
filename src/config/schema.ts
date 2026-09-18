@@ -41,7 +41,8 @@ export const ConfigSchema = z.object({
   }).prefault({}),
   smoke: z.object({
     maxDurationMinutes: z.number().int().positive().max(2880).default(60),
-    maxPools: z.number().int().positive().max(50).default(50),
+    /** the 50-pool smoke limit exists for the public endpoint; a private endpoint can carry the whole shortlist */
+    maxPools: z.number().int().positive().max(1000).default(50),
     maxDiskBytes: z.number().int().positive().default(2 * 1024 ** 3),
   }).prefault({}),
   paths: z.object({ dataDir: z.string().default('data'), reportsDir: z.string().default('reports/runs') }).prefault({}),
