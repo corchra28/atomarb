@@ -31,6 +31,14 @@ Four quantities are now separated and reconciled (`src/accounting/types.ts`, `re
 
 The deposits are measured per account, only for accounts that did not already exist, and the engine can now reclaim them: `buildCloseUserVolumeAccumulatorIx` (discriminator `f945a4da9667548a`, from the pump_amm IDL) plus a plain `CloseAccount`. A test on the real programs closes both and observes exactly the locked amount coming back, minus the 5,000-lamport fee of the closing transaction. The auditor's correction stands: that deposit is capital, not a loss.
 
+## Re-measured on a private endpoint after the fixes
+
+The auditor's coverage objections were answered with data rather than argument. With a paid endpoint (about 150 ms per call instead of 430 ms on the public one) and the WebSocket path working for the first time:
+
+- the scanner now reacts to vault notifications instead of a fixed poll, and records the per-key revision so a notification that lands while a route is being processed re-polls that route instead of being dropped;
+- the declared-but-unused `minQuoteReserveLamports` filter is applied, which removes the dust pools that produced every illusory positive in the published sweep;
+- a full-population sweep over all 151 eligible mints, one atomic snapshot each, dropped 206 pools below 0.02 SOL and left 96 real circuits: **zero positive at any size, gross or net** (`reports/population_sweep_*.json`).
+
 ## What we do not claim, after the fixes
 
 Repairing these defects is not evidence of profit, and none of them would have turned the observed run positive: the run recorded zero positive evaluations out of 17,676, and the population sweep found a largest gross result of 2,663 lamports against a 9,000-lamport fee. The economic verdict is unchanged and remains `NO_VERIFIED_EDGE` for the population and windows observed, with no support for the opposite claim either.
