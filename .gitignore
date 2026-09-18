@@ -14,3 +14,4 @@ target/
 programs/**/target/
 .DS_Store
 *.log
+integrations/**/target/

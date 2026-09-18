@@ -1,0 +1,15 @@
+[package]
+name = "raydium-cpmm-amm"
+version = "0.1.0"
+edition = "2024"
+rust-version = "1.85.0"
+description = "Raydium CPMM as a Jupiter Amm, verified against the on-chain program with jupiter-amm-test-kit."
+
+[dependencies]
+jupiter-amm-interface = { git = "https://github.com/jup-ag/jupiter-amm-interface", branch = "main" }
+solana-account = "4"
+solana-pubkey = { version = "4", features = ["curve25519"] }
+solana-instruction = "3"
+
+[dev-dependencies]
+jupiter-amm-test-kit = { git = "https://github.com/jup-ag/jupiter-amm-interface", branch = "main" }
