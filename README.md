@@ -53,6 +53,7 @@ See `docs/ARCHITECTURE.md`. Provenance for every external fact: `docs/sources/*.
 | How far from break-even is each route? | `reports/route_gaps_*.md` |
 | What happened in a run? | `reports/runs/<runId>/RUN_REPORT.{json,md}`, `data/atomarb.db` |
 | Where does each external fact come from? | `docs/sources/*.md`, `sources.lock.json` |
+| Is DEX-versus-centralised-exchange any different? | `docs/DEX_CEX_AUDIT.md`, raw data in `docs/sources/dexcex/` |
 
 ## What this is not
 Not a bot, not a profit claim. A simulated positive candidate does not enable live trading; a negative window does not prove universal impossibility. Landing rate and competition cost are unknown before live and are not estimated here.

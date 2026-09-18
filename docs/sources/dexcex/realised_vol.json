@@ -1,0 +1,66 @@
+{
+ "SOL": {
+  "sd_1min_bps": 7.55,
+  "sd_5min_bps": 16.88,
+  "p95_abs_1min_bps": 16.07,
+  "n_bars": 1000,
+  "source": "https://api.binance.com/api/v3/klines?symbol=SOLUSDT&interval=1m&limit=1000",
+  "fetched_utc": "2026-09-18T08:57:49Z"
+ },
+ "TRUMP": {
+  "sd_1min_bps": 10.62,
+  "sd_5min_bps": 23.75,
+  "p95_abs_1min_bps": 20.44,
+  "n_bars": 1000,
+  "source": "https://api.binance.com/api/v3/klines?symbol=TRUMPUSDT&interval=1m&limit=1000",
+  "fetched_utc": "2026-09-18T08:57:49Z"
+ },
+ "PENGU": {
+  "sd_1min_bps": 9.35,
+  "sd_5min_bps": 20.9,
+  "p95_abs_1min_bps": 19.79,
+  "n_bars": 1000,
+  "source": "https://api.binance.com/api/v3/klines?symbol=PENGUUSDT&interval=1m&limit=1000",
+  "fetched_utc": "2026-09-18T08:57:50Z"
+ },
+ "WIF": {
+  "sd_1min_bps": 9.37,
+  "sd_5min_bps": 20.96,
+  "p95_abs_1min_bps": 20.78,
+  "n_bars": 1000,
+  "source": "https://api.binance.com/api/v3/klines?symbol=WIFUSDT&interval=1m&limit=1000",
+  "fetched_utc": "2026-09-18T08:57:51Z"
+ },
+ "JUP": {
+  "sd_1min_bps": 17.53,
+  "sd_5min_bps": 39.2,
+  "p95_abs_1min_bps": 34.95,
+  "n_bars": 1000,
+  "source": "https://api.binance.com/api/v3/klines?symbol=JUPUSDT&interval=1m&limit=1000",
+  "fetched_utc": "2026-09-18T08:57:51Z"
+ },
+ "BONK": {
+  "sd_1min_bps": 22.98,
+  "sd_5min_bps": 51.38,
+  "p95_abs_1min_bps": 36.9,
+  "n_bars": 1000,
+  "source": "https://api.binance.com/api/v3/klines?symbol=BONKUSDT&interval=1m&limit=1000",
+  "fetched_utc": "2026-09-18T08:57:52Z"
+ },
+ "PYTH": {
+  "sd_1min_bps": 14.23,
+  "sd_5min_bps": 31.82,
+  "p95_abs_1min_bps": 31.31,
+  "n_bars": 1000,
+  "source": "https://api.binance.com/api/v3/klines?symbol=PYTHUSDT&interval=1m&limit=1000",
+  "fetched_utc": "2026-09-18T08:57:52Z"
+ },
+ "PUMP": {
+  "sd_1min_bps": 16.39,
+  "sd_5min_bps": 36.65,
+  "p95_abs_1min_bps": 30.9,
+  "n_bars": 1000,
+  "source": "https://api.binance.com/api/v3/klines?symbol=PUMPUSDT&interval=1m&limit=1000",
+  "fetched_utc": "2026-09-18T08:57:53Z"
+ }
+}

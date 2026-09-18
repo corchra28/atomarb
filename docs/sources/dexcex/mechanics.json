@@ -1,0 +1,658 @@
+{
+ "agent": "mechanics",
+ "scope": "DEX-CEX arbitrage mechanics and risk, Solana <-> Binance/Gate/MEXC/OKX",
+ "generated_utc": "2026-09-18T08:55:00Z",
+ "measurement_window_utc": "2026-09-18T08:44:32Z .. 2026-09-18T08:53:16Z",
+ "method_notes": [
+  "All figures from public, unauthenticated HTTPS endpoints or published exchange documentation. No API keys, no account endpoints, no orders.",
+  "Jupiter quote outAmount is NET of DEX pool fees and price impact, so every measured DEX-CEX gap below is already net of the DEX swap fee.",
+  "bp = basis points = 0.01%."
+ ],
+ "solana_settlement": {
+  "slot_time_seconds_measured": 0.2655,
+  "slots_per_second_measured": 3.767,
+  "slot_time_method": "getRecentPerformanceSamples, 5 x 60s samples, 1130 slots / 300 s",
+  "confirmed_minus_finalized_slots_measured": 30,
+  "confirmed_to_finalized_seconds_implied": 7.97,
+  "source": "https://api.mainnet-beta.solana.com (getRecentPerformanceSamples, getSlot commitment=confirmed/finalized)",
+  "fetched_utc": "2026-09-18T08:45:58Z",
+  "commitment_definitions_source": "https://solana.com/docs/rpc",
+  "commitment_definitions": {
+   "processed": "The node's most recent processed block. This is the newest view, but it can still be rolled back.",
+   "confirmed": "A block directly voted on by a supermajority of stake, meaning more than two-thirds of the network's active stake.",
+   "finalized": "A block the cluster recognizes as finalized with maximum lockout, meaning it has reached the strongest confirmation state used by the network."
+  },
+  "docs_quantify_finality_in_slots": false,
+  "note": "Solana docs define finalized qualitatively, not as a slot count. The 30-slot figure is measured, not documented."
+ },
+ "venue_deposit_withdrawal": {
+  "binance": {
+   "source": "https://www.binance.com/bapi/capital/v1/public/capital/getNetworkCoinAll",
+   "fetched_utc": "2026-09-18T08:44:46Z",
+   "confidence": "MEASURED",
+   "sol_network_minConfirm": 1,
+   "sol_network_lockConfirm": 0,
+   "sol_network_unLockConfirm": null,
+   "estimatedArrivalTime_minutes": 1,
+   "estimatedUnlockTime": 0,
+   "note_confirm": "minConfirm=1 and lockConfirm=0 for every one of the 61 assets Binance lists on the SOL network. Deposit is creditable after 1 Solana confirmation; there is no separate unlock threshold.",
+   "withdraw_fees": {
+    "SOL": {
+     "fee": "0.001 SOL",
+     "min": "0.01",
+     "max": "200300",
+     "integer_multiple": "0.00000001"
+    },
+    "USDT": {
+     "fee": "0.3 USDT",
+     "min": "5"
+    },
+    "USDC": {
+     "fee": "0.3 USDC",
+     "min": "3"
+    }
+   },
+   "assets_on_sol_network": 61,
+   "sol_network_deposit_disabled_now": {
+    "count": 5,
+    "assets": [
+     "HNT",
+     "SNS",
+     "SRM",
+     "GST",
+     "AVA"
+    ]
+   },
+   "sol_network_withdraw_disabled_now": {
+    "count": 5,
+    "assets": [
+     "HNT",
+     "SRM",
+     "GMT",
+     "GST",
+     "AVA"
+    ]
+   },
+   "fraction_of_sol_assets_with_a_leg_disabled_pct": 11.5,
+   "memo_required_sol": false,
+   "sameAddress": false,
+   "address_case_sensitive_warning": "Please note that SOL addresses are case sensitive.",
+   "withdrawal_batching_documented": "UNKNOWN"
+  },
+  "okx": {
+   "confirmations_source": "https://www.okx.com/help/why-has-not-my-deposit-been-credited",
+   "fetched_utc": "2026-09-18T08:46:27Z",
+   "confidence": "DOCS_ONLY",
+   "published_sol_confirmation_count": "UNKNOWN",
+   "note": "OKX's public help article states only 'You will receive your deposit amount once it reaches the required confirmation numbers'. It publishes no per-network confirmation table and no Solana number. The public /api/v5/asset/currencies endpoint that would carry it requires an API key (returns code 50103, 'Request header OK-ACCESS-KEY can not be empty'), so this is not measurable without an account.",
+   "would_measure_it": "Authenticated GET /api/v5/asset/currencies?ccy=SOL returns minDep, minWd, wdTickSz and confirmation fields; or read the confirmation count rendered on the logged-in deposit page.",
+   "withdrawal_batching_documented": "UNKNOWN"
+  },
+  "gate": {
+   "source": "https://api.gateio.ws/api/v4/wallet/currency_chains?currency=SOL and /api/v4/spot/currencies/SOL",
+   "fetched_utc": "2026-09-18T08:44:46Z",
+   "confidence": "MEASURED for limits, DOCS_ONLY for confirmations",
+   "sol_chain_enabled": true,
+   "withdraw_amount_min_SOL": "0.1",
+   "withdraw_amount_min_USDT_sol": "1",
+   "withdraw_amount_min_USDC_sol": "0.01",
+   "withdraw_amount_min_BONK_sol": "3547.35722",
+   "published_sol_confirmation_count": "UNKNOWN",
+   "confirmations_note": "Gate documents only that 'Gate has different blockchain confirmation requirements for deposits of different coins before they are credited' and that the per-coin number is shown 'at the bottom of the Deposit page' (login-gated).",
+   "confirmations_source": "https://www.gate.com/help/guide/deposit_withdrawa/17297",
+   "documented_statuses_source": "https://www.gate.com/help/guide/deposit_withdrawa/17395",
+   "deposit_statuses": [
+    "Pending - the transaction hasn't gotten the required number of confirmations yet",
+    "Done - the transaction is successfully credited",
+    "Manual - the deposit is being manually reviewed. It will be credited after review"
+   ],
+   "withdrawal_statuses": [
+    "Canceled",
+    "Processing - your withdrawal application is being sent by Gate",
+    "Done & Blockchain Pending - the transaction is already sent out by Gate, but not yet confirmed by blockchain",
+    "Done & Blockchain Confirmed",
+    "KYC Required"
+   ],
+   "manual_review_path_exists": true,
+   "withdrawal_batching_documented": "UNKNOWN"
+  },
+  "mexc": {
+   "confidence": "DOCS_ONLY",
+   "published_sol_confirmation_count": "UNKNOWN",
+   "documented_withdrawal_delay": "TxID typically generated within 1 to 60 minutes after the withdrawal request is submitted",
+   "documented_review_delay": "'Under Review' status estimated processing time is 5-60 minutes",
+   "escalation_threshold": "If the withdrawal request does not generate a TxID within 1 hour, contact MEXC Customer Service immediately.",
+   "source": "https://www.mexc.com/support/crypto-deposit-withdrawals/withdrawal-faq",
+   "fetched_utc": "2026-09-18T08:51:40Z",
+   "note": "This is the only venue of the four that publishes an explicit withdrawal processing delay range, and it is the single most important number in the sequential model: the upper bound is 60 minutes.",
+   "web_coin_config_endpoint": "blocked (Akamai 'Access Denied') for www.mexc.com/api/platform/asset/spot/currency/list",
+   "withdrawal_batching_documented": "UNKNOWN"
+  }
+ },
+ "fee_tiers_spot": {
+  "note": "Taker fee is the binding number for arbitrage: the CEX leg of a DEX-CEX round trip must cross the spread to be certain of the fill.",
+  "binance": {
+   "source": "https://www.binance.com/en/fee/schedule",
+   "fetched_utc": "2026-09-18T08:45:58Z",
+   "confidence": "DOCS_ONLY",
+   "tiers": [
+    {
+     "tier": "VIP 0",
+     "vol_usd_30d": "<1,000,000",
+     "maker_pct": 0.1,
+     "taker_pct": 0.1
+    },
+    {
+     "tier": "VIP 1",
+     "vol_usd_30d": ">=1,000,000",
+     "bnb": ">=5",
+     "maker_pct": 0.09,
+     "taker_pct": 0.1
+    },
+    {
+     "tier": "VIP 2",
+     "vol_usd_30d": ">=5,000,000",
+     "bnb": ">=25",
+     "maker_pct": 0.08,
+     "taker_pct": 0.1
+    },
+    {
+     "tier": "VIP 3",
+     "vol_usd_30d": ">=20,000,000",
+     "bnb": ">=100",
+     "maker_pct": 0.04,
+     "taker_pct": 0.06
+    },
+    {
+     "tier": "VIP 4",
+     "vol_usd_30d": ">=75,000,000",
+     "bnb": ">=500",
+     "maker_pct": 0.04,
+     "taker_pct": 0.052
+    },
+    {
+     "tier": "VIP 5",
+     "vol_usd_30d": ">=150,000,000",
+     "bnb": ">=1000",
+     "maker_pct": 0.025,
+     "taker_pct": 0.031
+    },
+    {
+     "tier": "VIP 6",
+     "vol_usd_30d": ">=400,000,000",
+     "bnb": ">=1750",
+     "maker_pct": 0.02,
+     "taker_pct": 0.029
+    },
+    {
+     "tier": "VIP 7",
+     "vol_usd_30d": ">=800,000,000",
+     "bnb": ">=3000",
+     "maker_pct": 0.019,
+     "taker_pct": 0.028
+    },
+    {
+     "tier": "VIP 8",
+     "vol_usd_30d": ">=2,000,000,000",
+     "bnb": ">=4500",
+     "maker_pct": 0.016,
+     "taker_pct": 0.025
+    },
+    {
+     "tier": "VIP 9",
+     "vol_usd_30d": ">=4,000,000,000",
+     "bnb": ">=5500",
+     "maker_pct": 0.011,
+     "taker_pct": 0.023
+    }
+   ],
+   "bnb_discount": "25% off when paying fees with BNB",
+   "taker_bp_range": [
+    10.0,
+    2.3
+   ]
+  },
+  "okx": {
+   "source": "https://www.okx.com/en-us/help/updates-to-global-fee-framework",
+   "fetched_utc": "2026-09-18T08:52:00Z",
+   "confidence": "DOCS_ONLY",
+   "note": "Rates quoted are for Group 1 pairs; Groups 2 and 3 differ, and some pairs (DAI-USDT, USDC-USDT) are zero fee.",
+   "tiers": [
+    {
+     "tier": "Regular",
+     "req": "<100k assets or <1M vol",
+     "maker_pct": 0.08,
+     "taker_pct": 0.1
+    },
+    {
+     "tier": "VIP 1",
+     "req": ">=100k or >=1M",
+     "maker_pct": 0.0675,
+     "taker_pct": 0.08
+    },
+    {
+     "tier": "VIP 2",
+     "req": ">=250k or >=5M",
+     "maker_pct": 0.06,
+     "taker_pct": 0.07
+    },
+    {
+     "tier": "VIP 3",
+     "req": ">=500k or >=10M",
+     "maker_pct": 0.055,
+     "taker_pct": 0.065
+    },
+    {
+     "tier": "VIP 4",
+     "req": ">=2M or >=20M",
+     "maker_pct": 0.03,
+     "taker_pct": 0.045
+    },
+    {
+     "tier": "VIP 5",
+     "req": ">=5M or >=100M",
+     "maker_pct": 0.025,
+     "taker_pct": 0.035
+    },
+    {
+     "tier": "VIP 6",
+     "req": ">=10M or >=200M",
+     "maker_pct": 0.0,
+     "taker_pct": 0.03
+    },
+    {
+     "tier": "VIP 7",
+     "req": ">=500M vol",
+     "maker_pct": -0.002,
+     "taker_pct": 0.025
+    },
+    {
+     "tier": "VIP 8",
+     "req": ">=1B vol",
+     "maker_pct": -0.005,
+     "taker_pct": 0.02
+    },
+    {
+     "tier": "VIP 9",
+     "req": ">=5B vol",
+     "maker_pct": -0.0075,
+     "taker_pct": 0.0175
+    }
+   ],
+   "maker_rebate_exists": true,
+   "taker_bp_range": [
+    10.0,
+    1.75
+   ],
+   "tier_update_frequency": "daily snapshot, tiers updated between 4:00-6:00 AM UTC+8",
+   "tier_faq_source": "https://www.okx.com/en-us/help/trading-fee-rules-faq"
+  },
+  "mexc": {
+   "source_api": "https://api.mexc.com/api/v3/exchangeInfo",
+   "fetched_utc": "2026-09-18T08:46:27Z",
+   "confidence": "MEASURED",
+   "symbols_total": 1983,
+   "maker_commission_distribution": {
+    "0": 1861,
+    "0.0001": 122
+   },
+   "taker_commission_distribution": {
+    "0.0005": 1610,
+    "0": 251,
+    "0.0001": 122
+   },
+   "SOLUSDT": {
+    "maker": "0",
+    "taker": "0.0005"
+   },
+   "BONKUSDT": {
+    "maker": "0",
+    "taker": "0.0005"
+   },
+   "WIFUSDT": {
+    "maker": "0",
+    "taker": "0.0005"
+   },
+   "marketing_claim": "MEXC press release dated 2025-12-22 states '0% Maker and 0% Taker fees' on 'all Spot trading pairs', with 'All VIP tier restrictions and asset-holding requirements have been removed'.",
+   "marketing_source": "https://blog.mexc.com/press-release/mexc-upgrades-0-fee-spot-trading-to-cover-all-pairs/",
+   "DISCREPANCY": "MEXC's own exchangeInfo API contradicts the 'all pairs 0%' claim: 1610 of 1983 symbols (81%) carry takerCommission 0.0005 (5 bp), including SOLUSDT. Only 251 symbols show 0 taker. Treat the headline 0% as marketing and the API as the operative number: 5 bp taker on SOL.",
+   "mx_discount_claim": "50% spot fee discount for holding 500+ MX for 24h, i.e. taker 0.025% (2.5 bp)"
+  },
+  "gate": {
+   "source_api": "https://api.gateio.ws/api/v4/spot/currency_pairs/SOL_USDT",
+   "fetched_utc": "2026-09-18T08:46:27Z",
+   "confidence": "MEASURED for base rate",
+   "SOL_USDT_fee_pct": 0.2,
+   "base_taker_bp": 20.0,
+   "vip_tiers_claim": "VIP0 0.20%, VIP1 (>=$1M) 0.18%, VIP3 (>=$10M) 0.14%, VIP5 (>=$50M) 0.10%, VIP9 (>=$1B) 0.02%",
+   "vip_tiers_confidence": "INFERRED",
+   "vip_tiers_note": "Gate's fee page and help article are login-gated / JS-rendered; the tier numbers above came from Gate-domain search summaries, not from a fetched table. The base 0.2% IS measured from Gate's own public API.",
+   "vip_tiers_source": "https://www.gate.com/fee",
+   "gt_discount": "GT (GateToken) can be used to pay trading fees with additional discounts - exact rate UNKNOWN"
+  },
+  "best_realistic_taker_bp": {
+   "value": 1.75,
+   "venue": "OKX VIP 9",
+   "requirement": ">=$5,000,000,000 30-day volume",
+   "comment": "A participant at that tier is a top-10 global flow house, not a solo operator. The realistic taker fee for anyone building this from scratch is 5 bp (MEXC) to 10 bp (Binance/OKX entry tier)."
+  }
+ },
+ "measured_dex_cex_gap": {
+  "pair": "SOL/USDT",
+  "dex": "Jupiter aggregator (lite-api.jup.ag/swap/v1/quote), route legs observed: Byreal, PancakeSwap, HumidiFi, Quay, JupLend AMM, Deriverse, Quantum, BisonFi",
+  "cex": "Binance SOLUSDT bookTicker",
+  "size_sol": 10,
+  "size_usd_approx": 1058,
+  "n_samples": 13,
+  "sampling_window_utc": "2026-09-18T08:50:16Z .. 2026-09-18T08:51:17Z",
+  "simultaneous": "yes - DEX quote and CEX bookTicker fetched in parallel threads within the same round",
+  "note": "DEX execution price is net of pool fees and price impact (Jupiter returns outAmount after fees). So these gaps are GROSS of CEX fees only.",
+  "direction_A_buy_CEX_sell_DEX_bp": {
+   "median": -0.03,
+   "min": -5.89,
+   "max": 1.75
+  },
+  "direction_B_buy_DEX_sell_CEX_bp": {
+   "median": -0.91,
+   "min": -2.69,
+   "max": 4.95
+  },
+  "best_single_observation_bp": 4.95,
+  "binance_top_of_book_spread_bp_median": 0.94,
+  "jupiter_price_impact_pct_at_10_SOL": "0 to 0.0000102",
+  "jupiter_price_impact_pct_at_100_SOL": 3.92e-05,
+  "jupiter_price_impact_pct_at_1000_SOL": 0.000122,
+  "impact_note": "SOL/USDC on Solana is deep: routing 1000 SOL (~$105,800) showed 0.0122 bp of price impact. Price impact is NOT the binding constraint on the majors, unlike the thin-pool DEX-DEX case."
+ },
+ "stablecoin_basis_trap": {
+  "finding": "The largest apparent DEX-CEX gap observed was not an arbitrage - it was a USDC/USDT denomination artifact.",
+  "binance_USDCUSDT_bid": 1.00077,
+  "binance_USDCUSDT_ask": 1.00078,
+  "jupiter_USDC_to_USDT_exec_px": 1.000781,
+  "agreement_bp": 0.01,
+  "binance_SOLUSDC_bid": 105.81,
+  "binance_SOLUSDT_bid": 105.89,
+  "implied_sol_pair_basis_bp": 7.6,
+  "fetched_utc": "2026-09-18T08:48:43Z",
+  "lesson": "Quoting a Solana SOL/USDC pool against a CEX SOL/USDT book manufactures a phantom ~7.6 bp edge that is exactly the stablecoin basis. The DEX and the CEX price that basis identically (1.000781 vs 1.00077). Any scanner that does not match quote currencies will generate a stream of false positives at precisely the size that looks tradeable."
+ },
+ "solana_network_costs": {
+  "fetched_utc": "2026-09-18T08:52:36Z",
+  "source": "https://api.mainnet-beta.solana.com",
+  "base_fee_lamports_per_signature": 5000,
+  "repo_measured_per_attempt_lamports": 9000,
+  "priority_fee_samples": 150,
+  "priority_fee_zero_slots": 150,
+  "priority_fee_median_micro_lamports_per_cu": 0.0,
+  "priority_fee_note": "All 150 sampled slots returned a prioritization fee of 0 at this time. Priority fees are episodic; this is a quiet-market reading and must not be assumed for a contested arbitrage transaction, where the whole point is that others are competing for the same slot.",
+  "token_account_rent_exempt_lamports": 1488440,
+  "token_account_rent_exempt_sol": 0.00148844,
+  "token_account_rent_usd": 0.1575,
+  "sol_price_used": 105.85,
+  "network_fee_bp_by_notional": {
+   "100": 0.095,
+   "1000": 0.01,
+   "10000": 0.001,
+   "100000": 0.0001
+  },
+  "conclusion": "At DEX-CEX sizes the 9,000-lamport network fee is NOT binding. At $10,000 notional it is 0.001 bp. This is the one cost that mattered in the DEX-DEX study and does not matter here."
+ },
+ "withdrawal_fee_amortisation": {
+  "binance_SOL_withdraw_fee_sol": 0.001,
+  "binance_SOL_withdraw_fee_usd": 0.1058,
+  "binance_USDC_withdraw_fee_usd": 0.3,
+  "bp_by_rebalance_notional": {
+   "SOL_leg": {
+    "1000": 1.058,
+    "10000": 0.106,
+    "100000": 0.011
+   },
+   "USDC_leg": {
+    "1000": 3.0,
+    "10000": 0.3,
+    "100000": 0.03
+   }
+  },
+  "conclusion": "Flat withdrawal fees amortise to near zero at size. Rebalancing $100,000 of USDC off Binance costs 0.03 bp. The withdrawal FEE is not the obstacle; the withdrawal DELAY and the withdrawal AVAILABILITY are."
+ },
+ "model_a_inventory_on_both_sides": {
+  "description": "Pre-fund the CEX and the Solana wallet. Both legs fire simultaneously, no transfer sits in the critical path. Rebalance periodically.",
+  "capital_multiplier": 2.0,
+  "capital_note": "For a working position size S you must hold S on the CEX and S on-chain, so capital is 2S before any buffer. To absorb a directional run of k consecutive same-side trades before rebalancing you need k*S of inventory on the side being drained, i.e. capital = 2*k*S.",
+  "worked_example": {
+   "trade_size_usd": 10000,
+   "trades_between_rebalances": 10,
+   "inventory_each_side_usd": 100000,
+   "total_capital_usd": 200000,
+   "rebalance_cost_usd": 0.3,
+   "amortised_withdrawal_bp_per_trade": 0.0003
+  },
+  "exposure_window": "zero for the transfer; both legs land within one Solana slot (0.27 s measured) and one CEX matching-engine ack.",
+  "residual_risks": [
+   "inventory is exposed to SOL price between rebalances if the two sides drift out of delta balance",
+   "capital is idle on two venues, so the return must be computed on 2S not S",
+   "the CEX half is a claim on the exchange, not an asset held"
+  ],
+  "binding_cost": "CEX taker fee only (DEX fee is inside the measured gap, network fee ~0.001 bp, amortised withdrawal ~0.0003 bp)"
+ },
+ "model_b_sequential": {
+  "description": "Buy on one venue, transfer the asset, sell on the other. Capital is 1x but the position is naked during the transfer.",
+  "capital_multiplier": 1.0,
+  "exposure_window_seconds": {
+   "dex_to_cex_deposit_best_case": 0.27,
+   "dex_to_cex_deposit_binance_published": 60,
+   "cex_to_dex_withdrawal_mexc_published_min": 60,
+   "cex_to_dex_withdrawal_mexc_published_max": 3600,
+   "cex_to_dex_withdrawal_binance_published": "UNKNOWN (Binance publishes estimatedArrivalTime=1 minute for the SOL network but no withdrawal approval SLA)"
+  },
+  "exposure_window_summary": "1 minute best case (Binance-published deposit arrival), up to 60 minutes worst case (MEXC-published withdrawal TxID ceiling).",
+  "measured_sol_volatility": {
+   "source": "https://api.binance.com/api/v3/klines?symbol=SOLUSDT&interval=1m&limit=1000",
+   "fetched_utc": "2026-09-18T08:53:16Z",
+   "window_utc": "2026-09-17T16:14:00Z .. 2026-09-18T08:53:00Z",
+   "n_bars": 1000,
+   "sigma_1min_bp": 7.54,
+   "sigma_5min_bp": 16.87,
+   "sigma_10min_bp": 23.85,
+   "sigma_30min_bp": 41.32,
+   "sigma_60min_bp": 58.43,
+   "realised_abs_1min_move_bp": {
+    "median": 3.9,
+    "p90": 12.9,
+    "max": 35.0
+   },
+   "realised_abs_60min_move_bp": {
+    "median": 33.6,
+    "p90": 103.4,
+    "max": 219.5
+   }
+  },
+  "verdict": "The 1-minute sigma alone (7.54 bp) is larger than the largest DEX-CEX gap observed in the entire sample (4.95 bp). At the 60-minute withdrawal ceiling the sigma is 58.43 bp, roughly 12x the best observed edge. The sequential model is not arbitrage; it is an unhedged directional bet on SOL with a 5 bp coupon attached."
+ },
+ "risks_with_sources": [
+  {
+   "risk": "Network deposit/withdrawal suspension while trading continues",
+   "evidence": "OKX: 'Deposits and withdrawals for SOLANA, TRON, IOTA, SUI, and TON tokens will be suspended starting from 09:00 am (UTC+8) on Feb 27, 2026', resuming 12:00 pm same day (~3 hours). Crucially: 'Trading of SOLANA, TRON, IOTA, SUI, and TON tokens is not affected.'",
+   "source": "https://www.okx.com/en-us/help/okx-wallet-maintenance-for-multiple-networks",
+   "fetched_utc": "2026-09-18T08:46:27Z",
+   "why_it_matters": "This is the exact failure mode for the inventory model: you cannot rebalance, but the market keeps moving and your two inventories keep diverging. A 3-hour freeze at a 41 bp 30-minute sigma is a large unhedged exposure."
+  },
+  {
+   "risk": "Chain-level halt forcing suspension",
+   "evidence": "Gate suspended SOL deposits because 'the Solana Mainnet is experiencing an outage and not processing transactions', announced 2022-10-01, with no committed end date - only 'as soon as the Solana network works normally again'.",
+   "source": "https://www.gate.com/article/28185",
+   "fetched_utc": "2026-09-18T08:52:00Z",
+   "why_it_matters": "Open-ended suspension. The DEX leg is also dead during a chain halt, but the CEX leg keeps trading, so a delta-balanced inventory book becomes one-sided."
+  },
+  {
+   "risk": "Intermittent withdrawal suspension for backlog clearing",
+   "evidence": "Binance publishes a 'Notice on the Intermittent Suspension of Withdrawals on Solana (SOL) Network'; Binance support states withdrawals via the Solana network 'may be paused from time to time to clear the backlog'.",
+   "source": "https://www.binance.com/en/support/announcement/notice-on-the-intermittent-suspension-of-withdrawals-on-solana-sol-network-4fd0cd11c66642e9be99830070c6b038",
+   "fetched_utc": "2026-09-18T08:47:35Z",
+   "confidence": "DOCS_ONLY - the announcement body did not render for automated fetch; the title and the support-page wording are the evidence."
+  },
+  {
+   "risk": "Per-asset deposit/withdrawal disablement is a live, ongoing condition, not a tail event",
+   "evidence": "Of the 61 assets Binance lists on the SOL network right now, 5 have deposits disabled (HNT, SNS, SRM, GST, AVA) and 5 have withdrawals disabled (HNT, SRM, GMT, GST, AVA).",
+   "source": "https://www.binance.com/bapi/capital/v1/public/capital/getNetworkCoinAll",
+   "fetched_utc": "2026-09-18T08:44:46Z",
+   "confidence": "MEASURED",
+   "why_it_matters": "~11.5% of the Solana asset universe on Binance has at least one leg frozen at any given moment. Any strategy that assumes it can always move the asset it just bought is wrong about one asset in nine."
+  },
+  {
+   "risk": "Manual review of deposits",
+   "evidence": "Gate documents a deposit status 'Manual - the deposit is being manually reviewed. It will be credited after review', with no published SLA.",
+   "source": "https://www.gate.com/help/guide/deposit_withdrawa/17395",
+   "fetched_utc": "2026-09-18T08:51:40Z",
+   "why_it_matters": "An unbounded, discretionary hold sitting inside the settlement path. The exposure window in the sequential model has no documented upper bound once this triggers."
+  },
+  {
+   "risk": "Withdrawal approval delay (the real asymmetry)",
+   "evidence": "MEXC: TxID 'typically generated within 1 to 60 minutes after the withdrawal request is submitted'; 'Under Review' status has an 'estimated processing time is 5-60 minutes'.",
+   "source": "https://www.mexc.com/support/crypto-deposit-withdrawals/withdrawal-faq",
+   "fetched_utc": "2026-09-18T08:51:40Z",
+   "why_it_matters": "The chain settles in 0.27 s. The exchange's withdrawal queue is documented at up to 3600 s. The bottleneck is 13,000x the block time and it is entirely off-chain and discretionary."
+  },
+  {
+   "risk": "Minimum withdrawal amounts floor the trade size",
+   "evidence": "Binance SOL network minimums: SOL 0.01, USDT 5, USDC 3. Gate SOL-network minimums: SOL 0.1, USDT 1, USDC 0.01, BONK 3547.35722.",
+   "source": "https://www.binance.com/bapi/capital/v1/public/capital/getNetworkCoinAll and https://api.gateio.ws/api/v4/wallet/currency_chains",
+   "fetched_utc": "2026-09-18T08:44:46Z",
+   "confidence": "MEASURED"
+  },
+  {
+   "risk": "Deposit memos / address formats",
+   "evidence": "For the SOL network Binance reports memoRegex empty and withdrawIsTag false for SOL, USDT and USDC - no memo required. It does warn 'Please note that SOL addresses are case sensitive.' sameAddress is false.",
+   "source": "https://www.binance.com/bapi/capital/v1/public/capital/getNetworkCoinAll",
+   "fetched_utc": "2026-09-18T08:44:46Z",
+   "confidence": "MEASURED",
+   "note": "Memo risk is low on Solana specifically, but a wrong-network or wrong-case send is unrecoverable and there is no on-chain reversal."
+  },
+  {
+   "risk": "The CEX leg is a claim on the exchange, not an asset you hold",
+   "evidence": "Structural. Every venue reserves discretionary control: Gate's 'Manual' review status, MEXC's 'Under Review' status, and OKX's and Binance's ability to suspend a network unilaterally are all documented above. Funds credited to a CEX balance are an unsecured claim on that entity.",
+   "source": "see Gate 17395, MEXC withdrawal FAQ, OKX wallet-maintenance notice above",
+   "confidence": "DOCS_ONLY",
+   "why_it_matters": "Model (a) requires permanently parking half the capital inside a counterparty. The strategy's 'risk-free' framing silently converts market risk into counterparty and operational risk."
+  },
+  {
+   "risk": "Spot pair fee-group reclassification changes your economics without notice",
+   "evidence": "OKX publishes 'Important Notice: Spot Trading Pair Fee Group Adjustment - Effective August 5, 2026' and 'Advance Notice: Spot and Futures Trading Fee Adjustment'; OKX fee tiers are re-snapshotted daily ('Fee tiers are updated daily between 4:00 AM and 6:00 AM (UTC+8)').",
+   "source": "https://www.okx.com/en-us/help/trading-fee-rules-faq",
+   "fetched_utc": "2026-09-18T08:46:27Z",
+   "why_it_matters": "At a 2-5 bp edge, a one-tier fee change or a pair moving to a worse fee group flips the sign of the strategy overnight."
+  }
+ ],
+ "break_even": {
+  "condition": "gap_bp  >  cex_taker_bp + dex_swap_fee_bp + price_impact_bp(both sides) + network_fee_bp + amortised_withdrawal_bp + exposure_cost_bp",
+  "note_on_double_counting": "In the measured gaps above, dex_swap_fee_bp and the DEX-side price_impact_bp are ALREADY subtracted (Jupiter's outAmount is post-fee, post-impact). So for those numbers the test reduces to: gap_bp > cex_taker_bp + network_fee_bp + amortised_withdrawal_bp + exposure_cost_bp.",
+  "measured_inputs": {
+   "gap_bp_median": -0.03,
+   "gap_bp_best_observed": 4.95,
+   "network_fee_bp_at_10k": 0.001,
+   "amortised_withdrawal_bp_at_100k_rebalance": 0.03,
+   "exposure_cost_bp_model_a": 0.0,
+   "exposure_cost_bp_model_b_1min": 7.54,
+   "exposure_cost_bp_model_b_60min": 58.43
+  },
+  "scenarios": [
+   {
+    "name": "Model A, retail tier, Binance VIP0",
+    "cex_taker_bp": 10.0,
+    "cost_floor_bp": 10.03,
+    "gap_needed_bp": 10.03,
+    "gap_median_bp": -0.03,
+    "gap_best_bp": 4.95,
+    "net_at_median_bp": -10.06,
+    "net_at_best_bp": -5.08,
+    "verdict": "NEGATIVE - best observation misses the floor by 5 bp"
+   },
+   {
+    "name": "Model A, MEXC taker 5 bp (API-measured)",
+    "cex_taker_bp": 5.0,
+    "cost_floor_bp": 5.03,
+    "gap_needed_bp": 5.03,
+    "gap_median_bp": -0.03,
+    "gap_best_bp": 4.95,
+    "net_at_median_bp": -5.06,
+    "net_at_best_bp": -0.08,
+    "verdict": "NEGATIVE - the single best observation in 13 samples still loses 0.08 bp"
+   },
+   {
+    "name": "Model A, OKX VIP9 taker 1.75 bp",
+    "cex_taker_bp": 1.75,
+    "cost_floor_bp": 1.78,
+    "gap_needed_bp": 1.78,
+    "gap_median_bp": -0.03,
+    "gap_best_bp": 4.95,
+    "net_at_median_bp": -1.81,
+    "net_at_best_bp": 3.17,
+    "verdict": "POSITIVE ONLY AT THE TAIL - requires >=$5bn/30d volume; profitable on roughly 1 of 13 observations, i.e. you must win a latency race for a 3 bp prize"
+   },
+   {
+    "name": "Model B sequential, MEXC 5 bp, 1-minute window",
+    "cex_taker_bp": 5.0,
+    "cost_floor_bp": 12.57,
+    "gap_needed_bp": 12.57,
+    "gap_median_bp": -0.03,
+    "gap_best_bp": 4.95,
+    "net_at_median_bp": -12.6,
+    "net_at_best_bp": -7.62,
+    "verdict": "NEGATIVE - volatility alone exceeds the entire edge"
+   },
+   {
+    "name": "Model B sequential, MEXC 5 bp, 60-minute window",
+    "cex_taker_bp": 5.0,
+    "cost_floor_bp": 63.46,
+    "gap_needed_bp": 63.46,
+    "gap_median_bp": -0.03,
+    "gap_best_bp": 4.95,
+    "net_at_median_bp": -63.49,
+    "net_at_best_bp": -58.51,
+    "verdict": "NEGATIVE by an order of magnitude"
+   }
+  ],
+  "plain_statement": "On the deepest Solana pair, at the moment measured, the DEX-CEX price difference had a median of roughly zero and a maximum of 4.95 bp across 13 simultaneous samples, against a realistic cost floor of 5 bp (MEXC, the cheapest taker actually available) to 10 bp (entry tier anywhere else). The strategy is underwater at the median for every fee tier below OKX VIP 9, and even the best single observation in the sample fails to clear a 5 bp taker fee."
+ },
+ "how_this_differs_from_the_dex_dex_result": {
+  "dex_dex_binding_costs": [
+   "pool fees, median 275 bps round trip on wide-gap pairs",
+   "price impact on thin pools",
+   "9,000 lamports per attempt"
+  ],
+  "dex_cex_binding_costs": [
+   "CEX taker fee, 1.75-10 bp depending on tier",
+   "the exposure window in the sequential model (7.54 bp per minute of sigma)",
+   "transfer availability, not transfer cost"
+  ],
+  "what_changed": "The DEX-DEX study died on fees and impact measured in hundreds of bp. DEX-CEX does not have that problem: the majors are deep (0.012 bp impact on $105k) and the withdrawal fee amortises to 0.03 bp. DEX-CEX dies on a different and harder constraint - the gap itself has already been competed to roughly zero by participants who pay 1.75 bp and co-locate.",
+  "the_honest_summary": "Moving from DEX-DEX to DEX-CEX does not remove the cost problem, it swaps a large, measurable, structural cost (pool fees) for a small cost you cannot get below (taker fee) chasing a spread that professionals have already flattened. The population changed; the sign did not."
+ },
+ "unknowns": [
+  {
+   "item": "Published Solana confirmation counts for OKX, Gate and MEXC",
+   "why": "All three gate the number behind login or render it only on the deposit page; OKX's /api/v5/asset/currencies requires an API key.",
+   "would_measure_it": "An authenticated read of each venue's capital-config endpoint (OKX /api/v5/asset/currencies, MEXC /api/v3/capital/config/getall, Gate /wallet/currency_chains with auth headers), or a screenshot of the logged-in deposit page."
+  },
+  {
+   "item": "Whether any of the four venues batch withdrawals",
+   "why": "None of the four publishes a batching policy. MEXC's '1 to 60 minutes' TxID range is consistent with batching but does not establish it.",
+   "would_measure_it": "Observe the on-chain withdrawal transactions from each exchange's known hot wallet and test whether multiple user withdrawals share a transaction signature or cluster at fixed intervals. This is measurable from public chain data without an account."
+  },
+  {
+   "item": "Binance's withdrawal approval SLA",
+   "why": "Binance publishes estimatedArrivalTime=1 minute for the SOL network but no processing/approval SLA.",
+   "would_measure_it": "Timestamp deltas between withdrawal submission and on-chain broadcast across a sample of real withdrawals."
+  },
+  {
+   "item": "Whether the gap distribution widens materially on thinner Solana pairs or during volatility events",
+   "why": "Only SOL/USDT was sampled, n=13, over 61 seconds in a quiet market. The measured priority fee was 0 across all 150 slots, confirming quiet conditions.",
+   "would_measure_it": "Run the same simultaneous sampler across the full list of assets that are listed BOTH on a CEX and on a Solana DEX, for days, recording the gap distribution per asset and conditioning on realised volatility. That intersection list is small - Binance lists 61 assets on the SOL network - and it is the correct population for this question."
+  },
+  {
+   "item": "Gate VIP tier maker/taker splits",
+   "why": "Gate's fee page is login-gated; only the 0.2% base rate is confirmed from Gate's public API.",
+   "would_measure_it": "Authenticated GET /api/v4/spot/fee, or a logged-in read of the VIP page."
+  }
+ ]
+}

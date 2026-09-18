@@ -1,0 +1,229 @@
+[
+ {
+  "utc": "2026-09-18T08:50:16.025310+00:00",
+  "dex_sell_px": 105.868528,
+  "binance_bid": 105.84,
+  "binance_ask": 105.85,
+  "mexc_bid": 105.82,
+  "mexc_ask": 105.83,
+  "gap_buyCEX_sellDEX_bp": 1.75,
+  "gap_buyDEX_sellCEX_bp": -2.695,
+  "binance_spread_bp": 0.945,
+  "jup_impact_pct": "0",
+  "legs": [
+   "GoonFi V2"
+  ]
+ },
+ {
+  "utc": "2026-09-18T08:50:23.372214+00:00",
+  "dex_sell_px": 105.886047,
+  "binance_bid": 105.87,
+  "binance_ask": 105.88,
+  "mexc_bid": 105.87,
+  "mexc_ask": 105.88,
+  "gap_buyCEX_sellDEX_bp": 0.571,
+  "gap_buyDEX_sellCEX_bp": -1.515,
+  "binance_spread_bp": 0.945,
+  "jup_impact_pct": "0",
+  "legs": [
+   "GoonFi V2",
+   "Quay",
+   "Deriverse",
+   "Quantum"
+  ]
+ },
+ {
+  "utc": "2026-09-18T08:50:27.775584+00:00",
+  "dex_sell_px": 105.879482,
+  "binance_bid": 105.87,
+  "binance_ask": 105.88,
+  "mexc_bid": 105.87,
+  "mexc_ask": 105.88,
+  "gap_buyCEX_sellDEX_bp": -0.049,
+  "gap_buyDEX_sellCEX_bp": -0.896,
+  "binance_spread_bp": 0.945,
+  "jup_impact_pct": "0.0000889528810773624245555486",
+  "legs": [
+   "Quantum",
+   "HumidiFi",
+   "BinaryFi",
+   "Deriverse"
+  ]
+ },
+ {
+  "utc": "2026-09-18T08:50:32.280433+00:00",
+  "dex_sell_px": 105.900105,
+  "binance_bid": 105.89,
+  "binance_ask": 105.9,
+  "mexc_bid": 105.87,
+  "mexc_ask": 105.88,
+  "gap_buyCEX_sellDEX_bp": 0.01,
+  "gap_buyDEX_sellCEX_bp": -0.954,
+  "binance_spread_bp": 0.944,
+  "jup_impact_pct": "0",
+  "legs": [
+   "Quantum",
+   "TesseraV",
+   "Deriverse"
+  ]
+ },
+ {
+  "utc": "2026-09-18T08:50:36.582520+00:00",
+  "dex_sell_px": 105.842569,
+  "binance_bid": 105.83,
+  "binance_ask": 105.84,
+  "mexc_bid": 105.87,
+  "mexc_ask": 105.88,
+  "gap_buyCEX_sellDEX_bp": 0.243,
+  "gap_buyDEX_sellCEX_bp": -1.188,
+  "binance_spread_bp": 0.945,
+  "jup_impact_pct": "0.0002206937514859442926844333",
+  "legs": [
+   "Quantum",
+   "Whirlpool",
+   "HumidiFi",
+   "AlphaQ"
+  ]
+ },
+ {
+  "utc": "2026-09-18T08:50:40.984530+00:00",
+  "dex_sell_px": 105.849677,
+  "binance_bid": 105.84,
+  "binance_ask": 105.85,
+  "mexc_bid": 105.84,
+  "mexc_ask": 105.85,
+  "gap_buyCEX_sellDEX_bp": -0.031,
+  "gap_buyDEX_sellCEX_bp": -0.914,
+  "binance_spread_bp": 0.945,
+  "jup_impact_pct": "0.0000285409995059373677531338",
+  "legs": [
+   "HumidiFi",
+   "HumidiFi",
+   "AlphaQ",
+   "JupLend AMM"
+  ]
+ },
+ {
+  "utc": "2026-09-18T08:50:45.412608+00:00",
+  "dex_sell_px": 105.787673,
+  "binance_bid": 105.84,
+  "binance_ask": 105.85,
+  "mexc_bid": 105.84,
+  "mexc_ask": 105.85,
+  "gap_buyCEX_sellDEX_bp": -5.888,
+  "gap_buyDEX_sellCEX_bp": 4.946,
+  "binance_spread_bp": 0.945,
+  "jup_impact_pct": "0.000618055038167721739725433",
+  "legs": [
+   "GoonFi V2",
+   "GoonFi V2",
+   "HumidiFi",
+   "AlphaQ"
+  ]
+ },
+ {
+  "utc": "2026-09-18T08:50:55.031927+00:00",
+  "dex_sell_px": 105.852505,
+  "binance_bid": 105.84,
+  "binance_ask": 105.85,
+  "mexc_bid": 105.84,
+  "mexc_ask": 105.85,
+  "gap_buyCEX_sellDEX_bp": 0.237,
+  "gap_buyDEX_sellCEX_bp": -1.181,
+  "binance_spread_bp": 0.945,
+  "jup_impact_pct": "0",
+  "legs": [
+   "Quantum",
+   "Quantum",
+   "Quantum",
+   "GoonFi V2"
+  ]
+ },
+ {
+  "utc": "2026-09-18T08:50:59.452547+00:00",
+  "dex_sell_px": 105.843653,
+  "binance_bid": 105.84,
+  "binance_ask": 105.85,
+  "mexc_bid": 105.84,
+  "mexc_ask": 105.85,
+  "gap_buyCEX_sellDEX_bp": -0.6,
+  "gap_buyDEX_sellCEX_bp": -0.345,
+  "binance_spread_bp": 0.945,
+  "jup_impact_pct": "0.0000187628958282304285157507",
+  "legs": [
+   "HumidiFi",
+   "GoonFi V2"
+  ]
+ },
+ {
+  "utc": "2026-09-18T08:51:03.921930+00:00",
+  "dex_sell_px": 105.847768,
+  "binance_bid": 105.84,
+  "binance_ask": 105.85,
+  "mexc_bid": 105.84,
+  "mexc_ask": 105.85,
+  "gap_buyCEX_sellDEX_bp": -0.211,
+  "gap_buyDEX_sellCEX_bp": -0.734,
+  "binance_spread_bp": 0.945,
+  "jup_impact_pct": "0",
+  "legs": [
+   "Byreal",
+   "HumidiFi",
+   "SolFi V2",
+   "Quay"
+  ]
+ },
+ {
+  "utc": "2026-09-18T08:51:08.429194+00:00",
+  "dex_sell_px": 105.845836,
+  "binance_bid": 105.84,
+  "binance_ask": 105.85,
+  "mexc_bid": 105.84,
+  "mexc_ask": 105.85,
+  "gap_buyCEX_sellDEX_bp": -0.393,
+  "gap_buyDEX_sellCEX_bp": -0.551,
+  "binance_spread_bp": 0.945,
+  "jup_impact_pct": "0",
+  "legs": [
+   "HumidiFi",
+   "Manifest",
+   "Quay",
+   "SolFi V2"
+  ]
+ },
+ {
+  "utc": "2026-09-18T08:51:12.831749+00:00",
+  "dex_sell_px": 105.843395,
+  "binance_bid": 105.84,
+  "binance_ask": 105.85,
+  "mexc_bid": 105.84,
+  "mexc_ask": 105.85,
+  "gap_buyCEX_sellDEX_bp": -0.624,
+  "gap_buyDEX_sellCEX_bp": -0.321,
+  "binance_spread_bp": 0.945,
+  "jup_impact_pct": "0",
+  "legs": [
+   "GoonFi V2",
+   "GoonFi V2",
+   "Quay",
+   "GoonFi V2"
+  ]
+ },
+ {
+  "utc": "2026-09-18T08:51:17.155008+00:00",
+  "dex_sell_px": 105.843215,
+  "binance_bid": 105.83,
+  "binance_ask": 105.84,
+  "mexc_bid": 105.83,
+  "mexc_ask": 105.84,
+  "gap_buyCEX_sellDEX_bp": 0.304,
+  "gap_buyDEX_sellCEX_bp": -1.249,
+  "binance_spread_bp": 0.945,
+  "jup_impact_pct": "0",
+  "legs": [
+   "GoonFi V2",
+   "GoonFi V2",
+   "GoonFi V2"
+  ]
+ }
+]

@@ -100,3 +100,22 @@ Ranked by how much they would change the answer per unit of work:
 4. **Only then**: a funded simulation identity, a mainnet lookup table, and the landing-rate question (which cannot be answered before live).
 
 Nothing in this lot supports enabling live trading, and a simulated positive candidate would not change that on its own.
+
+## The DEX–CEX question, audited separately (2026-09-18)
+
+A natural follow-up: if two on-chain pools no longer disagree, does a pool disagree with a centralised exchange? Audited in `docs/DEX_CEX_AUDIT.md`, over 24 Solana-native assets on Binance, OKX, MEXC and Gate. Same verdict, different mechanism.
+
+The headline is a correction of my own first measurement. Quoting the DEX leg in USDC against a CEX book in USDT manufactures a spread equal to the stablecoin basis, about 7.5 bps, which is exactly the size that looks tradeable against a 5 bps taker fee. Denominated correctly, the SOL gap has a median of **−0.03 bps**.
+
+| | |
+|---|---|
+| cross-venue observations, gross of all fees | 130 |
+| of which positive | **0** |
+| best gross gap, any asset, any size | 0.00 bps (SOL, exactly zero) |
+| deterministic cost floor on the best asset | ~10.8 bps |
+| 1-minute price risk carried between the legs, SOL | ±7.55 bps (1σ) |
+| `/SOL`-quoted spot pairs across all four venues | **0** |
+
+Two DEX–DEX blockers genuinely disappear here: the taker fee is 5 bps against a 275 bps median round-trip pool fee, and the withdrawal fee is about $0.50 flat, which is 0.5 bps at a $10k clip. The strategy still loses, because the cycle is not atomic and the unhedged variance over the transfer window exceeds the entire edge budget.
+
+One finding from that audit applies directly to this engine: across 244 hops that Jupiter actually routed, the two adapters here (Raydium CP and PumpSwap) covered **2.05 %**, and exactly 1 leg of 80 routed entirely inside them. Real flow is dominated by proprietary market-maker venues — Scorch, HumidiFi, BisonFi, TesseraV — with no public pool state to read. That reorders item 3 in the list above: the gap in coverage is not another constant-product adapter, it is a venue class this engine cannot see at all.
