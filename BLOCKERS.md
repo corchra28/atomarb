@@ -24,4 +24,4 @@ leg produced 4 positive gross results and zero positive net. Blocker 4 remains t
 between this repository and a realised-profit claim, and `docs/REAL_WORLD_MEV.md` measures why
 crossing it would not pay: about $124,000 a day for the whole market (3,000-block census, see
 `docs/REAL_WORLD_MEV.md` §12), won in an auction whose top ten trades take 65% of all profit, with
-capital saturating near $1,538.
+capital saturating near 100 SOL (~$11,000), above which returns collapse to 0.1 bps.

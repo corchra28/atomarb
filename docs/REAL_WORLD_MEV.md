@@ -135,7 +135,7 @@ The honest summary of all three audits together:
 2. Drop the flat 9,000-lamport assumption and price the fee per attempt from the actual base fee plus the tip the route can afford. A third of the real opportunity set sits under the old floor.
 3. Replace polling with a direct feed. Until then the engine is looking at a state that the winners have already traded against.
 
-**What a realistic person concludes.** Even with all three fixed, the addressable prize is a fraction of $21,000 a day, contested by 51 incumbents who already have the infrastructure. The engineering is tractable; the economics of entering are not. That is a different and more useful answer than "no edge exists", and it is the one the data supports.
+**What a realistic person concludes.** Even with all three fixed, the addressable prize is a fraction of the total (measured at ~$124,000/day in §12, not the $21,000 this line originally used), contested by a stable roster of incumbents — 156 of them — who already have the infrastructure. The engineering is tractable; the economics of entering are not. That is a different and more useful answer than "no edge exists", and it is the one the data supports.
 
 ---
 
@@ -164,6 +164,11 @@ So the realistic arithmetic for a new entrant, stated plainly: to earn anything 
 ---
 
 ## 8. How big is the rest of it?
+
+> **Superseded by §13.** The tips figure below is $68,600/day from **150 blocks**. Over 3,000
+> blocks and 88,658 tip-paying transactions it is **$147,960/day**, and arbitrage turns out to pay
+> only **8.2%** of all tips. The conclusion drawn here — "the whole market is small" — does not
+> survive that. The measurement is left in place as the record.
 
 Section 6 admits this census covers atomic single-transaction arbitrage only, and calls the other categories "larger". That claim was never measured, so it gets measured here.
 
@@ -207,7 +212,7 @@ Conservative detection: two successful transactions in one block by the same sig
 
 Across 100 blocks and 14,580 DEX transactions this found **2**, worth $12.96 and $0.003.
 
-**That is not a size estimate and must not be read as one.** Two observations cannot support a daily figure, and the detector requires the same signer on both sides, which is the one thing a sandwich bot has every reason not to do. A real measurement needs front and back matched by pool and direction across *different* signers, which this does not attempt. The honest status is UNKNOWN, and the $68,600 a day in total tips is the bound that actually constrains it.
+**That is not a size estimate and must not be read as one.** Two observations cannot support a daily figure, and the detector requires the same signer on both sides, which is the one thing a sandwich bot has every reason not to do. A real measurement needs front and back matched by pool and direction across *different* signers, which this does not attempt. The honest status is UNKNOWN. The tips figure was offered here as the bound that constrains it; §13 revises that to $147,960 a day, of which arbitrage pays only 8.2% — so the unmeasured categories, sandwiching among them, account for most of it.
 
 I am not building a sandwich bot. It profits by making an ordinary user's swap fill worse, and the gain is exactly the user's loss. Measuring the market to understand it is one thing; running that particular extraction is another, and it is not work I will do.
 
