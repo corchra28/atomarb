@@ -168,6 +168,15 @@ Section 6 admits this census covers atomic single-transaction arbitrage only, an
 
 The premise behind "you measured the small corner" does not survive. **The whole market is small.**
 
+> **This bound no longer holds as stated — see §10.** The evening census puts atomic-arbitrage
+> take-home alone at $107,350 a day, which *exceeds* the $68,600 total-tips figure above. That is
+> not a contradiction between the two quantities (searchers keep more than they bid, so take-home
+> can exceed tips), but it does break the argument built on top of it: tips cannot bound the pie
+> at "low hundreds of thousands at most" when one category's take-home is already larger than the
+> measured tips. The tips figure has the same weakness as the original take-home figure — one
+> 150-block sample, with the top 50 tips carrying 70.6% of the total. Read both as
+> order-of-magnitude, and read this paragraph's conclusion as unproven rather than established.
+
 ### Liquidations
 
 | | |

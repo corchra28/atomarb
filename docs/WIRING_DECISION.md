@@ -7,8 +7,8 @@ Rust adapters now exist and are proven exact against the chain:
 | crate | parity tests | mutations caught |
 |---|---|---|
 | `integrations/raydium_cpmm_amm/` | 3 tests, 12 swaps | 6 of 6 |
-| `integrations/whirlpool_amm/` | 5 tests, 19 swaps + 2 unit | 10 of 10 |
-| `integrations/meteora_dlmm_amm/` | 4 tests, 15 swaps + 1 unit | 10 of 10 |
+| `integrations/whirlpool_amm/` | 5 tests, 17 swaps + 2 unit | 10 of 10 |
+| `integrations/meteora_dlmm_amm/` | 4 tests, 13 swaps + 1 unit | 10 of 10 |
 
 The question is how to get them in front of the gap analysis. Three options were on the table.
 
