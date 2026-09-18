@@ -1,6 +1,36 @@
 # atomarb — Solana atomic cross-pool arbitrage research engine (read-only)
 
-Detects, quotes exactly, builds and **simulates** the circuit `WSOL -> TOKEN (pool A) -> WSOL (pool B)` for the same mint across Raydium CPMM and PumpSwap AMM pools (cross-adapter and same-adapter), in one transaction, both directions. It never signs or broadcasts: `execution.live` is a schema literal `false`, every submit RPC method is blocked (`LIVE_NOT_AUTHORIZED`), and no private key exists in the project.
+Detects, quotes exactly, builds and **simulates** the circuit `WSOL -> TOKEN (pool A) -> WSOL (pool B)` for the same mint, in one transaction, both directions. It never signs or broadcasts: `execution.live` is a schema literal `false`, every submit RPC method is blocked (`LIVE_NOT_AUTHORIZED`), and no private key exists in the project.
+
+**Verdict: `NO_VERIFIED_EDGE`.** Reached three independent ways, then re-measured after the coverage objection was answered. The short version, with everything measured rather than assumed:
+
+| | |
+|---|---|
+| Venues priced exactly | Raydium CPMM, Orca Whirlpool, Meteora DLMM |
+| Pools scanned | 362,514 WSOL pairs across those three |
+| Mints with pools on 2+ **different** venues | 10,129 |
+| Circuits priced, all with a concentrated-liquidity leg | 4,046 |
+| Positive gross / positive net | 4 / **0** |
+| Whole atomic-arb market, measured from 104 real winners | **~$21,000 a day** |
+
+The reason is no longer coverage. It is the auction: 101 of 104 real winners pay for block position, the top three trades take 56% of all profit, and the largest capital deployed in any winning trade observed was $1,538 — so more money buys nothing.
+
+## The three Rust adapters
+
+Each implements [`jupiter-amm-interface`](https://github.com/jup-ag/jupiter-amm-interface) and has its quote **proven equal to the on-chain program**: snapshot a live pool, run `quote()`, execute the program's native swap in LiteSVM, assert the realized token delta matches exactly.
+
+| crate | parity | mutations caught |
+|---|---|---|
+| `integrations/raydium_cpmm_amm/` | 3 tests, 12 swaps | 6 of 6 |
+| `integrations/whirlpool_amm/` | 5 tests, 17 swaps + 2 unit | 10 of 10 |
+| `integrations/meteora_dlmm_amm/` | 4 tests, 13 swaps + 1 unit | 10 of 10 |
+| `integrations/gap_scan/` | the cross-venue scan + 2 regression tests | — |
+
+Each carries a `mutation_test.sh` that breaks one piece of the math at a time and requires the suite to notice. All of it runs from a clean clone with **no RPC** — the fixtures are committed.
+
+```
+cd integrations/whirlpool_amm && cargo test && ./mutation_test.sh
+```
 
 Evidence levels: `QUOTE_ONLY` -> `LOCAL_REAL_PROGRAM_SIMULATION` (real program ELFs + real accounts in LiteSVM, synthetic labelled balances, exact deltas) -> `MAINNET_RPC_SIMULATION` (`simulateTransaction`, `sigVerify=false`) -> `CONFIRMED_EXECUTION` (not authorised in this lot).
 
