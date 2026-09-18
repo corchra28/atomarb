@@ -15,3 +15,4 @@ programs/**/target/
 .DS_Store
 *.log
 integrations/**/target/
+integrations/**/Cargo.lock.bak
