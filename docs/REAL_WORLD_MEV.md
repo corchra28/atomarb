@@ -88,7 +88,18 @@ This was item 3 on the "next decisive test" list in `DECISION.md`, ranked third,
 
 The engine assumed a flat 9,000 lamports per attempt. More than half of the real winners pay 5,000, and more than a third of all winning trades take home less than 9,000 in total. The engine's floor was set above the entire prize on a third of the real opportunity set, so those opportunities were invisible to it by construction.
 
-Note what the fee distribution says about how this is won. A majority pay no priority fee and no tip. They are not outbidding anyone. They are **first**, which is a latency property, not a budget property. The half that do tip pay a median of 1,000 lamports. This is not an auction that money wins.
+**Correction to my own first reading of this.** I initially wrote that a majority pay nothing for block position and concluded this is won on latency rather than bidding. That was wrong, and it was wrong because I looked at the priority fee alone. Splitting it properly:
+
+| | |
+|---|---|
+| Paying only the 5,000-lamport base fee | 58 of 104 |
+| …of those, also paying a Jito tip | **55 of 58** |
+| Paying nothing at all for position | **3 of 104** |
+| **Paying something for position, by either channel** | **101 of 104** |
+
+Searchers here bid through the tip, not through the priority fee, so a low priority fee reads as "not bidding" only if you forget to look at the other channel. It is an auction after all.
+
+The three that pay nothing are worth **$167 a day network-wide**, out of $21,000. There is no quiet lane.
 
 Compute consumed sits at a median of 138,381 units, so these are short routes: 85 of 104 are two-venue circuits, 35 are three-venue, 3 are four-venue.
 
@@ -120,3 +131,17 @@ The honest summary of all three audits together:
 - A searcher who routes profit to an account other than the fee payer is missed by the classifier. 12 of the 123 candidates had no token account owned by the signer and are excluded from the strict count of 104 for that reason.
 - Venue labels cover 25 programs. An arbitrage between two venues not on that list is not counted, which biases the count down and makes the concentrated-liquidity share a floor rather than a ceiling.
 - SOL priced at $105.75 throughout.
+
+---
+
+## 7. The distribution is the whole story
+
+| | |
+|---|---|
+| Share of all profit taken by the **top 3** trades of 104 | **56%** |
+| Share taken by the top 10 | **81%** |
+| Median trade | $0.0026 |
+
+This is not a business with a steady trickle. It is a handful of large hits carrying everything, and those hits are precisely the contested ones that go to whoever is fastest. Winning the long tail instead is not an alternative: the entire uncontested tail is worth $167 a day across the whole network.
+
+So the realistic arithmetic for a new entrant, stated plainly: to earn anything you must win contested opportunities; to win those you need a co-located node and a direct feed, which costs $500 to $2,000 a month; and you are bidding against 51 incumbents who already have both. There is no configuration of this where the expected return covers the running cost.

@@ -133,7 +133,9 @@ Three measured facts reorder everything in the "next decisive test" list:
 | arbitrages using only Raydium CPMM + PumpSwap, the two adapters here | **0 of 104** |
 | touching at least one of the two | 45 of 104 |
 | including at least one concentrated-liquidity venue | **98 of 104** |
-| paying only the 5,000-lamport base fee, no priority fee, no tip | 58 of 104 |
+| paying only the 5,000-lamport base fee (but 55 of those still tip) | 58 of 104 |
+| paying nothing at all for block position | 3 of 104, worth $167 a day network-wide |
+| share of all profit taken by the top 3 trades of 104 | 56% (top 10: 81%) |
 | real winning trades whose entire profit is below the assumed 9,000-lamport cost | 43 of 123 |
 | median take-home per trade | 24,585 lamports, about $0.0026 |
 | total take-home across every searcher, per block | about $0.065, roughly $21,000 a day network-wide |
@@ -144,6 +146,6 @@ Revised order for the next decisive test:
 
 1. **Add an Orca Whirlpool or Meteora DLMM adapter** and pair it against the existing two. This moves the engine from a combination appearing in 0 of 104 winners to combinations appearing in 45.
 2. **Drop the flat 9,000-lamport fee assumption.** A majority of real winners pay 5,000 and no tip; the old floor sat above the entire profit of a third of the real opportunity set.
-3. **Replace polling with a direct feed.** A majority of winners pay nothing for position, so this is won on being first, not on bidding.
+3. **Replace polling with a direct feed.** 101 of 104 winners pay for block position, most of them through the Jito tip rather than the priority fee, so seeing the state first is what lets you bid at all.
 
 Even with all three done, the addressable prize is a fraction of $21,000 a day against 51 incumbents with existing infrastructure. The engineering is tractable; the economics of entering are the real blocker. That is a more useful conclusion than "no edge exists" and it is what the data supports.
