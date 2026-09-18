@@ -46,6 +46,12 @@ Coverage improved while fixing this: raising the listing cap from 5,000 to 25,00
 | MINOR | `accountsNeeded` double-counted a shared token program, and a test pinned the wrong length | deduplicated, test asserts distinctness |
 | MINOR | `FeeItem.bps` on the LP share and on output-side fees did not match its documented meaning | the rate is omitted where no single rate applies |
 
+## Independent audit (2026-09-18, commit 2c78a61) — accepted and being fixed
+
+Seven findings, all reproduced here before touching anything: `docs/sources/audit_2c78a61.md` records what the auditor established, `docs/AUDIT_RESPONSE.md` the disposition of each. Done so far: F1 (reconciled accounting, deposits proven recoverable, close path implemented) plus the unused `minQuoteReserveLamports` filter. In progress on separate files: F2/F7 (staleness gate and sizing inside the capital the ledger will grant), F3/F4/F5 (WebSocket start lifecycle, atomic RPC budget, timeout covering the body), F6 (flag parser).
+
+The economic verdict does not change: repairing control defects is not evidence of profit, and the observed run had zero positive evaluations out of 17,676.
+
 ## Finished
 
 - **60-minute prospective run** (`shadow_2026-09-17T18-09-25-841Z_32a7b818`): 50 pools validated on-chain, 22 routes, 17,676 circuit evaluations over the sizing grid, **zero positive**; stopped on the 10,000-request budget at 55 min; snapshot latency p50 349 ms; no data gaps.
