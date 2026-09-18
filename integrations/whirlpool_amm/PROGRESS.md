@@ -114,4 +114,4 @@ targets exactly that, rather than pretending to test Orca's arithmetic.
 - Removed the `traverse_missing_arrays` mutation as genuinely unobservable with these pools: on
   all of them a swap reaching a missing array also fails for want of liquidity. Recorded in the
   README rather than left as a false gap.
-- **Final: 5 parity tests over 19 swaps, 2 unit tests, 10 of 10 mutations caught.**
+- **Final: 5 parity tests over 17 swaps, 2 unit tests, 10 of 10 mutations caught.** (An earlier line in this log said 19 swaps; the count from the source is 17.)

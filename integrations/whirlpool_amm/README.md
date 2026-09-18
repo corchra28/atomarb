@@ -3,7 +3,7 @@
 Orca Whirlpool implemented as a Jupiter [`Amm`](https://github.com/jup-ag/jupiter-amm-interface), with its quote proven equal to the on-chain program.
 
 ```
-cargo test                 # 5 parity tests + 2 unit tests (fixtures are committed)
+cargo test                 # 5 parity tests (17 swaps) + 2 unit tests (fixtures are committed)
 ./mutation_test.sh         # proves the suite actually asserts the behaviour
 ```
 
@@ -21,7 +21,7 @@ What it owns is the part an integrator actually gets wrong: decoding the account
 
 ## Coverage
 
-Five parity tests, 19 swaps, against the real mainnet program in LiteSVM:
+Five parity tests, 17 swaps, against the real mainnet program in LiteSVM:
 
 | Test | Pool | What it covers |
 |---|---|---|

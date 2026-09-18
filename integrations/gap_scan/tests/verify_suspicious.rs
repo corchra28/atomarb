@@ -33,7 +33,7 @@ fn the_headline_circuits_are_on_frozen_pools() {
     ];
     let mut checked = 0;
     for pool in frozen {
-        let Some((snap, dir)) = snapshot(pool) else { continue };
+        let (snap, dir) = snapshot(pool).expect("vendored snapshot");
         assert!(
             has_frozen_token_account(&snap, &dir),
             "{pool} holds a frozen token account and must be rejected before quoting"
@@ -47,8 +47,8 @@ fn the_headline_circuits_are_on_frozen_pools() {
 #[test]
 fn a_healthy_pool_is_not_rejected() {
     // The deep WSOL/USDC Whirlpool used by the whirlpool_amm parity suite.
-    let Some((snap, dir)) = snapshot("Czfq3xZZDmsdGdUyrNLtRhGc47cXcZtLG4crryfu44zE") else {
-        return; // not in this snapshot set; nothing to assert
-    };
+    // No early return: a missing snapshot must fail the test, not quietly pass it.
+    let (snap, dir) = snapshot("Czfq3xZZDmsdGdUyrNLtRhGc47cXcZtLG4crryfu44zE")
+        .expect("the healthy-pool snapshot must be vendored, or this test asserts nothing");
     assert!(!has_frozen_token_account(&snap, &dir));
 }

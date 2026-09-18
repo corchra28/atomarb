@@ -1,23 +1,44 @@
-IMPLEMENTATION_STATUS       = MVP COMPLETE (adapters, discovery, routing/sizing, accounting, simulation, executor, CLI, reports)
-ADAPTERS_IMPLEMENTED        = raydium_cpmm, pumpswap
-ADAPTERS_INTEGRATION_TESTED = raydium_cpmm, pumpswap (real mainnet ELFs executed in LiteSVM)
-DISCOVERED_POOLS            = raydium_cpmm UNKNOWN (API, ? mints) / pumpswap UNKNOWN (local inventory 2026-09-04, ? mints); both unverified until snapshot
-POOL_INTERSECTION           = cross-adapter mints ? (routes ?) | pumpswap mints with >=2 pools ? (routes ?) | raydium mints with >=2 pools ? (routes ?); routes truncated by per-mint cap ?
-ELIGIBLE_ROUTES             = shortlist 367 pools / UNKNOWN routes; validated on-chain in the run: 367 pools / 151 routes (dropped 0)
-QUOTE_COUNT                 = 75542 circuit evaluations (each over the sizing grid) in run shadow_2026-09-18T07-07-11-904Z_05942733; route-gap diagnostic: 612 circuits, best 266.3 bps
-ATOMIC_SIM_ATTEMPTED        = mainnet 2 | local real-program 3 | executor-guarded 4
-ATOMIC_SIM_SUCCEEDED        = mainnet 0 | local real-program 3 (quote matched exactly: 3) | executor passed 0, reverted by guard 2
-SIMULATION_ENVIRONMENT      = LOCAL_REAL_PROGRAM_SIMULATION (LiteSVM + mainnet ELFs + real accounts + labelled synthetic balances) and MAINNET_RPC_SIMULATION (simulateTransaction, sigVerify=false, unfunded identity)
-ACCOUNTING_STATUS           = COMPLETE for local probes (exact token/lamport deltas, observed base+priority+rent); ESTIMATED external costs elsewhere; REALIZED = NOT_OBSERVED
-SIMULATED_POSITIVE_EPISODES = 0
-REALIZED_NET_PNL            = NOT_OBSERVED
-RPC_USAGE                   = 37357 requests in the run (errors 0, retries 0)
-DATA_GAPS                   = wss 0 gap(s); snapshot_incomplete 0; stale decisions 0; errors 0
-LATENCY_P50_P95_P99         = snapshot 160/288/365 ms | quote 17/95/122 ms | state age at decision 21/28/48 ms
-TESTS_PASS / FAIL / SKIPPED = 291 / 0 / 2 (fixtures: 25 json)
-MAINNET_ATOMIC_GUARD_STATUS = MAINNET_ATOMIC_GUARD_NOT_DEPLOYED (arb_executor built locally: 42416 bytes, sha256 1ae6519d19afe390…)
-AUDIT_FINDINGS              = 7/7 fixed (independent audit of 2c78a61; see docs/AUDIT_RESPONSE.md)
+SCOPE                       = Solana atomic cross-pool arbitrage: WSOL -> TOKEN (pool A) -> WSOL (pool B), one transaction
+IMPLEMENTATION_STATUS       = COMPLETE (TypeScript engine + 3 Rust Amm adapters + cross-venue scan)
+
+ADAPTERS_TYPESCRIPT         = raydium_cpmm, pumpswap (engine-internal, used by discovery/shadow/accounting)
+ADAPTERS_RUST_JUPITER_AMM   = raydium_cpmm, orca_whirlpool, meteora_dlmm (jupiter-amm-interface)
+ADAPTER_VERIFICATION        = every Rust quote proven EQUAL to the on-chain program by jupiter-amm-test-kit
+                              (snapshot a live pool, run quote(), execute the native swap in LiteSVM, assert the token delta)
+
+TESTS_TYPESCRIPT            = 291 passed / 0 failed / 2 skipped (29 files)
+TESTS_RUST                  = 17 passed / 0 failed
+  raydium_cpmm_amm          =  3 parity tests, 12 swaps
+  whirlpool_amm             =  5 parity tests, 17 swaps + 2 unit tests
+  meteora_dlmm_amm          =  4 parity tests, 13 swaps + 1 unit test
+  gap_scan                  =  2 regression tests (frozen-pool guard)
+MUTATION_TESTING            = 26 of 26 caught (raydium 6/6, whirlpool 10/10, dlmm 10/10)
+FAULT_INJECTION             = 9 of 9 caught (TypeScript engine)
+CLEAN_CLONE_VERIFIED        = YES — all 17 Rust tests and all 3 mutation suites run from a fresh clone with no RPC
+
+POPULATION_SCANNED          = 362,514 WSOL-paired pools across 3 venues
+                              raydium_cpmm 218,379 | meteora_dlmm 116,558 | orca_whirlpool 27,577
+CROSS_VENUE_MINTS           = 10,129 mints with WSOL pools on 2 or more DIFFERENT venues
+                              294 of them with >= 1 SOL on the thinner side
+CIRCUITS_PRICED             = 4,046, every one involving a concentrated-liquidity leg
+POSITIVE_GROSS              = 4 | best 1,892 lamports (the constant-product-only radar's best was 754)
+POSITIVE_NET                = 0 after the 9,000-lamport assumption, and 0 after the 5,000 base fee alone
+
+PHANTOM_REMOVED             = the first run reported a 371% return plus 6 smaller net-positive circuits;
+                              every leg failed on chain with SPL Token error 17, Account is frozen.
+                              A guard rejecting pools that hold a frozen token account removed 24 circuits
+                              and took net-positive from 7 to 0. Pinned as a regression test.
+
+MARKET_SIZE_MEASURED        = ~$21,000/day for all atomic arbitrage on Solana, from 104 verified winners in 120 blocks
+                              median winning trade: $0.0026 take-home, $2.49 of capital deployed
+                              capital saturates near $1,538 — the largest deployed in any winning trade observed
+                              101 of 104 winners pay for block position; top 3 trades take 56% of all profit
+
 TRANSACTIONS_BROADCAST      = 0
+KEYPAIRS_READ               = 0
 LIVE_TRADING_ENABLED        = NO
 ECONOMIC_VERDICT            = NO_VERIFIED_EDGE
+VERDICT_REASON              = was partly coverage, is now purely the auction. The coverage objection is
+                              answered: concentrated liquidity is included and priced exactly, and the best
+                              gross result improved 2.5x while staying 5x short of the fee.
 NEXT_DECISIVE_TEST          = see DECISION.md

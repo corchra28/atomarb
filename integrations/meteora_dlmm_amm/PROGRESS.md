@@ -110,4 +110,4 @@ third-party crate does not advertise. Pools using them may quote wrong, and pari
   false gap — zeroing the mint decimals changes nothing, because `decimals_x`/`decimals_y` appear
   only in the engine's decoder and never in its quote, fee or math code. Verified by grep, not
   assumed.
-- Final: 4 parity tests over 15 swaps, 1 unit test, 10 of 10 mutations caught.
+- Final: 4 parity tests over 13 swaps, 1 unit test, 10 of 10 mutations caught. (An earlier draft said 15 swaps; the count from the source is 13.)

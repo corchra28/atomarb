@@ -3,7 +3,7 @@
 Meteora DLMM implemented as a Jupiter [`Amm`](https://github.com/jup-ag/jupiter-amm-interface), with its quote proven equal to the on-chain program.
 
 ```
-cargo test                 # 4 parity tests + 1 unit test (fixtures are committed)
+cargo test                 # 4 parity tests (13 swaps) + 1 unit test (fixtures are committed)
 ./mutation_test.sh         # proves the suite actually asserts the behaviour
 ```
 
