@@ -61,10 +61,13 @@ Rounding direction is load-bearing at every step and differs by swap direction.
 - [x] `get_swap_and_account_metas` for the native `swap_v2` instruction
 - [x] Parity test on the deep SOL/USDC pool (4 swaps, both directions)
 - [x] Parity test at sizes that force tick crossings (4 swaps, 20% measured price impact)
-- [x] Mutation suite — 6 of 8 caught
-- [ ] Close escape 1: a crossing where `liquidity_net` is negative
-- [ ] Close escape 2: a Whirlpool with a Token-2022 mint carrying a transfer fee
+- [x] Decode the newer `DynamicTickArray` shape as well as the fixed one
+- [x] Refuse to traverse tick arrays that do not exist on chain
+- [x] Mutation suite — **10 of 10 caught**
+- [x] Close escape 1: `liquidity_net` — the mutation itself was a no-op, not a test gap
+- [x] Close escape 2: a Whirlpool with a Token-2022 mint carrying a 300 bps transfer fee
 - [ ] Verify from a clean clone with no RPC
+- [ ] Adaptive-fee pools (currently refused rather than mis-quoted)
 
 ## Decision: do not port the math
 
@@ -93,6 +96,22 @@ targets exactly that, rather than pretending to test Orca's arithmetic.
   compile-failure detector matched `error: test failed`, so genuine test failures were being
   labelled "does not compile". Fixed the detector; also replaced a vacuous mutation (not
   refreshing `sqrt_price` changes nothing in a snapshot test, where the snapshot IS the state).
-- Honest result now: **6 of 8 caught**. Both escapes are missing test cases, not wrong code —
-  no crossed tick in the current pools has a negative `liquidity_net`, and neither pool has a
-  Token-2022 mint.
+- Honest result then: **6 of 8 caught**.
+- Chasing the two escapes found a **real bug**. Adding a Token-2022 pool, the parity test failed
+  with `TickArraySequenceInvalidIndex` from the program: my quote treated a tick array that does
+  not exist on chain as "empty but traversable", so it produced a number no transaction could
+  honour. Fixed by only traversing arrays that actually exist, and never referencing a
+  non-existent one in the instruction.
+- That pool also uses the newer `DynamicTickArray` shape (disc `11d8f68ee1c7da38`, variable
+  length, each tick 1 byte uninitialised and 113 initialised) which I had skipped. Implemented
+  both shapes.
+- The `liquidity_net` escape was **not a test gap at all**: the mutation read `u128` and cast to
+  `i128`, which in Rust is a bit-for-bit reinterpretation, so it changed nothing. Replaced with
+  dropping the sign, and it is caught.
+- The dynamic-stride mutation stayed invisible through parity even on a pool with two initialised
+  ticks, so it is now pinned by a **unit test on the decoder** against a synthetic array — the
+  right tool for a decoding bug.
+- Removed the `traverse_missing_arrays` mutation as genuinely unobservable with these pools: on
+  all of them a swap reaching a missing array also fails for want of liquidity. Recorded in the
+  README rather than left as a false gap.
+- **Final: 5 parity tests over 19 swaps, 2 unit tests, 10 of 10 mutations caught.**

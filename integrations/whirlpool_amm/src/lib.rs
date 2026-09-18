@@ -37,10 +37,18 @@ pub const MEMO_PROGRAM: Pubkey = pubkey!("MemoSq4gqABAXKb96qnH8TysNcWxMyWCqXgDLG
 const WHIRLPOOL_LEN: usize = 653;
 const WHIRLPOOL_DISCRIMINATOR: [u8; 8] = [0x3f, 0x95, 0xd1, 0x0c, 0xe1, 0x80, 0x63, 0x09];
 
-/// `TickArray::LEN` = 8 + 4 + 88 * 113 + 32, and `Tick::LEN`.
+/// Two on-chain shapes exist and both are live.
+///
+/// `FixedTickArray`: 8 disc + 4 start_tick_index + 88 x `Tick::LEN` + 32 pool = 9,988 bytes.
+/// `DynamicTickArray`: 8 disc + 4 start + 32 pool + 16 bitmap, then 88 enum-encoded ticks that
+/// are 1 byte when uninitialised and 113 when not — so its length varies from 148 to 10,004.
 const TICK_ARRAY_LEN: usize = 9988;
 const TICK_ARRAY_SIZE: usize = 88;
 const TICK_LEN: usize = 113;
+const FIXED_TICK_ARRAY_DISCRIMINATOR: [u8; 8] = [0x45, 0x61, 0xbd, 0xbe, 0x6e, 0x07, 0x42, 0xbb];
+const DYNAMIC_TICK_ARRAY_DISCRIMINATOR: [u8; 8] = [0x11, 0xd8, 0xf6, 0x8e, 0xe1, 0xc7, 0xda, 0x38];
+const DYNAMIC_TICK_ARRAY_MIN_LEN: usize = 148;
+const DYNAMIC_TICK_DATA_LEN: usize = 112;
 
 /// How many tick arrays to carry on each side of the current one. The native instruction takes
 /// three, so two beyond the current array is what a swap can actually traverse.
@@ -118,22 +126,36 @@ fn empty_tick_array(start_tick_index: i32) -> TickArrayFacade {
     }
 }
 
-fn decode_tick_array(data: &[u8], expected_start: i32) -> TickArrayFacade {
-    if data.len() != TICK_ARRAY_LEN {
-        return empty_tick_array(expected_start);
+/// Decode either shape. Returns `None` when the account is neither, which includes the case of
+/// an account that does not exist.
+fn decode_tick_array(data: &[u8], expected_start: i32) -> Option<TickArrayFacade> {
+    if data.len() >= 8 && data[..8] == FIXED_TICK_ARRAY_DISCRIMINATOR && data.len() == TICK_ARRAY_LEN
+    {
+        return Some(decode_fixed_tick_array(data));
     }
-    let start_tick_index = read_i32(data, 8);
-    let mut ticks = [TickFacade {
+    if data.len() >= DYNAMIC_TICK_ARRAY_MIN_LEN && data[..8] == DYNAMIC_TICK_ARRAY_DISCRIMINATOR {
+        return decode_dynamic_tick_array(data);
+    }
+    let _ = expected_start;
+    None
+}
+
+fn blank_tick() -> TickFacade {
+    TickFacade {
         initialized: false,
         liquidity_net: 0,
         liquidity_gross: 0,
         fee_growth_outside_a: 0,
         fee_growth_outside_b: 0,
         reward_growths_outside: [0; 3],
-    }; TICK_ARRAY_SIZE];
+    }
+}
+
+fn decode_fixed_tick_array(data: &[u8]) -> TickArrayFacade {
+    let mut ticks = [blank_tick(); TICK_ARRAY_SIZE];
     for (i, tick) in ticks.iter_mut().enumerate() {
         // Tick: initialized(1) liquidity_net(i128) liquidity_gross(u128)
-        //       fee_growth_outside_a(u128) fee_growth_outside_b(u128) rewards(3 * u128)
+        //       fee_growth_outside_a(u128) fee_growth_outside_b(u128) rewards(3 x u128)
         let o = 12 + i * TICK_LEN;
         tick.initialized = data[o] != 0;
         tick.liquidity_net = read_i128(data, o + 1);
@@ -145,9 +167,39 @@ fn decode_tick_array(data: &[u8], expected_start: i32) -> TickArrayFacade {
         }
     }
     TickArrayFacade {
-        start_tick_index,
+        start_tick_index: read_i32(data, 8),
         ticks,
     }
+}
+
+/// `DynamicTickArray`: disc(8) start_tick_index(4) whirlpool(32) tick_bitmap(16), then the ticks,
+/// each a 1-byte tag followed by 112 bytes of data only when the tag says initialised.
+fn decode_dynamic_tick_array(data: &[u8]) -> Option<TickArrayFacade> {
+    let mut ticks = [blank_tick(); TICK_ARRAY_SIZE];
+    let mut cursor = 60usize;
+    for tick in ticks.iter_mut() {
+        let tag = *data.get(cursor)?;
+        cursor += 1;
+        if tag == 0 {
+            continue;
+        }
+        if cursor + DYNAMIC_TICK_DATA_LEN > data.len() {
+            return None;
+        }
+        tick.initialized = true;
+        tick.liquidity_net = read_i128(data, cursor);
+        tick.liquidity_gross = read_u128(data, cursor + 16);
+        tick.fee_growth_outside_a = read_u128(data, cursor + 32);
+        tick.fee_growth_outside_b = read_u128(data, cursor + 48);
+        for r in 0..3 {
+            tick.reward_growths_outside[r] = read_u128(data, cursor + 64 + r * 16);
+        }
+        cursor += DYNAMIC_TICK_DATA_LEN;
+    }
+    Some(TickArrayFacade {
+        start_tick_index: read_i32(data, 8),
+        ticks,
+    })
 }
 
 // ---------------------------------------------------------------------------------------------
@@ -215,7 +267,10 @@ pub struct WhirlpoolAmm {
     /// `(start_tick_index, address)`, ascending by start tick, spanning the current array plus
     /// `ARRAYS_PER_SIDE` on each side.
     tick_array_addresses: Vec<(i32, Pubkey)>,
+    /// Only the arrays that actually exist on chain. A tick array account that has never been
+    /// initialised cannot be traversed by the program, so a quote must not traverse it either.
     tick_array_facades: Vec<TickArrayFacade>,
+    existing_starts: Vec<i32>,
     transfer_fee_a: Option<TransferFee>,
     transfer_fee_b: Option<TransferFee>,
 }
@@ -254,9 +309,24 @@ impl WhirlpoolAmm {
         let ticks_in_array = TICK_ARRAY_SIZE as i32 * self.tick_spacing as i32;
         let current = array_start_tick(self.tick_current_index, self.tick_spacing);
         let step = if a_to_b { -ticks_in_array } else { ticks_in_array };
-        (0..3)
-            .map(|i| tick_array_pda(&self.key, current + i * step))
-            .collect()
+        let mut out: Vec<Pubkey> = Vec::new();
+        for i in 0..3 {
+            let start = current + i * step;
+            if self.existing_starts.contains(&start) {
+                out.push(tick_array_pda(&self.key, start));
+            } else {
+                break;
+            }
+        }
+        if out.is_empty() {
+            out.push(tick_array_pda(&self.key, current));
+        }
+        // The instruction always takes three; repeating the last existing one is what the
+        // official SDK does when the sequence is shorter.
+        while out.len() < 3 {
+            out.push(*out.last().expect("non-empty"));
+        }
+        out
     }
 }
 
@@ -299,6 +369,7 @@ impl Amm for WhirlpoolAmm {
             clock_ref: amm_context.clock_ref.clone(),
             tick_array_addresses: Vec::new(),
             tick_array_facades: Vec::new(),
+            existing_starts: Vec::new(),
             transfer_fee_a: None,
             transfer_fee_b: None,
         };
@@ -368,14 +439,16 @@ impl Amm for WhirlpoolAmm {
             .map(|start| (start, tick_array_pda(&self.key, start)))
             .collect();
 
-        self.tick_array_facades = self
-            .tick_array_addresses
-            .iter()
-            .map(|(start, address)| match account_provider.get(address) {
-                Some(account) => decode_tick_array(account.data(), *start),
-                None => empty_tick_array(*start),
-            })
-            .collect();
+        self.tick_array_facades.clear();
+        self.existing_starts.clear();
+        for (start, address) in &self.tick_array_addresses {
+            if let Some(account) = account_provider.get(address) {
+                if let Some(facade) = decode_tick_array(account.data(), *start) {
+                    self.tick_array_facades.push(facade);
+                    self.existing_starts.push(*start);
+                }
+            }
+        }
 
         let epoch = self.clock_ref.epoch.load(Ordering::Relaxed);
         let fee_of = |mint: &Pubkey| -> Option<TransferFee> {
@@ -396,28 +469,36 @@ impl Amm for WhirlpoolAmm {
         if !specified_token_a && quote_params.input_mint != self.token_mint_b {
             return Err(AmmError::from("input mint is not in this pool"));
         }
-        if self.tick_array_facades.len() < 5 {
+        if self.tick_array_facades.is_empty() {
             return Err(AmmError::from("tick arrays not loaded; call update first"));
         }
 
-        // Exactly the three arrays the native instruction will carry, in the direction of
-        // travel. Supplying more would let the quote traverse further than the on-chain swap
-        // possibly can, which would be a quote the program cannot honour.
+        // Only arrays that exist on chain, contiguous from the current one in the direction of
+        // travel. An uninitialised tick array cannot be traversed by the program, so quoting
+        // through it would produce a number the swap cannot honour — which is exactly what the
+        // parity test caught on a pool whose next array down was never created.
         let a_to_b = specified_token_a;
         let ticks_in_array = TICK_ARRAY_SIZE as i32 * self.tick_spacing as i32;
         let current = array_start_tick(self.tick_current_index, self.tick_spacing);
         let step = if a_to_b { -ticks_in_array } else { ticks_in_array };
-        let pick = |i: i32| -> TickArrayFacade {
+        let mut usable: Vec<TickArrayFacade> = Vec::new();
+        for i in 0..3 {
             let start = current + i * step;
-            self.tick_array_facades
+            match self
+                .tick_array_facades
                 .iter()
                 .find(|f| f.start_tick_index == start)
-                .copied()
-                .unwrap_or_else(|| empty_tick_array(start))
+            {
+                Some(f) => usable.push(*f),
+                None => break, // the chain stops here; so does the swap
+            }
+        }
+        let arrays = match usable.len() {
+            0 => return Err(AmmError::from("the current tick array does not exist on chain")),
+            1 => TickArrays::One(usable[0]),
+            2 => TickArrays::Two(usable[0], usable[1]),
+            _ => TickArrays::Three(usable[0], usable[1], usable[2]),
         };
-        // `TickArraySequence::new` sorts these itself and requires them evenly spaced, so the
-        // order here is irrelevant to it — but the set must match the instruction exactly.
-        let arrays = TickArrays::Three(pick(0), pick(1), pick(2));
 
         let timestamp = self.clock_ref.unix_timestamp.load(Ordering::Relaxed) as u64;
 
@@ -522,6 +603,56 @@ fn spl_token_program() -> Pubkey {
 #[cfg(test)]
 mod tests {
     use super::*;
+
+    /// Build a DynamicTickArray whose ticks are the given `(index, liquidity_net)` pairs, so the
+    /// variable-width walk can be checked against known values.
+    fn synthetic_dynamic_array(start: i32, initialized: &[(usize, i128)]) -> Vec<u8> {
+        let mut d = Vec::new();
+        d.extend_from_slice(&DYNAMIC_TICK_ARRAY_DISCRIMINATOR);
+        d.extend_from_slice(&start.to_le_bytes());
+        d.extend_from_slice(&[0u8; 32]); // whirlpool
+        d.extend_from_slice(&0u128.to_le_bytes()); // tick_bitmap
+        for i in 0..TICK_ARRAY_SIZE {
+            match initialized.iter().find(|(idx, _)| *idx == i) {
+                None => d.push(0),
+                Some((_, net)) => {
+                    d.push(1);
+                    d.extend_from_slice(&net.to_le_bytes()); // liquidity_net
+                    d.extend_from_slice(&7u128.to_le_bytes()); // liquidity_gross
+                    d.extend_from_slice(&0u128.to_le_bytes()); // fee_growth_outside_a
+                    d.extend_from_slice(&0u128.to_le_bytes()); // fee_growth_outside_b
+                    d.extend_from_slice(&[0u8; 48]); // rewards
+                }
+            }
+        }
+        d
+    }
+
+    /// A fixed stride over the dynamic ticks reads the first initialised tick correctly and then
+    /// desynchronises, so this needs at least two of them to be meaningful.
+    #[test]
+    fn dynamic_tick_array_walks_variable_width_ticks() {
+        let raw = synthetic_dynamic_array(46024, &[(3, -12345), (40, 999), (87, -1)]);
+        assert_eq!(raw.len(), 60 + TICK_ARRAY_SIZE + 3 * DYNAMIC_TICK_DATA_LEN);
+        let decoded = decode_dynamic_tick_array(&raw).expect("decodes");
+        assert_eq!(decoded.start_tick_index, 46024);
+        for i in 0..TICK_ARRAY_SIZE {
+            let expected = match i {
+                3 => Some(-12345i128),
+                40 => Some(999),
+                87 => Some(-1),
+                _ => None,
+            };
+            match expected {
+                Some(net) => {
+                    assert!(decoded.ticks[i].initialized, "tick {i} should be initialised");
+                    assert_eq!(decoded.ticks[i].liquidity_net, net, "tick {i} liquidity_net");
+                    assert_eq!(decoded.ticks[i].liquidity_gross, 7, "tick {i} liquidity_gross");
+                }
+                None => assert!(!decoded.ticks[i].initialized, "tick {i} should be uninitialised"),
+            }
+        }
+    }
 
     /// Negative ticks are where this goes wrong with truncating division, and every SOL/USDC
     /// pool sits at a negative tick.

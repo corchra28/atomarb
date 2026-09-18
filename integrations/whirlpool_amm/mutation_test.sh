@@ -35,20 +35,30 @@ if m == 'truncating_array_start':
 """    (tick_index / ticks_in_array) * ticks_in_array""")
 elif m == 'no_tick_liquidity':
     # Pretend every tick array is empty: liquidity never changes at a boundary.
-    s = s.replace("                Some(account) => decode_tick_array(account.data(), *start),",
-                  "                Some(_account) => empty_tick_array(*start),")
+    s = s.replace("                if let Some(facade) = decode_tick_array(account.data(), *start) {\n                    self.tick_array_facades.push(facade);",
+                  "                if decode_tick_array(account.data(), *start).is_some() {\n                    self.tick_array_facades.push(empty_tick_array(*start));")
 elif m == 'arrays_wrong_direction':
     # Walk the arrays the wrong way for the trade direction.
-    s = s.replace("        let step = if a_to_b { -ticks_in_array } else { ticks_in_array };\n        let pick",
-                  "        let step = if a_to_b { ticks_in_array } else { -ticks_in_array };\n        let pick")
+    s = s.replace("        let step = if a_to_b { -ticks_in_array } else { ticks_in_array };\n        let mut usable",
+                  "        let step = if a_to_b { ticks_in_array } else { -ticks_in_array };\n        let mut usable")
 elif m == 'tick_offset_off_by_four':
     # Forget that start_tick_index sits between the discriminator and the ticks.
     s = s.replace("        let o = 12 + i * TICK_LEN;", "        let o = 8 + i * TICK_LEN;")
-elif m == 'liquidity_net_unsigned':
-    # liquidity_net is signed: crossing a tick downward removes liquidity. Reading it as
-    # unsigned makes every crossing add.
+elif m == 'dynamic_tick_fixed_stride':
+    # Treat the dynamic array's ticks as fixed-width: they are 1 byte when uninitialised and
+    # 113 when not, so a fixed stride desynchronises after the first initialised tick.
+    s = s.replace("        cursor += DYNAMIC_TICK_DATA_LEN;", "        cursor += DYNAMIC_TICK_DATA_LEN - 1;")
+elif m == 'dynamic_array_ignored':
+    # Only understand the fixed shape, so every pool on the newer dynamic arrays quotes blind.
+    s = s.replace("    if data.len() >= DYNAMIC_TICK_ARRAY_MIN_LEN && data[..8] == DYNAMIC_TICK_ARRAY_DISCRIMINATOR {\n        return decode_dynamic_tick_array(data);\n    }", "")
+
+elif m == 'liquidity_net_sign_dropped':
+    # liquidity_net is signed: crossing a position's upper bound removes liquidity. Dropping the
+    # sign makes every crossing add. (Note `u128 as i128` would NOT model this — in Rust that is
+    # a bit-for-bit reinterpretation and changes nothing; the first version of this mutation was
+    # a no-op and wrongly looked like a gap in the tests.)
     s = s.replace("        tick.liquidity_net = read_i128(data, o + 1);",
-                  "        tick.liquidity_net = read_u128(data, o + 1) as i128;")
+                  "        tick.liquidity_net = read_i128(data, o + 1).abs();")
 elif m == 'ignore_transfer_fee':
     s = s.replace("        self.transfer_fee_a = fee_of(&self.token_mint_a);\n        self.transfer_fee_b = fee_of(&self.token_mint_b);",
                   "        self.transfer_fee_a = None;\n        self.transfer_fee_b = None;")
@@ -59,8 +69,7 @@ elif m == 'fee_rate_wrong_offset':
 elif m == 'one_tick_array_only':
     # Supply a single array instead of the three the instruction carries: any swap that reaches
     # a boundary then quotes short.
-    s = s.replace("        let arrays = TickArrays::Three(pick(0), pick(1), pick(2));",
-                  "        let arrays = TickArrays::One(pick(0));")
+    s = s.replace("        for i in 0..3 {\n            let start = current + i * step;", "        for i in 0..1 {\n            let start = current + i * step;")
 if s == before:
     sys.exit(3)
 open(p, 'w').write(s)
@@ -72,7 +81,9 @@ MUTATIONS=(
   "no_tick_liquidity|tick arrays are treated as empty, so liquidity never changes at a boundary"
   "arrays_wrong_direction|tick arrays are walked the wrong way for the trade direction"
   "tick_offset_off_by_four|tick decoding forgets the 4-byte start_tick_index before the ticks"
-  "liquidity_net_unsigned|liquidity_net read as unsigned, so crossings always add liquidity"
+  "dynamic_tick_fixed_stride|dynamic ticks walked with a fixed stride instead of a variable one"
+  "dynamic_array_ignored|the newer DynamicTickArray shape is not decoded at all"
+  "liquidity_net_sign_dropped|liquidity_net sign dropped, so every crossing adds liquidity"
   "ignore_transfer_fee|Token-2022 transfer fees are ignored"
   "fee_rate_wrong_offset|fee_rate read from offset 43 (the fee tier seed) instead of 45"
   "one_tick_array_only|only one tick array supplied instead of the three the instruction carries"
@@ -92,7 +103,7 @@ for entry in "${MUTATIONS[@]}"; do
     continue
   fi
   total=$((total + 1))
-  out=$(cargo test --test whirlpool 2>&1)
+  out=$(cargo test 2>&1)
   if echo "$out" | grep -qE 'error\[E[0-9]+\]|could not compile'; then
     echo "  CAUGHT   does not compile — $desc"
     caught=$((caught + 1))
@@ -110,7 +121,7 @@ done
 restore
 echo
 echo "caught $caught of $total"
-echo -n "suite green after restore: "
-cargo test --test whirlpool 2>&1 | grep -E 'test result: ok\. [1-9]' | head -1
+echo "suite green after restore:"
+cargo test 2>&1 | grep -E 'test result:' | sed 's/^/  /' 
 
 [ "$caught" -eq "$total" ] || exit 1

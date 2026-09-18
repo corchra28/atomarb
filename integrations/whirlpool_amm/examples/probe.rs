@@ -16,9 +16,14 @@ impl AccountProvider for SnapshotProvider<'_> {
 }
 
 fn main() {
-    for (name, pool) in [
-        ("deep", pubkey!("Czfq3xZZDmsdGdUyrNLtRhGc47cXcZtLG4crryfu44zE")),
-        ("thin", pubkey!("HJPjoWUrhoZzkNfRpHuieeFk9WcZWjwy6PBjZ81ngndJ")),
+    for (name, pool, mint_a, mint_b) in [
+        ("deep", pubkey!("Czfq3xZZDmsdGdUyrNLtRhGc47cXcZtLG4crryfu44zE"), WSOL, USDC),
+        ("thin", pubkey!("HJPjoWUrhoZzkNfRpHuieeFk9WcZWjwy6PBjZ81ngndJ"), WSOL, USDC),
+        ("dyn", pubkey!("949myKpLQJn2G9x22FBWUa33JA4fiEspz3sKNumGiz1v"),
+            pubkey!("555XtgMJYBefyiJWdvSj5yPqEtTBN6WRuAuPfKcob2ux"), USDC),
+        ("t22", pubkey!("3qjhHaRKT1U1FQyKak6Qjk1Geea4na1WKGMRSQCuSmDc"),
+            pubkey!("5SyfywcaD8kiEGyrt7cg4FnVqxTcuut5KCcWgh44o3UG"),
+            pubkey!("5YfJXwwEpjPBNntMaEYGUoC6xGuw1hnyckGtwKL5URuS")),
     ] {
         let dir = format!("tests/fixtures/accounts/{pool}");
         let Ok(snapshot) = PoolSnapshot::load_dir(std::path::Path::new(&dir)) else {
@@ -34,8 +39,8 @@ fn main() {
         amm.update(&provider).unwrap();
         println!("--- {name} {pool} ---");
         for (label, input, output, amounts) in [
-            ("WSOL->USDC", WSOL, USDC, vec![100_000_001u64, 1_000_000_007, 5_000_000_011, 20_000_000_003, 50_000_000_003, 200_000_000_011]),
-            ("USDC->WSOL", USDC, WSOL, vec![10_000_003u64, 500_000_009, 2_000_000_007, 5_000_000_007, 25_000_000_013, 100_000_000_017]),
+            ("A->B", mint_a, mint_b, vec![1_003u64, 10_007, 100_003, 1_000_003, 10_000_003, 100_000_007]),
+            ("B->A", mint_b, mint_a, vec![1_003u64, 10_007, 100_003, 1_000_003, 10_000_003, 50_000_011]),
         ] {
             for a in amounts {
                 let q = amm.quote(&QuoteParams { amount: a, input_mint: input, output_mint: output, swap_mode: SwapMode::ExactIn, fee_mode: Default::default() });

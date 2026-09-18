@@ -25,6 +25,18 @@ const DEEP_POOL: Pubkey = pubkey!("Czfq3xZZDmsdGdUyrNLtRhGc47cXcZtLG4crryfu44zE"
 /// Thin pool, tick spacing 64, fee 0.3% — liquidity is ~3000x smaller.
 const THIN_POOL: Pubkey = pubkey!("HJPjoWUrhoZzkNfRpHuieeFk9WcZWjwy6PBjZ81ngndJ");
 
+/// Token B here is a Token-2022 mint carrying a 300 bps (3%) transfer fee, and the pool sits at
+/// a POSITIVE tick (45,056), which also exercises the other branch of the tick arithmetic.
+const T22_POOL: Pubkey = pubkey!("3qjhHaRKT1U1FQyKak6Qjk1Geea4na1WKGMRSQCuSmDc");
+const T22_A: Pubkey = pubkey!("5SyfywcaD8kiEGyrt7cg4FnVqxTcuut5KCcWgh44o3UG");
+const T22_B: Pubkey = pubkey!("5YfJXwwEpjPBNntMaEYGUoC6xGuw1hnyckGtwKL5URuS");
+
+/// A pool whose current tick array is the DynamicTickArray shape with more than one initialised
+/// tick. With only one, a decoder that walks the variable-width ticks with a fixed stride still
+/// happens to read the first one correctly; a second initialised tick is what desynchronises it.
+const DYN_POOL: Pubkey = pubkey!("949myKpLQJn2G9x22FBWUa33JA4fiEspz3sKNumGiz1v");
+const DYN_A: Pubkey = pubkey!("555XtgMJYBefyiJWdvSj5yPqEtTBN6WRuAuPfKcob2ux");
+
 #[test]
 fn whirlpool_deep_pool_parity() {
     let test = PoolTest::new(DEEP_POOL)
@@ -52,6 +64,23 @@ fn whirlpool_thin_pool_crosses_ticks() {
     assert_pool_parity::<WhirlpoolAmm>(&test, encode_swap);
 }
 
+/// The Token-2022 paths. Swapping A in makes the 3% fee apply to the OUTPUT; swapping B in makes
+/// it apply to the INPUT, so the pool receives only 97% of what was sent. A quote that ignores it
+/// is wrong by 3%, which is 75 times this pool's own 1% swap fee.
+#[test]
+fn whirlpool_token2022_transfer_fee_parity() {
+    let test = PoolTest::new(T22_POOL)
+        // Sizes bounded by what this pool can actually serve: its current tick array holds a
+        // single initialised tick and the next one down holds none, so a larger A->B swap runs
+        // out of sequence — on chain as well as in the quote.
+        .add_swap(T22_A, T22_B, 100_007)
+        .add_swap(T22_A, T22_B, 10_000_003)
+        .add_swap(T22_B, T22_A, 1_000_003)
+        .add_swap(T22_B, T22_A, 500_000_011);
+
+    assert_pool_parity::<WhirlpoolAmm>(&test, encode_swap);
+}
+
 /// `swap_v2` instruction data: `sha256("global:swap_v2")[..8]`, then
 /// `amount`, `other_amount_threshold`, `sqrt_price_limit`, `amount_specified_is_input`, `a_to_b`,
 /// and a `None` for `remaining_accounts_info`.
@@ -75,4 +104,69 @@ fn encode_swap(swap: &jupiter_amm_interface::Swap, in_amount: u64) -> Vec<u8> {
     data.push(a_to_b as u8);
     data.push(0); // remaining_accounts_info: None
     data
+}
+
+/// Dynamic tick arrays with more than one initialised tick, so the variable-width walk is
+/// actually exercised.
+#[test]
+fn whirlpool_dynamic_tick_array_parity() {
+    let test = PoolTest::new(DYN_POOL)
+        // Tick spacing 1 means an array spans only 88 ticks, so this pool exhausts its
+        // sequence quickly in the A->B direction. These are the sizes it can actually serve.
+        .add_swap(DYN_A, USDC, 1_003)
+        .add_swap(USDC, DYN_A, 100_003)
+        .add_swap(USDC, DYN_A, 1_000_003)
+        .add_swap(USDC, DYN_A, 10_000_003)
+        .add_swap(USDC, DYN_A, 50_000_011);
+
+    assert_pool_parity::<WhirlpoolAmm>(&test, encode_swap);
+}
+
+/// A swap the pool cannot serve must be refused, not quoted.
+///
+/// `T22_POOL` has one initialised tick in its current array and none in the next one down, and
+/// the array below that was never created. A large A->B swap therefore runs out of tick-array
+/// sequence — and `swap_v2` would fail on chain with `TickArraySequenceInvalidIndex`. Quoting it
+/// anyway produces a number no transaction can honour, which is a real bug this adapter had.
+///
+/// The parity harness can only assert swaps that succeed, so this asserts the refusal directly.
+#[test]
+fn whirlpool_refuses_swaps_beyond_the_existing_tick_arrays() {
+    use jupiter_amm_interface::{AccountProvider, Amm, AmmContext, ClockRef, KeyedAccount, QuoteParams, SwapMode};
+    use jupiter_amm_test_kit::PoolSnapshot;
+    use solana_account::Account;
+
+    struct P<'a>(&'a PoolSnapshot);
+    impl AccountProvider for P<'_> {
+        fn get(&self, pubkey: &Pubkey) -> Option<impl solana_account::ReadableAccount + use<'_>> {
+            self.0.get(pubkey).cloned() as Option<Account>
+        }
+    }
+
+    let dir = format!("tests/fixtures/accounts/{T22_POOL}");
+    let snapshot = PoolSnapshot::load_dir(std::path::Path::new(&dir)).expect("fixtures");
+    let ctx = AmmContext { clock_ref: ClockRef::from(snapshot.clock().unwrap_or_default()) };
+    let keyed = KeyedAccount { key: T22_POOL, account: snapshot.get(&T22_POOL).unwrap().clone(), params: None };
+    let mut amm = WhirlpoolAmm::from_keyed_account(&keyed, &ctx).expect("decode");
+    let provider = P(&snapshot);
+    amm.update(&provider).expect("update");
+    amm.update(&provider).expect("update");
+
+    // Serviceable, from the measured range.
+    assert!(amm.quote(&QuoteParams {
+        amount: 10_000_003,
+        input_mint: T22_A,
+        output_mint: T22_B,
+        swap_mode: SwapMode::ExactIn,
+        fee_mode: Default::default(),
+    }).is_ok(), "a size the pool can serve must quote");
+
+    // Beyond what the existing tick arrays cover.
+    assert!(amm.quote(&QuoteParams {
+        amount: 1_000_000_007,
+        input_mint: T22_A,
+        output_mint: T22_B,
+        swap_mode: SwapMode::ExactIn,
+        fee_mode: Default::default(),
+    }).is_err(), "a size that runs past the existing tick arrays must be refused, not quoted");
 }
