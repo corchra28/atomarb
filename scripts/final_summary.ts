@@ -72,6 +72,10 @@ out.push(`DATA_GAPS                   = wss ${summary['wss'] ? JSON.stringify((s
 out.push(`LATENCY_P50_P95_P99         = snapshot ${fmt(lat['snapshot'])} ms | quote ${fmt(lat['quote'])} ms | state age at decision ${fmt(lat['stateAgeAtDecision'])} ms`)
 out.push(`TESTS_PASS / FAIL / SKIPPED = ${testLine ? `${testLine[2]} / ${testLine[3]} / ${testLine[4]}` : 'SEE TEST_REPORT.md'} (fixtures: ${fixtures} json)`)
 out.push(`MAINNET_ATOMIC_GUARD_STATUS = MAINNET_ATOMIC_GUARD_NOT_DEPLOYED (arb_executor built locally: ${elf?.['bytes'] ?? '?'} bytes, sha256 ${String(elf?.['sha256'] ?? '?').slice(0, 16)}…)`)
+// independent audit: count how many findings are still open in the response table
+const audit = existsSync('docs/AUDIT_RESPONSE.md') ? readFileSync('docs/AUDIT_RESPONSE.md', 'utf8') : ''
+const auditRows = [...audit.matchAll(/^\| (F\d) \|.*\| (fixed|open|won't fix|deferred)[^|]*\|$/gm)]
+if (auditRows.length) out.push(`AUDIT_FINDINGS              = ${auditRows.filter(r => r[2] === 'fixed').length}/${auditRows.length} fixed (independent audit of 2c78a61; see docs/AUDIT_RESPONSE.md)`)
 out.push('TRANSACTIONS_BROADCAST      = 0')
 out.push('LIVE_TRADING_ENABLED        = NO')
 out.push(`ECONOMIC_VERDICT            = ${verdict}`)
