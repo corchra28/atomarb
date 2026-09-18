@@ -1,0 +1,1851 @@
+{
+ "summary": {
+  "generatedUtc": "2026-09-18T08:25:33.690Z",
+  "slot": 448027358,
+  "durationMs": 393345,
+  "rpcRequests": 362,
+  "pumpswapWsolPools": 322557,
+  "raydiumCpmmWsolPools": 218303,
+  "mintsWithTwoOrMorePools": 7405,
+  "poolsPriced": 17934,
+  "vaultsRead": 35868,
+  "filters": {
+   "minThinSideSol": 1,
+   "minGapBps": 100
+  },
+  "pairsPassingFilter": 122,
+  "note": "gap is pre-fee and pre-impact: a filter, not an opportunity. Round-trip fees are 45-150 bps and price impact is set by the thinner pool."
+ },
+ "pairs": [
+  {
+   "mint": "99tCAvV13GA35GQzMe6UsZJN8S5VTKDEbfqp2ZoRgFws",
+   "gapBps": 370.9,
+   "thinSideSol": 50.681,
+   "cheap": {
+    "venue": "raydium_cpmm",
+    "pool": "6zUfrPzqnbcqJjwSNwfw7LAP55uCg4wZLtF2sTVCc5u",
+    "wsol": "50680767123"
+   },
+   "dear": {
+    "venue": "raydium_cpmm",
+    "pool": "FJqzcRgCVaxk3DjyZ1jmF529Te7mTRP6G7NZ2BFZwGAX",
+    "wsol": "56609245870"
+   }
+  },
+  {
+   "mint": "9iZkAPhsQikq4acSeRMgSh94Bfhwed9LrDZYrKdeiZmy",
+   "gapBps": 1704.1,
+   "thinSideSol": 9.334,
+   "cheap": {
+    "venue": "raydium_cpmm",
+    "pool": "2r4cyB9FHVbJ7cwZdrFy3r1bjiczZG8a9pn1Nsg5Wcpa",
+    "wsol": "11392380622"
+   },
+   "dear": {
+    "venue": "raydium_cpmm",
+    "pool": "6E2h4yhXoYHL2VsA4ZT9QdLwX4kimkRsiQ6mhdn1qEGg",
+    "wsol": "9334389544"
+   }
+  },
+  {
+   "mint": "ADcgdafjKxvyPjqJRqPsuixCQRae2Ngqq1c8pQo2pump",
+   "gapBps": 146.8,
+   "thinSideSol": 44.822,
+   "cheap": {
+    "venue": "raydium_cpmm",
+    "pool": "CeMyZDRTfPGsRYXLMPu51rhETCdxvGsMNNSnjS7iUxiw",
+    "wsol": "44821793370"
+   },
+   "dear": {
+    "venue": "pumpswap",
+    "pool": "5WguHFQRoyvh1mQJfb8WcRrFJ3p3GHQ5E8rSQ6dmsppM",
+    "wsol": "140309431796"
+   }
+  },
+  {
+   "mint": "4xSfWrG9VkyNbnCNvB6opKEex2ebXmCZCiied84fZisB",
+   "gapBps": 155.9,
+   "thinSideSol": 35.599,
+   "cheap": {
+    "venue": "raydium_cpmm",
+    "pool": "7Zfb8tjH6sdM4E5h3HeC31KDPqRi6ocpKbegBUNKd99b",
+    "wsol": "126714781724"
+   },
+   "dear": {
+    "venue": "raydium_cpmm",
+    "pool": "Asg36JmgAyrrxwzXRSc5cqBXkEXc6E5D7WwkcVuFATTF",
+    "wsol": "35599237482"
+   }
+  },
+  {
+   "mint": "8sdZVK4cLbXPEstDTpyN3VAtdNfFJvWVKchEYS8epump",
+   "gapBps": 140.7,
+   "thinSideSol": 34.575,
+   "cheap": {
+    "venue": "raydium_cpmm",
+    "pool": "9sV7boHWPnShnrM4ZWt5je8Yqk6PP2yZzPMZBkrvNKTa",
+    "wsol": "34575370205"
+   },
+   "dear": {
+    "venue": "pumpswap",
+    "pool": "ArnWdnyKHDosGL7xSQELo65HqDK4uMa3nw5CnmoYgtWn",
+    "wsol": "172305608838"
+   }
+  },
+  {
+   "mint": "3Cg8ETCZCbVi4igJYtDiUffr8pnQKW8vogtZcFN2TYqe",
+   "gapBps": 216.2,
+   "thinSideSol": 14.436,
+   "cheap": {
+    "venue": "raydium_cpmm",
+    "pool": "9TZF5wKvxo8nCj4QDrU4mpuMJLctQD4wh1dbaZYQWuHi",
+    "wsol": "19610858329"
+   },
+   "dear": {
+    "venue": "raydium_cpmm",
+    "pool": "DjVLxWAFezyLZczZabrgjMHULDprUiBaFvdDnikGHoJf",
+    "wsol": "14435862941"
+   }
+  },
+  {
+   "mint": "AezonetBkbiJoeia7T7ASePKpMY9AKQJmgtk7HyQEbR1",
+   "gapBps": 785.6,
+   "thinSideSol": 3.506,
+   "cheap": {
+    "venue": "raydium_cpmm",
+    "pool": "2BWbr1RfWD64FY9f19vCWrRZriGcuJCZt2YYFa7mRpqQ",
+    "wsol": "3506156842"
+   },
+   "dear": {
+    "venue": "raydium_cpmm",
+    "pool": "EXSTQ2z2pfBZWRr2BYjMuftVVoz7SDEjVbzQsPySSW9g",
+    "wsol": "4665697909"
+   }
+  },
+  {
+   "mint": "41wFZXSSjyiaQE97pRMqodTSwYxnV4ryX6XYfEs3pump",
+   "gapBps": 232,
+   "thinSideSol": 11.336,
+   "cheap": {
+    "venue": "pumpswap",
+    "pool": "kKWmfhhFTGdEz72EeoWRfnhh88zASbYr4edKu5rgkCG",
+    "wsol": "42603212902"
+   },
+   "dear": {
+    "venue": "raydium_cpmm",
+    "pool": "CKAjGSfmRtFgtg7k3A97GGjRsvQQYrr3N8LmMw6Krt43",
+    "wsol": "11335619069"
+   }
+  },
+  {
+   "mint": "9pExrvgUz4uX5kNeVdLGntjAjrQ8f6SWA1PHZpN2djCT",
+   "gapBps": 244.5,
+   "thinSideSol": 10.239,
+   "cheap": {
+    "venue": "raydium_cpmm",
+    "pool": "8Ea1WnaoPyMNVSecunwt8ZUptF14ZdPpN1jHzqG1mryN",
+    "wsol": "10238741141"
+   },
+   "dear": {
+    "venue": "raydium_cpmm",
+    "pool": "7x4ovSBhVcu9v26EvhCy6g3b6ET6JgbCXsgHLAN2hvjL",
+    "wsol": "56973370348"
+   }
+  },
+  {
+   "mint": "8Mfgv1WWmyH1Uera1t5BqMpkAk9Z9jwbJZ9x63b4FWcd",
+   "gapBps": 260,
+   "thinSideSol": 9.102,
+   "cheap": {
+    "venue": "raydium_cpmm",
+    "pool": "4ZqcLAsHKpiQFGmKsJabYTYkZkDKZ3s73c6H6N7giSjr",
+    "wsol": "312392677759"
+   },
+   "dear": {
+    "venue": "raydium_cpmm",
+    "pool": "5fU4bc8dKZfVFnqWvqU5bJifEGmM9AeYBpePH4T3pNXk",
+    "wsol": "9102076525"
+   }
+  },
+  {
+   "mint": "AezonetBkbiJoeia7T7ASePKpMY9AKQJmgtk7HyQEbR1",
+   "gapBps": 880.2,
+   "thinSideSol": 2.605,
+   "cheap": {
+    "venue": "raydium_cpmm",
+    "pool": "2BWbr1RfWD64FY9f19vCWrRZriGcuJCZt2YYFa7mRpqQ",
+    "wsol": "3506156842"
+   },
+   "dear": {
+    "venue": "raydium_cpmm",
+    "pool": "35ZZ5ADhGyzSuYsBEfVooLsnHNLXuJqgECzmGJ4pR1h9",
+    "wsol": "2605201466"
+   }
+  },
+  {
+   "mint": "3i5vJwLN76HYphPMqqBCFqLzT14mkqCHsgrD8aFUpump",
+   "gapBps": 465.8,
+   "thinSideSol": 4.752,
+   "cheap": {
+    "venue": "pumpswap",
+    "pool": "76CFjFkoL2Uad7uxev2GRafR6kdR7x6z3TfLw2b4oPqB",
+    "wsol": "20127549727"
+   },
+   "dear": {
+    "venue": "raydium_cpmm",
+    "pool": "8w4KAidBQHm1LbhrGMyyvZRUcqf9AeeeQ932H79fDE44",
+    "wsol": "4752127170"
+   }
+  },
+  {
+   "mint": "8Mfgv1WWmyH1Uera1t5BqMpkAk9Z9jwbJZ9x63b4FWcd",
+   "gapBps": 447.3,
+   "thinSideSol": 4.817,
+   "cheap": {
+    "venue": "raydium_cpmm",
+    "pool": "4ZqcLAsHKpiQFGmKsJabYTYkZkDKZ3s73c6H6N7giSjr",
+    "wsol": "312392677759"
+   },
+   "dear": {
+    "venue": "raydium_cpmm",
+    "pool": "5Ctvw9DzXzhGWXm2LUVEfTexMh6boCPEK2CokzcrhTAG",
+    "wsol": "4817050366"
+   }
+  },
+  {
+   "mint": "6Hy5AbCgXyF4noymTDCjKY4EuAv8ijzkU4HePGtMzszf",
+   "gapBps": 404.5,
+   "thinSideSol": 4.918,
+   "cheap": {
+    "venue": "raydium_cpmm",
+    "pool": "AS5fDzXYyqANCRqaYWsUExovChadeNSHLkBXbr39v3yi",
+    "wsol": "29756887273"
+   },
+   "dear": {
+    "venue": "raydium_cpmm",
+    "pool": "J41de1A69woVKzwae8ALBqwsbbkcXSPaYvBGG9e5AgeE",
+    "wsol": "4918043089"
+   }
+  },
+  {
+   "mint": "8Mfgv1WWmyH1Uera1t5BqMpkAk9Z9jwbJZ9x63b4FWcd",
+   "gapBps": 372.5,
+   "thinSideSol": 4.782,
+   "cheap": {
+    "venue": "raydium_cpmm",
+    "pool": "4f7RrGXLvQYrpTEuQYPXoGAEeNXrFhuhyMnHQYVJKAWC",
+    "wsol": "4782216961"
+   },
+   "dear": {
+    "venue": "raydium_cpmm",
+    "pool": "5Ctvw9DzXzhGWXm2LUVEfTexMh6boCPEK2CokzcrhTAG",
+    "wsol": "4817050366"
+   }
+  },
+  {
+   "mint": "AezonetBkbiJoeia7T7ASePKpMY9AKQJmgtk7HyQEbR1",
+   "gapBps": 337.7,
+   "thinSideSol": 4.666,
+   "cheap": {
+    "venue": "raydium_cpmm",
+    "pool": "EqcJiotYBo7r2XRuhjQvjLLwQpqUScHFbUPhJm6zAdsG",
+    "wsol": "17897177325"
+   },
+   "dear": {
+    "venue": "raydium_cpmm",
+    "pool": "EXSTQ2z2pfBZWRr2BYjMuftVVoz7SDEjVbzQsPySSW9g",
+    "wsol": "4665697909"
+   }
+  },
+  {
+   "mint": "FKNfAwb8TmjYkj11V4NiTz4TgrLWTWgm2NRwAD9epump",
+   "gapBps": 126.8,
+   "thinSideSol": 12.119,
+   "cheap": {
+    "venue": "pumpswap",
+    "pool": "585ZshMuwRj6qx4SH8owwz8a4k38AQNBnuPYA1WxLTse",
+    "wsol": "351059916859"
+   },
+   "dear": {
+    "venue": "raydium_cpmm",
+    "pool": "AgsQ8hWjGiDwdeYqBB2MgEzEAgxGk9xwCDdDcj5bJnEg",
+    "wsol": "12119011764"
+   }
+  },
+  {
+   "mint": "AezonetBkbiJoeia7T7ASePKpMY9AKQJmgtk7HyQEbR1",
+   "gapBps": 433.2,
+   "thinSideSol": 3.506,
+   "cheap": {
+    "venue": "raydium_cpmm",
+    "pool": "2BWbr1RfWD64FY9f19vCWrRZriGcuJCZt2YYFa7mRpqQ",
+    "wsol": "3506156842"
+   },
+   "dear": {
+    "venue": "raydium_cpmm",
+    "pool": "EqcJiotYBo7r2XRuhjQvjLLwQpqUScHFbUPhJm6zAdsG",
+    "wsol": "17897177325"
+   }
+  },
+  {
+   "mint": "3i5vJwLN76HYphPMqqBCFqLzT14mkqCHsgrD8aFUpump",
+   "gapBps": 324.5,
+   "thinSideSol": 4.477,
+   "cheap": {
+    "venue": "raydium_cpmm",
+    "pool": "JZg6epQ33dM7xBsVVPmujtngptBLPBHBYjGBshihfaq",
+    "wsol": "4477129555"
+   },
+   "dear": {
+    "venue": "raydium_cpmm",
+    "pool": "8w4KAidBQHm1LbhrGMyyvZRUcqf9AeeeQ932H79fDE44",
+    "wsol": "4752127170"
+   }
+  },
+  {
+   "mint": "C19J3fcXX9otmTjPuGNdZMQdfRG6SRhbnJv8EJnRpump",
+   "gapBps": 376,
+   "thinSideSol": 3.775,
+   "cheap": {
+    "venue": "pumpswap",
+    "pool": "2RKZJaD7sSues6YxoujsafcBYjxW6t4h9AVgiRWyDjdw",
+    "wsol": "96393655126"
+   },
+   "dear": {
+    "venue": "raydium_cpmm",
+    "pool": "7SGUcFfSwpfMXnMicX8geWG43v6AQdd1UcA9q6L2F12n",
+    "wsol": "3774626922"
+   }
+  },
+  {
+   "mint": "F1ohPuk8H5NPvXXb189aYo1J5F5DMep6FWNJeQgGpxf1",
+   "gapBps": 227.6,
+   "thinSideSol": 5.726,
+   "cheap": {
+    "venue": "pumpswap",
+    "pool": "7DT634UvLmJWkYcP8X15Lr8FQxZbwWPwPpW6zH6AUTFs",
+    "wsol": "27571835115"
+   },
+   "dear": {
+    "venue": "raydium_cpmm",
+    "pool": "3ods9jPZPFmdCuTXVbVzcWwRaJjomyEMvYDoEhrP2ZNq",
+    "wsol": "5726378375"
+   }
+  },
+  {
+   "mint": "mntpbsxNzjtqw3KXF8qXeLBS38BV8cxwS7MmBRLxD48",
+   "gapBps": 226.8,
+   "thinSideSol": 5.645,
+   "cheap": {
+    "venue": "raydium_cpmm",
+    "pool": "7SyU5FjAnJS6jqFNEg4pqa6CXjttjzpJ65W1vdMaP7Wh",
+    "wsol": "13672407922"
+   },
+   "dear": {
+    "venue": "raydium_cpmm",
+    "pool": "Gutd2Wz9DXtwy1aWw7yv9dEgR5qzrV1mYL1iXLdhUUJq",
+    "wsol": "5644763105"
+   }
+  },
+  {
+   "mint": "4e2DhohUAJ9EbrLey3rVVgFQzLCAeeBirSbdhqrh9snX",
+   "gapBps": 422.9,
+   "thinSideSol": 3.026,
+   "cheap": {
+    "venue": "raydium_cpmm",
+    "pool": "HvCuswpugJg8omeXYaExJS7Wxf8izdWQgLjqYxfehhQC",
+    "wsol": "3026147814"
+   },
+   "dear": {
+    "venue": "raydium_cpmm",
+    "pool": "A3PGkHb1Fw3FqxUvjN9VPPeMDjEp5TF5GYy7UbghbqDW",
+    "wsol": "36454123646"
+   }
+  },
+  {
+   "mint": "AMC1qwR9KhiyrQBRPrxnfo4JfMeMZqEBvt5tgTytNNoc",
+   "gapBps": 395,
+   "thinSideSol": 3.171,
+   "cheap": {
+    "venue": "raydium_cpmm",
+    "pool": "2NsmKXgVDr1XwMLC9qfqM3uRpYUYtwhW8VMje7n4wq3H",
+    "wsol": "11582864697"
+   },
+   "dear": {
+    "venue": "raydium_cpmm",
+    "pool": "7waj3UhJ24zMyosSsECrR2hx4Egzn8uDxP5h3P4RH1aj",
+    "wsol": "3171122162"
+   }
+  },
+  {
+   "mint": "5ic4A4scnqeAT2XkwvWCUYjZoxjVLvoTz4njbmAhbonk",
+   "gapBps": 165.4,
+   "thinSideSol": 7.454,
+   "cheap": {
+    "venue": "raydium_cpmm",
+    "pool": "FqCxsVNH7FSSaXsugXpFryLst5CzUJxda3t7mNcUE6fb",
+    "wsol": "7453621865"
+   },
+   "dear": {
+    "venue": "raydium_cpmm",
+    "pool": "EULN99frqdSAUTh7ZrbVQeKSLkGwGUTMRkx7AABSgWG9",
+    "wsol": "52052956315"
+   }
+  },
+  {
+   "mint": "8Mfgv1WWmyH1Uera1t5BqMpkAk9Z9jwbJZ9x63b4FWcd",
+   "gapBps": 376.8,
+   "thinSideSol": 3.238,
+   "cheap": {
+    "venue": "raydium_cpmm",
+    "pool": "FLfDQXEvUvPFLidXzHQbnbUis9d3kd5Cm7T6YniNnkGk",
+    "wsol": "3237559607"
+   },
+   "dear": {
+    "venue": "raydium_cpmm",
+    "pool": "5Ctvw9DzXzhGWXm2LUVEfTexMh6boCPEK2CokzcrhTAG",
+    "wsol": "4817050366"
+   }
+  },
+  {
+   "mint": "28a2oQVCPrJB7SLZo4DVMVdHchSXiG8sZy31DohPpump",
+   "gapBps": 150.5,
+   "thinSideSol": 7.495,
+   "cheap": {
+    "venue": "pumpswap",
+    "pool": "91FPaXonom2yWwK6t4AWxKJ8gexh6AV6tLji41HFt8FB",
+    "wsol": "610904924771"
+   },
+   "dear": {
+    "venue": "raydium_cpmm",
+    "pool": "kAiumbZ7mc36nxUviLJ993uzmv25wisfGWbEdqQtzCU",
+    "wsol": "7495430050"
+   }
+  },
+  {
+   "mint": "AezonetBkbiJoeia7T7ASePKpMY9AKQJmgtk7HyQEbR1",
+   "gapBps": 428.5,
+   "thinSideSol": 2.605,
+   "cheap": {
+    "venue": "raydium_cpmm",
+    "pool": "EqcJiotYBo7r2XRuhjQvjLLwQpqUScHFbUPhJm6zAdsG",
+    "wsol": "17897177325"
+   },
+   "dear": {
+    "venue": "raydium_cpmm",
+    "pool": "35ZZ5ADhGyzSuYsBEfVooLsnHNLXuJqgECzmGJ4pR1h9",
+    "wsol": "2605201466"
+   }
+  },
+  {
+   "mint": "Cwb4hoCw4LQ3WoHCt74irs2YkgBWyFdcfwJGyYkzeB83",
+   "gapBps": 373.7,
+   "thinSideSol": 2.795,
+   "cheap": {
+    "venue": "raydium_cpmm",
+    "pool": "C1y8wy3WnKxxhZpCQZ6heERiNhFU2KUysTG1h2G8f4Q6",
+    "wsol": "3341094098"
+   },
+   "dear": {
+    "venue": "raydium_cpmm",
+    "pool": "HbfSejACAb1kvwe32phnqicYdESzQYYLXnhBHmXapfcd",
+    "wsol": "2794844129"
+   }
+  },
+  {
+   "mint": "DTFc41ZXq8Mr84pLD6J68YgyhxNmvJ9qnvZQKCotPZPg",
+   "gapBps": 488.6,
+   "thinSideSol": 2.105,
+   "cheap": {
+    "venue": "raydium_cpmm",
+    "pool": "jG97DK3ASuZzYi5zBkQdr6Zf7s1ekdXkJbhvyyMiLmW",
+    "wsol": "19257722340"
+   },
+   "dear": {
+    "venue": "raydium_cpmm",
+    "pool": "6M9rLwZ9rDWAED7U552NwBDtrTy3nWiepBjGv268LFWR",
+    "wsol": "2104882022"
+   }
+  },
+  {
+   "mint": "8uA1NfURM6kfBdP2ZyJYdSppG8jmu3ZjfNK7wyzjpv1",
+   "gapBps": 183.5,
+   "thinSideSol": 5.536,
+   "cheap": {
+    "venue": "raydium_cpmm",
+    "pool": "9BbKAHwQ3r4BLWPFMp3UNw7MHuUy1dUtQGToXPzeQF4y",
+    "wsol": "5535856169"
+   },
+   "dear": {
+    "venue": "raydium_cpmm",
+    "pool": "FhXbXdHSu4FeFr1DwCUu41aoN3xdjdHg9iQLFs5Rvohi",
+    "wsol": "12456991196"
+   }
+  },
+  {
+   "mint": "XANDuUoVoUqniKkpcKhrxmvYJybpJvUxJLr21Gaj3Hx",
+   "gapBps": 146.7,
+   "thinSideSol": 6.239,
+   "cheap": {
+    "venue": "raydium_cpmm",
+    "pool": "C9zjuGax3Tu13fxhsoJ69aE86JpWc5xpZEo2hsGSN2XG",
+    "wsol": "7524051712"
+   },
+   "dear": {
+    "venue": "raydium_cpmm",
+    "pool": "7MxJQeuo8SNDzb7miYvfFFk3q4sFTZ9AjYhSTxkL5xJY",
+    "wsol": "6238631465"
+   }
+  },
+  {
+   "mint": "3gLn1Z5GqzFkYp2zKhmGcMsrpnpJc92R7pmcDzBcBtPp",
+   "gapBps": 882.3,
+   "thinSideSol": 1.023,
+   "cheap": {
+    "venue": "raydium_cpmm",
+    "pool": "9kzf7WvAvgd8rrRuDqmENn1e1uB3uMvjiPH3dFK1VQy7",
+    "wsol": "10747892273"
+   },
+   "dear": {
+    "venue": "raydium_cpmm",
+    "pool": "3YaK1JZhBt8RZtC7Gh9UTtm6xBdRtDfKpPY9CNhwHxtm",
+    "wsol": "1022904467"
+   }
+  },
+  {
+   "mint": "8Mfgv1WWmyH1Uera1t5BqMpkAk9Z9jwbJZ9x63b4FWcd",
+   "gapBps": 186.5,
+   "thinSideSol": 4.782,
+   "cheap": {
+    "venue": "raydium_cpmm",
+    "pool": "4f7RrGXLvQYrpTEuQYPXoGAEeNXrFhuhyMnHQYVJKAWC",
+    "wsol": "4782216961"
+   },
+   "dear": {
+    "venue": "raydium_cpmm",
+    "pool": "5fU4bc8dKZfVFnqWvqU5bJifEGmM9AeYBpePH4T3pNXk",
+    "wsol": "9102076525"
+   }
+  },
+  {
+   "mint": "8Mfgv1WWmyH1Uera1t5BqMpkAk9Z9jwbJZ9x63b4FWcd",
+   "gapBps": 182.6,
+   "thinSideSol": 4.817,
+   "cheap": {
+    "venue": "raydium_cpmm",
+    "pool": "5fU4bc8dKZfVFnqWvqU5bJifEGmM9AeYBpePH4T3pNXk",
+    "wsol": "9102076525"
+   },
+   "dear": {
+    "venue": "raydium_cpmm",
+    "pool": "5Ctvw9DzXzhGWXm2LUVEfTexMh6boCPEK2CokzcrhTAG",
+    "wsol": "4817050366"
+   }
+  },
+  {
+   "mint": "8GYZDvTUGN4U5YaBNyhdJhXF6JAgDhv1vQ4vrC5g3Few",
+   "gapBps": 104.9,
+   "thinSideSol": 8.074,
+   "cheap": {
+    "venue": "raydium_cpmm",
+    "pool": "4exHzwToy3xVGWDtK43HfnTkTd5hfmS9FT9RmdoasW8s",
+    "wsol": "8073859199"
+   },
+   "dear": {
+    "venue": "pumpswap",
+    "pool": "FjdXpJb3A5UxBQsU6mEMbPHyd8m2nn8KwMrz9U6BC97o",
+    "wsol": "73227068716"
+   }
+  },
+  {
+   "mint": "9E3ZNoJMZxeZ4j642CF86ucT8F1DXdv6BPSmgMYNpump",
+   "gapBps": 138.8,
+   "thinSideSol": 5.701,
+   "cheap": {
+    "venue": "pumpswap",
+    "pool": "FrBJXKVWruSgQYfF3FfYd6ux5joWGKWT1NgpbdDjuYQJ",
+    "wsol": "37083285187"
+   },
+   "dear": {
+    "venue": "raydium_cpmm",
+    "pool": "44gcxu8VixsDLtVD8M1aWKfc1apHi1ov6XPU8gLCSe3q",
+    "wsol": "5700946051"
+   }
+  },
+  {
+   "mint": "5G7xzLhXSrLaw8utPNAada8WPdQPZ4Dm6sddhuUckibr",
+   "gapBps": 164.2,
+   "thinSideSol": 4.707,
+   "cheap": {
+    "venue": "raydium_cpmm",
+    "pool": "GJXthq3pnrVzJbGUxN7vqso6EcV9iTGkim1u74aRfjDZ",
+    "wsol": "19016580852"
+   },
+   "dear": {
+    "venue": "raydium_cpmm",
+    "pool": "GuLvURiTGChhPPPbuKyhYEFtAk2RXeSZnPvTon3X7AXC",
+    "wsol": "4707047403"
+   }
+  },
+  {
+   "mint": "Cwb4hoCw4LQ3WoHCt74irs2YkgBWyFdcfwJGyYkzeB83",
+   "gapBps": 452.5,
+   "thinSideSol": 1.682,
+   "cheap": {
+    "venue": "raydium_cpmm",
+    "pool": "C1y8wy3WnKxxhZpCQZ6heERiNhFU2KUysTG1h2G8f4Q6",
+    "wsol": "3341094098"
+   },
+   "dear": {
+    "venue": "raydium_cpmm",
+    "pool": "Fg7CP4doM2ML64GC3fqsECWRbcih5KUUjTsJPbzVugo3",
+    "wsol": "1681859242"
+   }
+  },
+  {
+   "mint": "6P985Tsjw9n4JnJdeJhTPmXLUsWzXScscmA2BcUgpump",
+   "gapBps": 476.5,
+   "thinSideSol": 1.595,
+   "cheap": {
+    "venue": "pumpswap",
+    "pool": "6pa8pbxfX2B5dsfu4Ei26sHyGAfJknLedQtK2Zuwy1iE",
+    "wsol": "22706209626"
+   },
+   "dear": {
+    "venue": "raydium_cpmm",
+    "pool": "AHWwPArigwBU2pfgw8jKVTDTZfaA7AgvFCqTtQYVCM9X",
+    "wsol": "1595393073"
+   }
+  },
+  {
+   "mint": "F8yjN6ieKvczhauWyG3yZxWPnwcDeEnuQKWawPmLpump",
+   "gapBps": 157.2,
+   "thinSideSol": 4.723,
+   "cheap": {
+    "venue": "pumpswap",
+    "pool": "BXziEvUqBChnRJzQRTybr9mcioh15AtXEpcN77GboSFt",
+    "wsol": "8666611423"
+   },
+   "dear": {
+    "venue": "raydium_cpmm",
+    "pool": "72vMVAgbjfLcvpycgWqpb937ABVeGkhqHnsc2n7SnpP8",
+    "wsol": "4722706534"
+   }
+  },
+  {
+   "mint": "3pvAxQ2MbDPB6a17VFwPwERDedy8qK3KjrnJdFD8pump",
+   "gapBps": 155.5,
+   "thinSideSol": 4.769,
+   "cheap": {
+    "venue": "pumpswap",
+    "pool": "DDzz3uz4chQPFvQpLjuUJ24FvUkMfBQZqmJeXJwgZEzd",
+    "wsol": "27993290267"
+   },
+   "dear": {
+    "venue": "pumpswap",
+    "pool": "5EYZg3TYfZNtZC6VyQGYyVL8HQa3swfNyx7Cq3sY6yge",
+    "wsol": "4769207788"
+   }
+  },
+  {
+   "mint": "6Hy5AbCgXyF4noymTDCjKY4EuAv8ijzkU4HePGtMzszf",
+   "gapBps": 240.7,
+   "thinSideSol": 3.004,
+   "cheap": {
+    "venue": "raydium_cpmm",
+    "pool": "AS5fDzXYyqANCRqaYWsUExovChadeNSHLkBXbr39v3yi",
+    "wsol": "29756887273"
+   },
+   "dear": {
+    "venue": "raydium_cpmm",
+    "pool": "6pEv3e2QZJR5iix7ncKNNdZgKs6kjUDC52Wx8EMqQV5S",
+    "wsol": "3003755823"
+   }
+  },
+  {
+   "mint": "BoDgg27XAETeUZKrJdejXSKE6bq3gEEekRpbFFLVp5Re",
+   "gapBps": 458.6,
+   "thinSideSol": 1.569,
+   "cheap": {
+    "venue": "raydium_cpmm",
+    "pool": "6fUxJDGJSw7SZd1i56XNBub1JvTdpVxtDVJmEzmLrHqm",
+    "wsol": "2140425850"
+   },
+   "dear": {
+    "venue": "raydium_cpmm",
+    "pool": "B9QG4w2M6akEdaVjnoxsh6nxsNXdo2EBd8kbT6cjKy9U",
+    "wsol": "1569045953"
+   }
+  },
+  {
+   "mint": "s1ZkgswZki8F1VJTiyMbCEzoaGC6C6r3x3UaVKDbonk",
+   "gapBps": 681.3,
+   "thinSideSol": 1.05,
+   "cheap": {
+    "venue": "raydium_cpmm",
+    "pool": "3C41fwGesrXsMsPjUn45kPUy36P8ZDgVtjHtaRBLBSFt",
+    "wsol": "21377836918"
+   },
+   "dear": {
+    "venue": "raydium_cpmm",
+    "pool": "Gb4xB3VoPqwdBmJMvA6UvDg18nCS7zmBnyGY8kU7SSok",
+    "wsol": "1049831679"
+   }
+  },
+  {
+   "mint": "W2bAuFf2Xeb7ZNpJTywFSaCs5jYkaLYtBMR53SzVXUo",
+   "gapBps": 460.3,
+   "thinSideSol": 1.551,
+   "cheap": {
+    "venue": "raydium_cpmm",
+    "pool": "FDX5owiNqd9Rbn1eaCF1wHSDJKJ3UgEkRRTTVDqbccMf",
+    "wsol": "1550868019"
+   },
+   "dear": {
+    "venue": "raydium_cpmm",
+    "pool": "HQK4rhW8PErZDQTFRE2gQYXTfrbAqXPoMnNYjNFMiXuD",
+    "wsol": "3022669056"
+   }
+  },
+  {
+   "mint": "2hqsbcJ162RAWRMHm7LJA5VfpvizQrKmqYojdF1opump",
+   "gapBps": 150.3,
+   "thinSideSol": 4.734,
+   "cheap": {
+    "venue": "pumpswap",
+    "pool": "EMgdJVhUovyQGrruptyJijxCQHmxBsLW974dRFbfNvAk",
+    "wsol": "12300988238"
+   },
+   "dear": {
+    "venue": "raydium_cpmm",
+    "pool": "EQYHDrgFQ7rv22K5y3PEE1ahzJT9P7YHQEtsUAfLKGCs",
+    "wsol": "4734048891"
+   }
+  },
+  {
+   "mint": "56hrCR3n7danhHNjWaU4VeUHpE1eRE9VRBWpHRPKpump",
+   "gapBps": 122.7,
+   "thinSideSol": 5.672,
+   "cheap": {
+    "venue": "pumpswap",
+    "pool": "6DNmWXHCRBUiXE5m3CLQkiCGo1XvuWKfjh3S9Utvh3mx",
+    "wsol": "38712827219"
+   },
+   "dear": {
+    "venue": "raydium_cpmm",
+    "pool": "6NvWCrQMVG8CWXpLeZk468P6f5W4eFano5nPfmYi1oMy",
+    "wsol": "5671687195"
+   }
+  },
+  {
+   "mint": "Cwb4hoCw4LQ3WoHCt74irs2YkgBWyFdcfwJGyYkzeB83",
+   "gapBps": 216.2,
+   "thinSideSol": 3.165,
+   "cheap": {
+    "venue": "raydium_cpmm",
+    "pool": "C1y8wy3WnKxxhZpCQZ6heERiNhFU2KUysTG1h2G8f4Q6",
+    "wsol": "3341094098"
+   },
+   "dear": {
+    "venue": "raydium_cpmm",
+    "pool": "9Y48VURRZpbFfbt6dtfoYuxpHGCgS6tc2GJSyaKAAPfL",
+    "wsol": "3164581135"
+   }
+  },
+  {
+   "mint": "2zMMhcVQEXDtdE6vsFS7S7D5oUodfJHE8vd1gnBouauv",
+   "gapBps": 155.8,
+   "thinSideSol": 4.276,
+   "cheap": {
+    "venue": "pumpswap",
+    "pool": "9qKxzRejsV6Bp2zkefXWCbGvg61c3hHei7ShXJ4FythA",
+    "wsol": "6749686155998"
+   },
+   "dear": {
+    "venue": "raydium_cpmm",
+    "pool": "2ux1qsjpAHFV7ZmRXpjfjM5uwr5a5AHpMxTdTonASRZ5",
+    "wsol": "4275740436"
+   }
+  },
+  {
+   "mint": "ydDccyq66xKtfqn5bsRpfFXz4WeF4fh3bgQBx1npump",
+   "gapBps": 196.8,
+   "thinSideSol": 3.384,
+   "cheap": {
+    "venue": "pumpswap",
+    "pool": "5uJgHXWfe4ZXgVokmLk1M4Aoyp6Er8ns4DMEo2jSS4TN",
+    "wsol": "149611848676"
+   },
+   "dear": {
+    "venue": "raydium_cpmm",
+    "pool": "4RDarskhUWTaHnc8vuZvQBwuxchp1ogL1C7VGbxDJ9uF",
+    "wsol": "3383871796"
+   }
+  },
+  {
+   "mint": "2zMMhcVQEXDtdE6vsFS7S7D5oUodfJHE8vd1gnBouauv",
+   "gapBps": 152.9,
+   "thinSideSol": 4.276,
+   "cheap": {
+    "venue": "raydium_cpmm",
+    "pool": "A38GwDi771vbkbYEfBCXmcSNj7RrCW23V36mTa36mNZq",
+    "wsol": "10320841224"
+   },
+   "dear": {
+    "venue": "raydium_cpmm",
+    "pool": "2ux1qsjpAHFV7ZmRXpjfjM5uwr5a5AHpMxTdTonASRZ5",
+    "wsol": "4275740436"
+   }
+  },
+  {
+   "mint": "8fzhnxwVFdcvDxL16jtrEcRJrdLoQoNWk7UmS9z4h3dY",
+   "gapBps": 291.6,
+   "thinSideSol": 2.222,
+   "cheap": {
+    "venue": "raydium_cpmm",
+    "pool": "9UHcW43VkgBuVkSgC4pgynYPM3tQofFjJhCA6Rfppjpc",
+    "wsol": "37435770271"
+   },
+   "dear": {
+    "venue": "raydium_cpmm",
+    "pool": "9HGjY4EkpJFNs5X66R6s5xUJF1Wtgh3BgcjP5fMKv5aF",
+    "wsol": "2221733200"
+   }
+  },
+  {
+   "mint": "5NCQoHJqhfmV1aqHYscUKfaStfmNq2wQ7nWakRHbgos3",
+   "gapBps": 135.6,
+   "thinSideSol": 4.555,
+   "cheap": {
+    "venue": "raydium_cpmm",
+    "pool": "E2WQCgEiCjqEfeaLuqe7u6khzN8wznes96EovvQtwHZT",
+    "wsol": "20199579811"
+   },
+   "dear": {
+    "venue": "raydium_cpmm",
+    "pool": "8A3s8rtMMPebWYrikdpoHPvbkw7mqbyvWpiceusC6ovH",
+    "wsol": "4554596039"
+   }
+  },
+  {
+   "mint": "8Mfgv1WWmyH1Uera1t5BqMpkAk9Z9jwbJZ9x63b4FWcd",
+   "gapBps": 190.7,
+   "thinSideSol": 3.238,
+   "cheap": {
+    "venue": "raydium_cpmm",
+    "pool": "FLfDQXEvUvPFLidXzHQbnbUis9d3kd5Cm7T6YniNnkGk",
+    "wsol": "3237559607"
+   },
+   "dear": {
+    "venue": "raydium_cpmm",
+    "pool": "5fU4bc8dKZfVFnqWvqU5bJifEGmM9AeYBpePH4T3pNXk",
+    "wsol": "9102076525"
+   }
+  },
+  {
+   "mint": "3i5vJwLN76HYphPMqqBCFqLzT14mkqCHsgrD8aFUpump",
+   "gapBps": 136.8,
+   "thinSideSol": 4.477,
+   "cheap": {
+    "venue": "pumpswap",
+    "pool": "76CFjFkoL2Uad7uxev2GRafR6kdR7x6z3TfLw2b4oPqB",
+    "wsol": "20127549727"
+   },
+   "dear": {
+    "venue": "raydium_cpmm",
+    "pool": "JZg6epQ33dM7xBsVVPmujtngptBLPBHBYjGBshihfaq",
+    "wsol": "4477129555"
+   }
+  },
+  {
+   "mint": "Foot4fxy8CHxM37W8BeHwK6aLd8VH2yHTFu43KCxbCqc",
+   "gapBps": 414.2,
+   "thinSideSol": 1.41,
+   "cheap": {
+    "venue": "raydium_cpmm",
+    "pool": "HvGdRNTyoT1vbZAmZLYuAjQ6nFfX5pNouumTLmL1HQyY",
+    "wsol": "124172218021"
+   },
+   "dear": {
+    "venue": "raydium_cpmm",
+    "pool": "ZXRCwAVzhb6hDACzGXiLYdhP1FMSfmaEAMn8umy3YKT",
+    "wsol": "1409815287"
+   }
+  },
+  {
+   "mint": "2zMMhcVQEXDtdE6vsFS7S7D5oUodfJHE8vd1gnBouauv",
+   "gapBps": 121.4,
+   "thinSideSol": 4.276,
+   "cheap": {
+    "venue": "raydium_cpmm",
+    "pool": "Ha4SGpJP9mBNcmvYDFCJD7bGbmHTx6mpzcC9XuqsikHJ",
+    "wsol": "80374840459"
+   },
+   "dear": {
+    "venue": "raydium_cpmm",
+    "pool": "2ux1qsjpAHFV7ZmRXpjfjM5uwr5a5AHpMxTdTonASRZ5",
+    "wsol": "4275740436"
+   }
+  },
+  {
+   "mint": "F241tyRL8a46MxCrpTYk32hN3pNm6UAdHB8fHddZpump",
+   "gapBps": 121.2,
+   "thinSideSol": 4.262,
+   "cheap": {
+    "venue": "raydium_cpmm",
+    "pool": "29ZzbVHHWxyrSKr7Dwoustios4DjypoQRqx2idkPXRo4",
+    "wsol": "4261535244"
+   },
+   "dear": {
+    "venue": "pumpswap",
+    "pool": "BXgexZYpd1BKKxgffQDARB2ni1fCutfxjRoD7G8RMkxX",
+    "wsol": "79256433417"
+   }
+  },
+  {
+   "mint": "GxgzW3bUSsM8mQ32Gs54JGpsRdsLRKHHFHiGGzAemibg",
+   "gapBps": 389.3,
+   "thinSideSol": 1.31,
+   "cheap": {
+    "venue": "raydium_cpmm",
+    "pool": "ZTJvuMYhkHuDokoWztWyiCAo5QoGMUNL8J6cjsS2W4r",
+    "wsol": "3285327535"
+   },
+   "dear": {
+    "venue": "raydium_cpmm",
+    "pool": "jfbsaGRqNS4q1kainRQMwsB3Yvz7KdarkrcFrSF6dN9",
+    "wsol": "1310151872"
+   }
+  },
+  {
+   "mint": "HPX7hR9msKu7sJ8vf3C3QFDiy92NX8K5gVryDcic5xk8",
+   "gapBps": 212.4,
+   "thinSideSol": 2.349,
+   "cheap": {
+    "venue": "raydium_cpmm",
+    "pool": "7qkuE8bB5NdmRAiKgDbAtuZjB8ngAs82qx6ytHiMXazM",
+    "wsol": "8436785552"
+   },
+   "dear": {
+    "venue": "raydium_cpmm",
+    "pool": "9Ak4m2uNzKD4tAZQ4rBWfuGWXi6RCLQKDiSH1E6v3aqq",
+    "wsol": "2349191746"
+   }
+  },
+  {
+   "mint": "GxgzW3bUSsM8mQ32Gs54JGpsRdsLRKHHFHiGGzAemibg",
+   "gapBps": 421.2,
+   "thinSideSol": 1.179,
+   "cheap": {
+    "venue": "raydium_cpmm",
+    "pool": "ZTJvuMYhkHuDokoWztWyiCAo5QoGMUNL8J6cjsS2W4r",
+    "wsol": "3285327535"
+   },
+   "dear": {
+    "venue": "raydium_cpmm",
+    "pool": "CQ5vJK2swjGqupGRrm4eBesRR5ny1HNdYKso5cH8jQh6",
+    "wsol": "1179078934"
+   }
+  },
+  {
+   "mint": "Et63bkNtgp7nyvBMBxjKGBCjxet9Hrvm7qXpjnYSbKGh",
+   "gapBps": 235.9,
+   "thinSideSol": 2.093,
+   "cheap": {
+    "venue": "raydium_cpmm",
+    "pool": "HVgiRuDdzzHZYRwnh2f3mCMrwaxMcnqSxCqqDtC64PJA",
+    "wsol": "10175392628"
+   },
+   "dear": {
+    "venue": "raydium_cpmm",
+    "pool": "2hSmcLZ9XskTPyJadN84tRFp49CmzvFBcek78G9udS4T",
+    "wsol": "2093319050"
+   }
+  },
+  {
+   "mint": "85GKQbYydg3fkFCptqzphjZyL3ZjdaWv8FmmCxEYNHpj",
+   "gapBps": 278.9,
+   "thinSideSol": 1.732,
+   "cheap": {
+    "venue": "raydium_cpmm",
+    "pool": "ETE9DfVZeFkQqB1UUVs2VD3zSUKeJqA2cC6NCoqjXWpo",
+    "wsol": "3275385175"
+   },
+   "dear": {
+    "venue": "raydium_cpmm",
+    "pool": "C99Eu9nNGZZyVa6hWS4rDEjepc6VqJK4PNk47nrDA9wU",
+    "wsol": "1732464937"
+   }
+  },
+  {
+   "mint": "6Hy5AbCgXyF4noymTDCjKY4EuAv8ijzkU4HePGtMzszf",
+   "gapBps": 159.9,
+   "thinSideSol": 3.004,
+   "cheap": {
+    "venue": "raydium_cpmm",
+    "pool": "6pEv3e2QZJR5iix7ncKNNdZgKs6kjUDC52Wx8EMqQV5S",
+    "wsol": "3003755823"
+   },
+   "dear": {
+    "venue": "raydium_cpmm",
+    "pool": "J41de1A69woVKzwae8ALBqwsbbkcXSPaYvBGG9e5AgeE",
+    "wsol": "4918043089"
+   }
+  },
+  {
+   "mint": "DKQigKMFUxmRYWm3WzJqMG8AhmtGzPpVfxzuRNu9kez5",
+   "gapBps": 401.4,
+   "thinSideSol": 1.174,
+   "cheap": {
+    "venue": "raydium_cpmm",
+    "pool": "8zxH5aYFVZE7kkVobPY2XNVwyTJzyd4nZRtq2XYEkZJD",
+    "wsol": "1622885505"
+   },
+   "dear": {
+    "venue": "raydium_cpmm",
+    "pool": "2q6KJK32opDdZggkAzHZ8q5hCizbRjisCQNvNnpcQrBd",
+    "wsol": "1174038876"
+   }
+  },
+  {
+   "mint": "FyACwbX91yc9s8fErt39xqd7KBwUaK37nnaUJrBHxoeq",
+   "gapBps": 157.6,
+   "thinSideSol": 2.987,
+   "cheap": {
+    "venue": "raydium_cpmm",
+    "pool": "HSNtLbN4xjRD4N5p42KvxMMFZrBymw1N5jcJRe5sjqJK",
+    "wsol": "2987105703"
+   },
+   "dear": {
+    "venue": "raydium_cpmm",
+    "pool": "61jDpthCBynFUngdsNGbnvA9v5UFFAX7t6pDqq8nij2e",
+    "wsol": "12876563056"
+   }
+  },
+  {
+   "mint": "85GKQbYydg3fkFCptqzphjZyL3ZjdaWv8FmmCxEYNHpj",
+   "gapBps": 267.9,
+   "thinSideSol": 1.732,
+   "cheap": {
+    "venue": "raydium_cpmm",
+    "pool": "F6eBazpR3EkduDscmm1zL9kwnDtDiDfgvmvyYryp4J1r",
+    "wsol": "27072152488"
+   },
+   "dear": {
+    "venue": "raydium_cpmm",
+    "pool": "C99Eu9nNGZZyVa6hWS4rDEjepc6VqJK4PNk47nrDA9wU",
+    "wsol": "1732464937"
+   }
+  },
+  {
+   "mint": "3i5vJwLN76HYphPMqqBCFqLzT14mkqCHsgrD8aFUpump",
+   "gapBps": 268.1,
+   "thinSideSol": 1.71,
+   "cheap": {
+    "venue": "raydium_cpmm",
+    "pool": "EEGnhpCGSC89Tn9tPDA5A8Jnq8b96DjR3xezN3sbUCp4",
+    "wsol": "1709551936"
+   },
+   "dear": {
+    "venue": "raydium_cpmm",
+    "pool": "8w4KAidBQHm1LbhrGMyyvZRUcqf9AeeeQ932H79fDE44",
+    "wsol": "4752127170"
+   }
+  },
+  {
+   "mint": "BJzDWoAxe9HyMyQMWj9MgoYkwDkpEuFuRhyxSUs9PQue",
+   "gapBps": 153.1,
+   "thinSideSol": 2.911,
+   "cheap": {
+    "venue": "raydium_cpmm",
+    "pool": "Fn63A4a8DkakVVYuARMiDCiqQ6LVMALsK6yfzwKu3zJg",
+    "wsol": "3079337834"
+   },
+   "dear": {
+    "venue": "raydium_cpmm",
+    "pool": "GR1a7GowogG4M35rQnnbtB2Cs1wbC4YQZ5jitdExXBQQ",
+    "wsol": "2911264154"
+   }
+  },
+  {
+   "mint": "4fKFEbjRQtfFVYpBoKeUThLnwMzLj29AEH7a3AjUWTqt",
+   "gapBps": 173.1,
+   "thinSideSol": 2.53,
+   "cheap": {
+    "venue": "raydium_cpmm",
+    "pool": "HrPdeVbSc2VZ6wEfddqTwBFbqWJPwykj3kZVtDxa9Ppn",
+    "wsol": "2529948641"
+   },
+   "dear": {
+    "venue": "raydium_cpmm",
+    "pool": "8bjaHDJ5WQibgWP7r38STU9rLYL1cH2yB8qFDSpofSoM",
+    "wsol": "15736234189"
+   }
+  },
+  {
+   "mint": "GxgzW3bUSsM8mQ32Gs54JGpsRdsLRKHHFHiGGzAemibg",
+   "gapBps": 333.8,
+   "thinSideSol": 1.31,
+   "cheap": {
+    "venue": "raydium_cpmm",
+    "pool": "4zar9frEPExUaYuRv7VAJpUsoxsBSeyHPr2ryCjZReyB",
+    "wsol": "3336442631"
+   },
+   "dear": {
+    "venue": "raydium_cpmm",
+    "pool": "jfbsaGRqNS4q1kainRQMwsB3Yvz7KdarkrcFrSF6dN9",
+    "wsol": "1310151872"
+   }
+  },
+  {
+   "mint": "Cwb4hoCw4LQ3WoHCt74irs2YkgBWyFdcfwJGyYkzeB83",
+   "gapBps": 154.2,
+   "thinSideSol": 2.795,
+   "cheap": {
+    "venue": "raydium_cpmm",
+    "pool": "9Y48VURRZpbFfbt6dtfoYuxpHGCgS6tc2GJSyaKAAPfL",
+    "wsol": "3164581135"
+   },
+   "dear": {
+    "venue": "raydium_cpmm",
+    "pool": "HbfSejACAb1kvwe32phnqicYdESzQYYLXnhBHmXapfcd",
+    "wsol": "2794844129"
+   }
+  },
+  {
+   "mint": "GxgzW3bUSsM8mQ32Gs54JGpsRdsLRKHHFHiGGzAemibg",
+   "gapBps": 365.4,
+   "thinSideSol": 1.179,
+   "cheap": {
+    "venue": "raydium_cpmm",
+    "pool": "4zar9frEPExUaYuRv7VAJpUsoxsBSeyHPr2ryCjZReyB",
+    "wsol": "3336442631"
+   },
+   "dear": {
+    "venue": "raydium_cpmm",
+    "pool": "CQ5vJK2swjGqupGRrm4eBesRR5ny1HNdYKso5cH8jQh6",
+    "wsol": "1179078934"
+   }
+  },
+  {
+   "mint": "4cQ9BeG6bdpkQcYGadqc1n6nCWgMuoHZenVH1xXepump",
+   "gapBps": 110.9,
+   "thinSideSol": 3.835,
+   "cheap": {
+    "venue": "raydium_cpmm",
+    "pool": "G9pTJhsSfjFqeMYZoFNe9ziWqYV1p27qTWeUFVyNTAgu",
+    "wsol": "3835217372"
+   },
+   "dear": {
+    "venue": "raydium_cpmm",
+    "pool": "A4KEGeYaGSCSwBayojxXHrgrcpLTMfemA5RT3y66RFUw",
+    "wsol": "13624782037"
+   }
+  },
+  {
+   "mint": "BCxPwtkp121xu9FkE9a3kPFq3Chi8ktMu8yrpoa5pump",
+   "gapBps": 132.8,
+   "thinSideSol": 3.193,
+   "cheap": {
+    "venue": "pumpswap",
+    "pool": "9k62CKYYGpAnReMD1UnQjTf7dg3jR95t2cjs53MSw4q3",
+    "wsol": "52626192438"
+   },
+   "dear": {
+    "venue": "pumpswap",
+    "pool": "EswBoyB8be8J2KQr7pcUStUBHPdRCse99FYiGinFF3CH",
+    "wsol": "3193153839"
+   }
+  },
+  {
+   "mint": "Foot4fxy8CHxM37W8BeHwK6aLd8VH2yHTFu43KCxbCqc",
+   "gapBps": 225.2,
+   "thinSideSol": 1.771,
+   "cheap": {
+    "venue": "raydium_cpmm",
+    "pool": "HvGdRNTyoT1vbZAmZLYuAjQ6nFfX5pNouumTLmL1HQyY",
+    "wsol": "124172218021"
+   },
+   "dear": {
+    "venue": "raydium_cpmm",
+    "pool": "hYqPkXjB3rTdfWnFqP1BqfXFWFVezUATzjppaZ4f1dx",
+    "wsol": "1770896229"
+   }
+  },
+  {
+   "mint": "HcmPd8P19DjSAXvsJw6kMWM57kDrWgz9E1GFRn7qFcH3",
+   "gapBps": 131.6,
+   "thinSideSol": 2.977,
+   "cheap": {
+    "venue": "raydium_cpmm",
+    "pool": "4kVUkYWt7CMaQ9uJxhnU9bX8Az6mgitV1TxjfdaafzjV",
+    "wsol": "2976887484"
+   },
+   "dear": {
+    "venue": "raydium_cpmm",
+    "pool": "4KAdKzi2ytFg58Ehpcqqk9i2bVtiudUVuZDPJvpv87Gm",
+    "wsol": "6005639234"
+   }
+  },
+  {
+   "mint": "Cwb4hoCw4LQ3WoHCt74irs2YkgBWyFdcfwJGyYkzeB83",
+   "gapBps": 231.3,
+   "thinSideSol": 1.682,
+   "cheap": {
+    "venue": "raydium_cpmm",
+    "pool": "9Y48VURRZpbFfbt6dtfoYuxpHGCgS6tc2GJSyaKAAPfL",
+    "wsol": "3164581135"
+   },
+   "dear": {
+    "venue": "raydium_cpmm",
+    "pool": "Fg7CP4doM2ML64GC3fqsECWRbcih5KUUjTsJPbzVugo3",
+    "wsol": "1681859242"
+   }
+  },
+  {
+   "mint": "9ireMXEb32ZSitkkEuVx4eJVjPhUJ8Qd7H96Sbr9rqZk",
+   "gapBps": 205.3,
+   "thinSideSol": 1.89,
+   "cheap": {
+    "venue": "raydium_cpmm",
+    "pool": "4KhtYwC5FjjMmWfU2aNYf2DR1J76mWJXEJ3mKs1Meo3P",
+    "wsol": "9698359487"
+   },
+   "dear": {
+    "venue": "raydium_cpmm",
+    "pool": "Fc2VBLzZzZ9En7r5wv4mnAZjXoQnZy7mFsxhjTVVLoM1",
+    "wsol": "1889565319"
+   }
+  },
+  {
+   "mint": "BhYWCPsCmhNVHpCDJWb8MRQeUJTMDEoM8cGmdQCfpump",
+   "gapBps": 105.8,
+   "thinSideSol": 3.468,
+   "cheap": {
+    "venue": "pumpswap",
+    "pool": "2hPWbT9Hwyzzh3gckEpRm2c9UaW6K7woSxwxjfkVzrRd",
+    "wsol": "42466661872"
+   },
+   "dear": {
+    "venue": "raydium_cpmm",
+    "pool": "BBeY9fNBVA3ZfyKtKDmAjTqcj9xHTwyFzMqfPRzSVtDS",
+    "wsol": "3467880437"
+   }
+  },
+  {
+   "mint": "EBkhmqqrDXDDLBNvedZhb9Fdqs3m7LdZKem2znRPBoNG",
+   "gapBps": 169.8,
+   "thinSideSol": 2.14,
+   "cheap": {
+    "venue": "raydium_cpmm",
+    "pool": "3tjEpppyDxxrSboGKR9psvLJmndXmvMeDi5YMM2w4cy1",
+    "wsol": "121778639867"
+   },
+   "dear": {
+    "venue": "raydium_cpmm",
+    "pool": "5sEygnJnRW4N2NYJNnZFY38Lj7yXRyEnv7AbDgvsSGec",
+    "wsol": "2140012873"
+   }
+  },
+  {
+   "mint": "85GKQbYydg3fkFCptqzphjZyL3ZjdaWv8FmmCxEYNHpj",
+   "gapBps": 143.5,
+   "thinSideSol": 2.44,
+   "cheap": {
+    "venue": "raydium_cpmm",
+    "pool": "ETE9DfVZeFkQqB1UUVs2VD3zSUKeJqA2cC6NCoqjXWpo",
+    "wsol": "3275385175"
+   },
+   "dear": {
+    "venue": "raydium_cpmm",
+    "pool": "CKwhy6rSzwgcMUuW16zaR95T1NXtxc5LMgj1bFNyDGbJ",
+    "wsol": "2440028881"
+   }
+  },
+  {
+   "mint": "DU4UxmsDWBWmLVg7HpoeT7we5vAKT6Mczee5LAHMpump",
+   "gapBps": 143.7,
+   "thinSideSol": 2.417,
+   "cheap": {
+    "venue": "pumpswap",
+    "pool": "7tNj6yx1qhqZ8VEej5Qp6Vjd3yhVFcym1c1W7PuPNn29",
+    "wsol": "21124967054"
+   },
+   "dear": {
+    "venue": "raydium_cpmm",
+    "pool": "D1LXzjPPBsHzX7o5ZXnZnPPdWmhApeUFuxfzKDVLHoby",
+    "wsol": "2416695705"
+   }
+  },
+  {
+   "mint": "4bpdQBtSGgJz1CqU1F52Ru3kegDJFHRGa7Fvsau81K7i",
+   "gapBps": 246.1,
+   "thinSideSol": 1.357,
+   "cheap": {
+    "venue": "raydium_cpmm",
+    "pool": "2Kdt72f8iog8SddCMdfAyKuyxeRSFpoWrZJPKyfrUcFV",
+    "wsol": "1356503749"
+   },
+   "dear": {
+    "venue": "raydium_cpmm",
+    "pool": "3q9xHEZK5JPZeBsZJqeXANABedntGBxFKYMfmdjVUKpE",
+    "wsol": "1381335271"
+   }
+  },
+  {
+   "mint": "3i5vJwLN76HYphPMqqBCFqLzT14mkqCHsgrD8aFUpump",
+   "gapBps": 192.5,
+   "thinSideSol": 1.71,
+   "cheap": {
+    "venue": "pumpswap",
+    "pool": "76CFjFkoL2Uad7uxev2GRafR6kdR7x6z3TfLw2b4oPqB",
+    "wsol": "20127549727"
+   },
+   "dear": {
+    "venue": "raydium_cpmm",
+    "pool": "EEGnhpCGSC89Tn9tPDA5A8Jnq8b96DjR3xezN3sbUCp4",
+    "wsol": "1709551936"
+   }
+  },
+  {
+   "mint": "AYMwf7uvzTMnnDrw64zcMjLBGaqrVcSGP8eNKXtdpump",
+   "gapBps": 286.7,
+   "thinSideSol": 1.137,
+   "cheap": {
+    "venue": "pumpswap",
+    "pool": "C4VwPi7bkEHBqWAb2Tf1YuMmZ4zkEx1vbr9LHd3Dav1e",
+    "wsol": "23183489382"
+   },
+   "dear": {
+    "venue": "raydium_cpmm",
+    "pool": "FSzYD13aRdNovGjgpZNrmp4sXvnVtykimPJv6bWsvo2g",
+    "wsol": "1136788043"
+   }
+  },
+  {
+   "mint": "85GKQbYydg3fkFCptqzphjZyL3ZjdaWv8FmmCxEYNHpj",
+   "gapBps": 132.7,
+   "thinSideSol": 2.44,
+   "cheap": {
+    "venue": "raydium_cpmm",
+    "pool": "F6eBazpR3EkduDscmm1zL9kwnDtDiDfgvmvyYryp4J1r",
+    "wsol": "27072152488"
+   },
+   "dear": {
+    "venue": "raydium_cpmm",
+    "pool": "CKwhy6rSzwgcMUuW16zaR95T1NXtxc5LMgj1bFNyDGbJ",
+    "wsol": "2440028881"
+   }
+  },
+  {
+   "mint": "3fiEMrBMZQEt5wj6GVgi96nfGUHXx8VFhYtoVAgxpump",
+   "gapBps": 109.9,
+   "thinSideSol": 2.798,
+   "cheap": {
+    "venue": "pumpswap",
+    "pool": "DYwUm5q5DffJ81JDyYMxsYPvsXusSYEsen6KmyynvhQw",
+    "wsol": "2797807670"
+   },
+   "dear": {
+    "venue": "pumpswap",
+    "pool": "9cH2L8v1xjv5sBPQzwZg6q81CCKkR3FooAyShyuxSiHP",
+    "wsol": "83767818157"
+   }
+  },
+  {
+   "mint": "37g74RMegbuiGHvwAS3FNhFVTk64PzyN74p8YPJahyHS",
+   "gapBps": 113.8,
+   "thinSideSol": 2.688,
+   "cheap": {
+    "venue": "raydium_cpmm",
+    "pool": "3ZBgEMZBB6UDqLJ83x3B29gSc8Tjk5pKBrxZ82BWwKj7",
+    "wsol": "12510975865"
+   },
+   "dear": {
+    "venue": "raydium_cpmm",
+    "pool": "9mbrvAXLVAZNjNBcV2dKWxH1gkYjH1DeHj4jQwQJKbWT",
+    "wsol": "2688487519"
+   }
+  },
+  {
+   "mint": "Eh36AX4m5CwyCHHcAy95oWRop2EMYVJbLQq7q77hsX9N",
+   "gapBps": 152.1,
+   "thinSideSol": 1.973,
+   "cheap": {
+    "venue": "pumpswap",
+    "pool": "H99xSrbgC5LPbp7KTk13mogPG1g81hYhewwbWoZPKw8A",
+    "wsol": "1973443707"
+   },
+   "dear": {
+    "venue": "pumpswap",
+    "pool": "5bns2je5vrMvtYqa7X8PsyFARja8PLFybLA5PjgkUyZ9",
+    "wsol": "149712328393"
+   }
+  },
+  {
+   "mint": "HbMaLkHDdhcvhUSipyzjJPedihtYELNsx9XNUq8YXXnR",
+   "gapBps": 188.5,
+   "thinSideSol": 1.554,
+   "cheap": {
+    "venue": "raydium_cpmm",
+    "pool": "6bhD39SsejUVxU3q4EJMr8yHQpN4zwPxYhnkawExwGKa",
+    "wsol": "2060479755"
+   },
+   "dear": {
+    "venue": "raydium_cpmm",
+    "pool": "Es85h2KvaCWzwoWbaGoX1qGy8igVZUxp7L8eyPrxuTYR",
+    "wsol": "1553757907"
+   }
+  },
+  {
+   "mint": "6Qd6mmFR84jzg24S3851TWNGeTTFrfPko76UiHyRMDMT",
+   "gapBps": 103,
+   "thinSideSol": 2.812,
+   "cheap": {
+    "venue": "raydium_cpmm",
+    "pool": "3ceKnrpPPUuz9FVsDJuYfTqbK5ia6KND7SQwcnRJ38KC",
+    "wsol": "1117312537521"
+   },
+   "dear": {
+    "venue": "raydium_cpmm",
+    "pool": "9TKvw2GU9nEsvpoDm5Q9dvtKJMkA4fu88XG4HgdzbuNT",
+    "wsol": "2812141182"
+   }
+  },
+  {
+   "mint": "4tjXKVqqQea4XJSYkdeqm38HqLVhtjtNBMFJspRXpump",
+   "gapBps": 195.4,
+   "thinSideSol": 1.429,
+   "cheap": {
+    "venue": "pumpswap",
+    "pool": "9gxMDveNzW7RDke6CcQighEL7wGjkqRSFmV7Xk6pdhZz",
+    "wsol": "27311786501"
+   },
+   "dear": {
+    "venue": "raydium_cpmm",
+    "pool": "294yV2AegN4a3M9FfruhSJvqHKmVmdQ2k83FofteLvPd",
+    "wsol": "1429217001"
+   }
+  },
+  {
+   "mint": "GvQH1VGGbrjeRSbsCreptYN4GUcZ9w7vMFJ5ic8ypump",
+   "gapBps": 165.7,
+   "thinSideSol": 1.658,
+   "cheap": {
+    "venue": "pumpswap",
+    "pool": "DSSA7dRkM2gTHxDVfTKwPvpVcqWP1G2gydLXd1twFWWh",
+    "wsol": "74859706336"
+   },
+   "dear": {
+    "venue": "raydium_cpmm",
+    "pool": "3E9BiSKJnG5kAA79hfaJcL6LiXwudfB1N6bni3xdK9Lr",
+    "wsol": "1658152641"
+   }
+  },
+  {
+   "mint": "8vGr1eX9vfpootWiUPYa5kYoGx9bTuRy2Xc4dNMrpump",
+   "gapBps": 144,
+   "thinSideSol": 1.867,
+   "cheap": {
+    "venue": "raydium_cpmm",
+    "pool": "Cqv7PgzNEP1o2bHDhU6rtYv6yj4YzTmvPzEFycVkKhb1",
+    "wsol": "1866585956"
+   },
+   "dear": {
+    "venue": "pumpswap",
+    "pool": "AypFy111g9Nt1JvUNYmtJd9iS2m8C3PbVEosmX9ecHEu",
+    "wsol": "952180664488"
+   }
+  },
+  {
+   "mint": "5pGwrrxrUtLFKoNbTyfVaikhsYXuio1KTZMmesFn1Nej",
+   "gapBps": 140.3,
+   "thinSideSol": 1.908,
+   "cheap": {
+    "venue": "raydium_cpmm",
+    "pool": "Bzf99mL1E3vdy3wPtKG5WvpZ9bvUjVaZGv1K4H84fDjg",
+    "wsol": "17983528566"
+   },
+   "dear": {
+    "venue": "raydium_cpmm",
+    "pool": "EAbTVeMMdF3SXNjQfASVxggpmVHkn8Vzm5U6vxK5TCR",
+    "wsol": "1907841359"
+   }
+  },
+  {
+   "mint": "4fKFEbjRQtfFVYpBoKeUThLnwMzLj29AEH7a3AjUWTqt",
+   "gapBps": 104.3,
+   "thinSideSol": 2.53,
+   "cheap": {
+    "venue": "raydium_cpmm",
+    "pool": "HrPdeVbSc2VZ6wEfddqTwBFbqWJPwykj3kZVtDxa9Ppn",
+    "wsol": "2529948641"
+   },
+   "dear": {
+    "venue": "raydium_cpmm",
+    "pool": "7gDTD5BLhRTUuq89tUgoRxBhPP4XGBizUzHbtRh516cn",
+    "wsol": "4970871337"
+   }
+  },
+  {
+   "mint": "Foot4fxy8CHxM37W8BeHwK6aLd8VH2yHTFu43KCxbCqc",
+   "gapBps": 184.9,
+   "thinSideSol": 1.41,
+   "cheap": {
+    "venue": "raydium_cpmm",
+    "pool": "hYqPkXjB3rTdfWnFqP1BqfXFWFVezUATzjppaZ4f1dx",
+    "wsol": "1770896229"
+   },
+   "dear": {
+    "venue": "raydium_cpmm",
+    "pool": "ZXRCwAVzhb6hDACzGXiLYdhP1FMSfmaEAMn8umy3YKT",
+    "wsol": "1409815287"
+   }
+  },
+  {
+   "mint": "Hw4TnxWFRfPJkT88RWTSfo2xdazACF3XArULmM4Fo23k",
+   "gapBps": 147.8,
+   "thinSideSol": 1.665,
+   "cheap": {
+    "venue": "raydium_cpmm",
+    "pool": "FuKr7qYW2kzANcNp3TVFX43jjMiM1ugwhSP7msdJB9Ex",
+    "wsol": "1665367194"
+   },
+   "dear": {
+    "venue": "raydium_cpmm",
+    "pool": "3pKLHVbFbCs56pVouc1DytB2RXSGHHXRgcCvp2ZLyVYP",
+    "wsol": "3095180662"
+   }
+  },
+  {
+   "mint": "sxv1symoD4WXjpeXCs5USFEyt8hBhmCuuptLjA8uRNy",
+   "gapBps": 181.4,
+   "thinSideSol": 1.344,
+   "cheap": {
+    "venue": "raydium_cpmm",
+    "pool": "4HBf4XHbkTDA9rgDjvKAowQ1aK9hjvi9Fi3TviG2mPXe",
+    "wsol": "9672202375"
+   },
+   "dear": {
+    "venue": "raydium_cpmm",
+    "pool": "GAbrNR7KP4ro9wwY8xjmnnrJ7zLUFKNQkRoDRFx8jTi5",
+    "wsol": "1344328196"
+   }
+  },
+  {
+   "mint": "AxSMXaM3KeQ3a6HDfGizJaRnzGqrDHJg3uyZbwZUpump",
+   "gapBps": 112.3,
+   "thinSideSol": 2.125,
+   "cheap": {
+    "venue": "pumpswap",
+    "pool": "Fi5NQTueYxRJo7faZsCx69HpwrkDuqkm7b54YkFnVDkW",
+    "wsol": "120217348972"
+   },
+   "dear": {
+    "venue": "raydium_cpmm",
+    "pool": "ERakLAvpjkecJZukryjNCJRgGpWFh758F4HXeoeivAb1",
+    "wsol": "2125174713"
+   }
+  },
+  {
+   "mint": "w48B2e1W3rEHuGrxW3EWy31gakVGvHm5wKHY8gh6TRU",
+   "gapBps": 129.7,
+   "thinSideSol": 1.828,
+   "cheap": {
+    "venue": "raydium_cpmm",
+    "pool": "5Y9rrKrBjfRiWz2ZLHWVH4qY1kPoZpui8rmsPd15TML1",
+    "wsol": "2696102615"
+   },
+   "dear": {
+    "venue": "raydium_cpmm",
+    "pool": "DfLcL6WFwsM6uoxRmd2KKkgRTaJmw5VkZNvKmRHErkxF",
+    "wsol": "1828422010"
+   }
+  },
+  {
+   "mint": "85GKQbYydg3fkFCptqzphjZyL3ZjdaWv8FmmCxEYNHpj",
+   "gapBps": 133.5,
+   "thinSideSol": 1.732,
+   "cheap": {
+    "venue": "raydium_cpmm",
+    "pool": "CKwhy6rSzwgcMUuW16zaR95T1NXtxc5LMgj1bFNyDGbJ",
+    "wsol": "2440028881"
+   },
+   "dear": {
+    "venue": "raydium_cpmm",
+    "pool": "C99Eu9nNGZZyVa6hWS4rDEjepc6VqJK4PNk47nrDA9wU",
+    "wsol": "1732464937"
+   }
+  },
+  {
+   "mint": "7N61kfG6ejeyog4yyyCfhr3GJ5w8ShQLGaymdt3Xpump",
+   "gapBps": 152.3,
+   "thinSideSol": 1.513,
+   "cheap": {
+    "venue": "pumpswap",
+    "pool": "AdprXmHwraQPT7SCESxz98ARH8hf6Dg7d6oQLgLTdH3g",
+    "wsol": "21885694137"
+   },
+   "dear": {
+    "venue": "raydium_cpmm",
+    "pool": "14duMF7r7bjV2sBsu3c1haAeQRNTT8inNpJjztHBetgE",
+    "wsol": "1513282534"
+   }
+  },
+  {
+   "mint": "EsK1asuT6KPtr5L2iLWo6RY3K5ku2eNDu24iz2MKpump",
+   "gapBps": 179.4,
+   "thinSideSol": 1.188,
+   "cheap": {
+    "venue": "pumpswap",
+    "pool": "6PnoWZWXmiCB2eC3ZktNL8XLEuYX4JGBYmYBWTyhT6Tj",
+    "wsol": "23162870135"
+   },
+   "dear": {
+    "venue": "raydium_cpmm",
+    "pool": "CJefTdXX2vTLZx9LJdVPtFB54maRZNqKecfEGCJKiAKk",
+    "wsol": "1187871609"
+   }
+  },
+  {
+   "mint": "F4i59YLr5TMAwg8bggp4VRQ6LBiZ31HpyRxraykEGmWX",
+   "gapBps": 180.4,
+   "thinSideSol": 1.161,
+   "cheap": {
+    "venue": "raydium_cpmm",
+    "pool": "UvijvRoi3jCtf5mURbf6GgGR52fPjiajtS8D3KCzdND",
+    "wsol": "1161299198"
+   },
+   "dear": {
+    "venue": "raydium_cpmm",
+    "pool": "6aBmai8FpKzMjBRMePedFgQzfp8Ldkn49G6KUWZchh5u",
+    "wsol": "1597195130"
+   }
+  },
+  {
+   "mint": "8vGr1eX9vfpootWiUPYa5kYoGx9bTuRy2Xc4dNMrpump",
+   "gapBps": 109.3,
+   "thinSideSol": 1.867,
+   "cheap": {
+    "venue": "raydium_cpmm",
+    "pool": "Cqv7PgzNEP1o2bHDhU6rtYv6yj4YzTmvPzEFycVkKhb1",
+    "wsol": "1866585956"
+   },
+   "dear": {
+    "venue": "raydium_cpmm",
+    "pool": "HMcsLqREEer8Q7VuRTxrxaNnyDgJRYc77XJ9K3gcARWv",
+    "wsol": "69738593934"
+   }
+  },
+  {
+   "mint": "5C44m1439fVPuortcHgGM2oFQ98YFLTLCSgc6fTSpump",
+   "gapBps": 141.8,
+   "thinSideSol": 1.403,
+   "cheap": {
+    "venue": "pumpswap",
+    "pool": "Ai9LJVHCi89ipr8cMPsWqAcTkWbaQaas7gGTkZbm1uNU",
+    "wsol": "1402715658"
+   },
+   "dear": {
+    "venue": "pumpswap",
+    "pool": "8NcYNUwM6dDruDdsyB9jpkhdAb1aJxgS7hx3TNgpy1CX",
+    "wsol": "2303279187"
+   }
+  },
+  {
+   "mint": "C9dELpq6sUs1QLmE6nBtZJjmBGwYRhThKVA1nMMVdTE2",
+   "gapBps": 154.4,
+   "thinSideSol": 1.257,
+   "cheap": {
+    "venue": "raydium_cpmm",
+    "pool": "EBXniSxbfZHRFrFgVng4UyJeujSWLqDqyK2VmcRBof4D",
+    "wsol": "1257350305"
+   },
+   "dear": {
+    "venue": "raydium_cpmm",
+    "pool": "CNNwGw6RejatPzdXKXUmHbLynqw8sL3tj8H7eMBn4gXs",
+    "wsol": "1443431850"
+   }
+  },
+  {
+   "mint": "C9dELpq6sUs1QLmE6nBtZJjmBGwYRhThKVA1nMMVdTE2",
+   "gapBps": 166.9,
+   "thinSideSol": 1.157,
+   "cheap": {
+    "venue": "raydium_cpmm",
+    "pool": "C3i5UJQYK8nRfWhQ31uFn9WcjAxt86jgKVWMU4p7QQCK",
+    "wsol": "1156580448"
+   },
+   "dear": {
+    "venue": "raydium_cpmm",
+    "pool": "CNNwGw6RejatPzdXKXUmHbLynqw8sL3tj8H7eMBn4gXs",
+    "wsol": "1443431850"
+   }
+  },
+  {
+   "mint": "AApu8rUPsT3hzFMZSddC6A2XZSSoeoaq2wEhnvFWpump",
+   "gapBps": 155.5,
+   "thinSideSol": 1.227,
+   "cheap": {
+    "venue": "pumpswap",
+    "pool": "DoLHTiM4Y6mUfDu8LRDMTavtNXPaNaCHBt6oE2E3TFAv",
+    "wsol": "22229040490"
+   },
+   "dear": {
+    "venue": "pumpswap",
+    "pool": "upPHBBWhofnbzVB9AkJyE4wvjZYzjWaRVtxSuvbh6qz",
+    "wsol": "1226701054"
+   }
+  },
+  {
+   "mint": "GkSkaEQgtnw2z45GMsiUR5foEmiAg7VccoS1Zz3KbXrd",
+   "gapBps": 125.9,
+   "thinSideSol": 1.503,
+   "cheap": {
+    "venue": "raydium_cpmm",
+    "pool": "DjVXLKZcnV1ULV4CSwrvRLgDsVGKXZ6v8jpAyfpbh7Ab",
+    "wsol": "10432666130"
+   },
+   "dear": {
+    "venue": "raydium_cpmm",
+    "pool": "A1x6bjX1y2BfGMJS35LVCw6wBbDmjY8xmBbMcDA29k7u",
+    "wsol": "1502770513"
+   }
+  },
+  {
+   "mint": "7pkZAEC4mLq6aLPac5uMzYjYwdA4UcWLTxSA17uBWDnq",
+   "gapBps": 121.5,
+   "thinSideSol": 1.474,
+   "cheap": {
+    "venue": "raydium_cpmm",
+    "pool": "67a1zNyrpq1JkpNaAfgnuGUDsbRWbMrZAXBsYAjdf4GV",
+    "wsol": "3597672265"
+   },
+   "dear": {
+    "venue": "raydium_cpmm",
+    "pool": "BsotQv38fDC5qQtCdSgVxEjNYNmuZwCWKxvBMBRuKEKb",
+    "wsol": "1473835488"
+   }
+  },
+  {
+   "mint": "C9HwNWaVVecVm35raAaZBXEa4sQF3hGXszhGKpy3pump",
+   "gapBps": 102.3,
+   "thinSideSol": 1.68,
+   "cheap": {
+    "venue": "pumpswap",
+    "pool": "83QiEeSqNKd3HkYMd87rbfnaMTThfvBUmwVVGvKdtZ5W",
+    "wsol": "279402123497"
+   },
+   "dear": {
+    "venue": "pumpswap",
+    "pool": "BZiqi94r5CP2nVc3JgR15i8Rg7gN3Xyb9xLcLy27ewLF",
+    "wsol": "1679771809"
+   }
+  },
+  {
+   "mint": "3GX1BNiJwmDre4nRGkaNtfyan56qJmE7PGJarTDmaMkB",
+   "gapBps": 125.5,
+   "thinSideSol": 1.33,
+   "cheap": {
+    "venue": "raydium_cpmm",
+    "pool": "EoLYF4eU1VGoeXFNjspaUZTng7UaRvFxhriaTWgb6tN1",
+    "wsol": "1330367382"
+   },
+   "dear": {
+    "venue": "raydium_cpmm",
+    "pool": "8N7P5S6jXyLfJz8Z4vMyoxgMFg23TaaGQFGkwDxKxyPH",
+    "wsol": "3722623435"
+   }
+  },
+  {
+   "mint": "3fAyYZh8W2noL2xUzK7DfZqphqC6nvBUPmwWtRWEQb9D",
+   "gapBps": 150.2,
+   "thinSideSol": 1.038,
+   "cheap": {
+    "venue": "pumpswap",
+    "pool": "9cZgBZupnnbMyRM9mbvkNNbKfMmaeaqLFGYhfbLZyMRy",
+    "wsol": "4845820834"
+   },
+   "dear": {
+    "venue": "raydium_cpmm",
+    "pool": "144Bi1WeyTHSc5Q5tPPtotirtVubdZoxkCgGENFr7iU8",
+    "wsol": "1038496631"
+   }
+  },
+  {
+   "mint": "J9kxz46uvoTCU6KjmxuShcS6ofXA7RRFGySyP7wnUray",
+   "gapBps": 148.8,
+   "thinSideSol": 1.048,
+   "cheap": {
+    "venue": "raydium_cpmm",
+    "pool": "GCCwCKxd36AGRm38ociAyMfLiT2TMY7yYA4zoGYPuocV",
+    "wsol": "1047708346"
+   },
+   "dear": {
+    "venue": "raydium_cpmm",
+    "pool": "AHm1pmo2Q3r8bwKDZyWSvXVGM6JAa5PF1LyHE4ZTaC44",
+    "wsol": "46893267917"
+   }
+  },
+  {
+   "mint": "7oZCgJNtCFvBNBNx7S1Nza9TwfzSNaovXMkfnk4gpump",
+   "gapBps": 140.9,
+   "thinSideSol": 1.096,
+   "cheap": {
+    "venue": "pumpswap",
+    "pool": "4Tk5Kfz9faB3ytX9K1fiySsM7NJfVaYSEg32DqcJ82T4",
+    "wsol": "39726884888"
+   },
+   "dear": {
+    "venue": "raydium_cpmm",
+    "pool": "2oF9hg7kDRKoWDSRNWfzfa2N8VYvz2ScRKAdn3APcnog",
+    "wsol": "1096459401"
+   }
+  },
+  {
+   "mint": "3HboPtDPaSw1KSBcQJHjoAfDXcYKw54yzcVf2MHaneGd",
+   "gapBps": 107.6,
+   "thinSideSol": 1.225,
+   "cheap": {
+    "venue": "raydium_cpmm",
+    "pool": "3HCSzHPa7sHrnxMbDRbcXTpPSENTSiQdZrjUXXxAaswq",
+    "wsol": "1923143465"
+   },
+   "dear": {
+    "venue": "raydium_cpmm",
+    "pool": "DSEBsSVnaba1EEsCujudSFRrVvZKYmfB6hFtYq6dBnxG",
+    "wsol": "1225376089"
+   }
+  },
+  {
+   "mint": "Et766yNEUmbxyh64NU4mw74ntWaa6KmZRsXwqb3ETuRb",
+   "gapBps": 129.1,
+   "thinSideSol": 1.003,
+   "cheap": {
+    "venue": "raydium_cpmm",
+    "pool": "9Fuu9KmHs2pkoD2S9ksqG3QRuyWPTeARhazJpfHotisf",
+    "wsol": "1002614530"
+   },
+   "dear": {
+    "venue": "raydium_cpmm",
+    "pool": "AZajGuNVoHG2i2LYf5qg2sUr1MEYds16WZC8VHvMJqCo",
+    "wsol": "1605987459"
+   }
+  },
+  {
+   "mint": "GN1cpdAAet4eCj1ubQ9F61nEvFoKn3hrP6CwZR67jhPC",
+   "gapBps": 103.2,
+   "thinSideSol": 1.14,
+   "cheap": {
+    "venue": "raydium_cpmm",
+    "pool": "5BsJ8i5hx8FwetCUBCP3ZTjLzWRnNvgCoXa5m426Spr6",
+    "wsol": "1762732294"
+   },
+   "dear": {
+    "venue": "raydium_cpmm",
+    "pool": "9hYDhP5sHVUR2DvUToMMC3ubhw9p5jdpiSyXiuWutiP4",
+    "wsol": "1139863275"
+   }
+  }
+ ]
+}

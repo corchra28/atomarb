@@ -69,6 +69,27 @@ A coverage experiment ran alongside it: listing 100,000 Standard WSOL pools inst
 
 The reason is liquidity, not fees: the cross-adapter intersection pairs a normal Raydium pool with a PumpSwap pool holding a few thousandths of a SOL, so price impact swamps any gap above dust size. Where both sides are deep, the gap is smaller than the fees. This is a result about **this** population in **this** window, not a proof that Solana atomic arbitrage is impossible.
 
+## The wide-gap search, run over the entire chain (2026-09-18)
+
+The obvious objection to everything above is "you only looked at a shortlist; filter for pools with a gap above 100 bps and look there". That search now exists (`scripts/gap_radar.ts`) and it reads the whole population directly from the chain rather than from an index API:
+
+| | via index API (before) | direct from chain (now) |
+|---|---|---|
+| PumpSwap pools quoted in WSOL | 25,061 (a 13-day-old file) | **322,557** |
+| Raydium CPMM pools with WSOL | 12,043 (listing capped) | **218,303** |
+| mints with two or more such pools | 156 | **7,405** |
+| cost of the scan | — | 362 requests, about 2 minutes |
+
+Filtering for a price gap of at least 100 bps with at least 1 SOL on the thinner side leaves **122 pairs**. Quoting the best 60 of them through the real engine (`scripts/verify_candidates.ts`), with fees, impact, the sizing grid and the network cost: **zero are net positive**, and the best gross result anywhere is **754 lamports against a 9,000-lamport fee**.
+
+The 118 circuits break down into exactly three structural reasons, which is the real answer to "why are there no gaps left":
+
+1. **58 % of them: the gap is smaller than the two pools' own fees.** The median round-trip fee across these pairs is 275 bps, because one side is usually a high-fee tier (4 % pools are common). A gap of 150 bps between a 25 bps pool and a 400 bps pool is not an inefficiency, it is the fee wall itself.
+2. **17 %: the "gap" is a Token-2022 transfer fee.** Moving the token between pools costs a percentage, so the price difference is permanent and uncapturable.
+3. **The remaining 25 %: the gap is real but the pool is not.** Median headroom above fees is 38 bps, on a thinner side of 1 to 3 SOL. The engine's best size there is 0.001 SOL, worth a few hundred lamports, far under the fee.
+
+That is the same wall from three directions: whatever survives on-chain is precisely what cannot be taken by someone paying 9,000 lamports per attempt.
+
 ## The next test that could change the conclusion
 
 Ranked by how much they would change the answer per unit of work:
