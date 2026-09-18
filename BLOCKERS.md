@@ -22,5 +22,6 @@ which every mutation is caught (26 of 26 across the three). They are what the cr
 measurable, and closing it did not change the verdict. 4,046 circuits with a concentrated-liquidity
 leg produced 4 positive gross results and zero positive net. Blocker 4 remains the only thing
 between this repository and a realised-profit claim, and `docs/REAL_WORLD_MEV.md` measures why
-crossing it would not pay: about $21,000 a day for the whole market, won in an auction, with
+crossing it would not pay: $21,000–107,000 a day for the whole market (two censuses, see
+`docs/REAL_WORLD_MEV.md` §10), won in an auction whose top ten trades take 81–82% of all profit, with
 capital saturating near $1,538.

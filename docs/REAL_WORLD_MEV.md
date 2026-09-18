@@ -226,3 +226,58 @@ removed 24 circuits and took the net-positive count from 7 to 0.
 **The counter-intuitive part: the better a scanner's pool coverage, the more of these it finds.**
 Abandoned pools are exactly where large stale prices survive. Any census or scan of this kind
 needs the frozen check before it quotes, or its most exciting results will all be phantoms.
+
+---
+
+## 10. Correction: $21,000 a day was a low sample
+
+Every conclusion in this document rests on one number, and that number had **one observation**
+behind it: 120 blocks, about 32 seconds of chain, at 09:00 UTC on a Friday. That is a sample of
+one drawn from a heavily skewed distribution, which is exactly the shape where a single sample
+misleads.
+
+Repeating the census 13 hours later, at 22:20–22:45 UTC the same day, with a larger sample:
+
+| | 09:00 UTC, 120 blocks | 22:20 UTC, 300 blocks |
+|---|---:|---:|
+| Verified circuits | 104 | **453** |
+| Circuits per block | 0.87 | 1.51 |
+| Total take-home, extrapolated | 200 SOL/day = **$21,173** | 947 SOL/day = **$107,350** |
+| Same, excluding the ten largest trades | 38 SOL/day | 170 SOL/day |
+| Median trade | 24,585 lamports = $0.0026 | 7,716 lamports = **$0.00087** |
+| Top ten trades' share of all profit | 81% | 82% |
+| Distinct signers | 44 | 81 |
+
+**The market is roughly five times larger than this document claimed.** The tail scales with it
+(4.5x), so it is not one whale distorting a total — the whole distribution shifted up.
+
+A caution on method: a third run was launched at 22:45 and its slot range turned out to overlap
+the second's, sharing 53 identical transactions. It is not an independent observation and is not
+counted as one. What is reported above is the larger of the two overlapping evening runs. So this
+is **two** independent samples, not three, and two is still few.
+
+### What does not change, and why the conclusion stands
+
+Three things are the same in both samples, and they are the ones that decide whether this is
+enterable:
+
+- **The concentration is identical.** The top ten trades take 81% of all profit in the morning and
+  82% in the evening. Whatever the market's size, the money is in a handful of contested trades.
+- **The operators are the same people.** 33 signers appear in both samples, 75% of the smaller
+  set, thirteen hours apart. This is a stable roster of incumbents, not a rotating crowd.
+- **The median trade got smaller as the market got busier** — $0.0026 down to $0.00087. More
+  activity meant thinner margins per trade, not fatter ones.
+
+So the correction is to the size, not to the shape. A new entrant still faces the same problem:
+the money is in the contested head, the head goes to whoever is fastest, and the same operators
+are there at every hour sampled.
+
+### The methodological lesson, which is the durable part
+
+**A 120-block census extrapolated to a day is unreliable by about a factor of five.** Nine minutes
+of chain is not a day, and on a distribution where ten trades carry 82% of the value, the sample
+either catches a big one or it does not.
+
+Any figure in this repository derived from a single short census should be read as an
+order-of-magnitude estimate with a wide band, not a measurement. The honest range from what has
+actually been sampled is **$21,000 to $107,000 a day**, and the true figure could sit outside it.

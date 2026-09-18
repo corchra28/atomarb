@@ -29,10 +29,14 @@ PHANTOM_REMOVED             = the first run reported a 371% return plus 6 smalle
                               A guard rejecting pools that hold a frozen token account removed 24 circuits
                               and took net-positive from 7 to 0. Pinned as a regression test.
 
-MARKET_SIZE_MEASURED        = ~$21,000/day for all atomic arbitrage on Solana, from 104 verified winners in 120 blocks
-                              median winning trade: $0.0026 take-home, $2.49 of capital deployed
+MARKET_SIZE_MEASURED        = $21,000-107,000/day for all atomic arbitrage on Solana — TWO censuses, 13 hours apart
+                              09:00 UTC, 120 blocks, 104 circuits -> $21,173/day
+                              22:20 UTC, 300 blocks, 453 circuits -> $107,350/day
+                              a nine-minute census extrapolated to a day is unreliable by ~5x; read it as an order of magnitude
+                              INVARIANT ACROSS BOTH: top 10 trades take 81-82% of all profit;
+                              75% of signers appear in both samples; median trade fell from $0.0026 to $0.00087 as volume rose
                               capital saturates near $1,538 — the largest deployed in any winning trade observed
-                              101 of 104 winners pay for block position; top 3 trades take 56% of all profit
+                              101 of 104 winners pay for block position
 
 TRANSACTIONS_BROADCAST      = 0
 KEYPAIRS_READ               = 0

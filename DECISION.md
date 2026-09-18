@@ -138,7 +138,7 @@ Three measured facts reorder everything in the "next decisive test" list:
 | share of all profit taken by the top 3 trades of 104 | 56% (top 10: 81%) |
 | real winning trades whose entire profit is below the assumed 9,000-lamport cost | 43 of 123 |
 | median take-home per trade | 24,585 lamports, about $0.0026 |
-| total take-home across every searcher, per block | about $0.065, roughly $21,000 a day network-wide |
+| total take-home across every searcher, per block | about $0.065, roughly $21,000 a day network-wide — **later corrected to a $21,000–107,000 range**, see `docs/REAL_WORLD_MEV.md` §10 |
 
 The engine was built on the one venue combination that never appears among the winners. Constant-product against constant-product tracks too closely to diverge past its own fees, which is exactly what the whole-chain radar found. The divergence lives between a concentrated-liquidity pool, which prices in ticks and can sit stale inside a range, and a continuous curve.
 
@@ -148,7 +148,7 @@ Revised order for the next decisive test:
 2. **Drop the flat 9,000-lamport fee assumption.** A majority of real winners pay 5,000 and no tip; the old floor sat above the entire profit of a third of the real opportunity set.
 3. **Replace polling with a direct feed.** 101 of 104 winners pay for block position, most of them through the Jito tip rather than the priority fee, so seeing the state first is what lets you bid at all.
 
-Even with all three done, the addressable prize is a fraction of $21,000 a day against 51 incumbents with existing infrastructure. The engineering is tractable; the economics of entering are the real blocker. That is a more useful conclusion than "no edge exists" and it is what the data supports.
+Even with all three done, the addressable prize is a fraction of the market against a stable set of incumbents with existing infrastructure — 75% of the operators are the same people thirteen hours apart. The engineering is tractable; the economics of entering are the real blocker. That is a more useful conclusion than "no edge exists" and it is what the data supports.
 
 ## Concentrated liquidity added, and the verdict re-measured (2026-09-19)
 
@@ -186,7 +186,7 @@ of the fee.
 **The verdict does not change. `NO_VERIFIED_EDGE` stands, and the reason has moved.** It was
 partly a coverage problem; it is now purely the auction. The census already measured what that
 auction costs: 101 of 104 winners pay for block position, the top three trades take 56% of all
-profit, and the whole market is about $21,000 a day.
+profit, and the whole market is $21,000–107,000 a day.
 
 ### A phantom worth recording
 
@@ -203,3 +203,21 @@ This is pinned as a regression test in `integrations/gap_scan/tests/verify_suspi
 three pools' snapshots vendored so it runs from a clean clone. Without the guard, a scanner of this
 kind reports large phantom arbitrage on abandoned pools — and the more thorough its pool coverage,
 the more of them it finds.
+
+## The market-size figure, corrected (2026-09-19)
+
+Every conclusion above leans on one number, and it had one observation behind it: a 120-block
+census at 09:00 UTC giving about $21,000 a day. Repeating it thirteen hours later with a larger
+sample gives **$107,350 a day** — roughly five times more. Details in `docs/REAL_WORLD_MEV.md` §10.
+
+The correction is to the size, not to the shape. Across both samples:
+
+- the top ten trades take **81–82%** of all profit, identically;
+- **75% of the operators are the same people**, thirteen hours apart;
+- the median trade got *smaller* as the market got busier, from $0.0026 to $0.00087.
+
+So the entry problem is unchanged: the money is in a handful of contested trades, they go to
+whoever is fastest, and the same roster is present at every hour sampled. What changes is that any
+figure in this repository derived from a single short census is an order of magnitude with a wide
+band, not a measurement. **Nine minutes of chain is not a day**, and on a distribution where ten
+trades carry 82% of the value, a short sample either catches a big one or it does not.
