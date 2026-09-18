@@ -145,3 +145,44 @@ The honest summary of all three audits together:
 This is not a business with a steady trickle. It is a handful of large hits carrying everything, and those hits are precisely the contested ones that go to whoever is fastest. Winning the long tail instead is not an alternative: the entire uncontested tail is worth $167 a day across the whole network.
 
 So the realistic arithmetic for a new entrant, stated plainly: to earn anything you must win contested opportunities; to win those you need a co-located node and a direct feed, which costs $500 to $2,000 a month; and you are bidding against 51 incumbents who already have both. There is no configuration of this where the expected return covers the running cost.
+
+---
+
+## 8. How big is the rest of it?
+
+Section 6 admits this census covers atomic single-transaction arbitrage only, and calls the other categories "larger". That claim was never measured, so it gets measured here.
+
+**Total tips are the cleanest proxy for the whole market.** Every MEV bundle pays for block position, so the sum of lamports flowing into Jito tip accounts is a floor on what MEV is worth to the people doing it, across every category at once. Over 150 blocks and 141,889 successful transactions:
+
+| | |
+|---|---|
+| Transactions paying a tip | 3,339 (2.4% of successful) |
+| Median tip | 1,995 lamports, about $0.0002 |
+| **Total tips, extrapolated** | **~$68,600 a day** |
+| Same, excluding the ten largest tips | ~$37,900 a day |
+| Share of all tips taken by the top 50 | **70.6%** |
+
+**A correction on the way to that number.** A first pass over 60 blocks returned $413,000 a day. One transaction in that sample tipped 0.517 SOL and carried 72% of the total. Re-running over 150 blocks brought it to $68,600, a factor of six lower. The first figure was one observation wearing a daily rate as a costume, and it is exactly the error this repository keeps catching elsewhere.
+
+**What that implies for the pie.** Tips are what participants pay, not what they keep. Atomic arbitrage take-home was measured at about $21,000 a day. Against $68,600 a day in total tips across every MEV category, the honest reading is that total extracted MEV sits in the low hundreds of thousands of dollars a day at most, and that atomic arbitrage is a real share of it rather than a rounding error.
+
+The premise behind "you measured the small corner" does not survive. **The whole market is small.**
+
+### Liquidations
+
+| | |
+|---|---|
+| Lending-protocol transactions seen | 13 in 150 blocks |
+| Of which liquidations | **2** |
+
+Too few to size. Whatever liquidations are worth, they are not a steady stream at this frequency, and the two observed sent no profit to the fee payer's native balance, so a measurement would need to follow the collateral rather than the lamports.
+
+### Sandwiching — what I could not establish
+
+Conservative detection: two successful transactions in one block by the same signer, sharing a pool account, with a different signer's transaction between them touching that same account, and the bracketing signer ending up ahead.
+
+Across 100 blocks and 14,580 DEX transactions this found **2**, worth $12.96 and $0.003.
+
+**That is not a size estimate and must not be read as one.** Two observations cannot support a daily figure, and the detector requires the same signer on both sides, which is the one thing a sandwich bot has every reason not to do. A real measurement needs front and back matched by pool and direction across *different* signers, which this does not attempt. The honest status is UNKNOWN, and the $68,600 a day in total tips is the bound that actually constrains it.
+
+I am not building a sandwich bot. It profits by making an ordinary user's swap fill worse, and the gain is exactly the user's loss. Measuring the market to understand it is one thing; running that particular extraction is another, and it is not work I will do.
