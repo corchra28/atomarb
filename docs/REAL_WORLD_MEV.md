@@ -42,7 +42,7 @@ Summed across **every searcher on the network**:
 | Per block | **$0.065** |
 | Extrapolated per day | **~$21,000** |
 
-That last figure is the entire atomic-arbitrage prize pool on Solana, split between everyone competing for it. It is an order-of-magnitude estimate from 32 seconds of chain time, not a precise number, and it covers **atomic arbitrage only** — sandwiching, liquidations, just-in-time liquidity and exchange-versus-chain flow are separate and larger categories not measured here.
+That last figure is the entire atomic-arbitrage prize pool on Solana, split between everyone competing for it. It is an order-of-magnitude estimate from 32 seconds of chain time, not a precise number, and it covers **atomic arbitrage only**. Sandwiching, liquidations and just-in-time liquidity are separate categories; §8 measures how much room is left for them and finds it is far less than I assumed when I first wrote this line.
 
 A new entrant with no latency advantage is competing for a share of $21,000 a day against 51 incumbents. The median winning trade pays a quarter of a cent.
 
