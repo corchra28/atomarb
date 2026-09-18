@@ -1,0 +1,1123 @@
+{
+ "summary": {
+  "sized": 96,
+  "ofCensus": 104,
+  "capitalPerTradeSol": {
+   "p10": 0.0006,
+   "p50": 0.0235,
+   "p90": 0.9885,
+   "max": 14.5432
+  },
+  "capitalPerTradeUsd": {
+   "p10": 0.07,
+   "p50": 2.49,
+   "p90": 104.53,
+   "max": 1537.94
+  },
+  "returnPerTradeBps": {
+   "p10": 0.31,
+   "p50": 10.86,
+   "p90": 398.27,
+   "max": 4525.62
+  },
+  "largestSingleTrade": [
+   {
+    "capitalSol": 14.5432,
+    "profitUsd": 0.02,
+    "returnBps": 0.1,
+    "venues": [
+     "Tessera V",
+     "Orca Whirlpool"
+    ]
+   },
+   {
+    "capitalSol": 12.4301,
+    "profitUsd": 0.27,
+    "returnBps": 2.02,
+    "venues": [
+     "Meteora DLMM",
+     "Tessera V"
+    ]
+   },
+   {
+    "capitalSol": 11.7529,
+    "profitUsd": 0.3,
+    "returnBps": 2.43,
+    "venues": [
+     "Tessera V",
+     "Raydium CPMM"
+    ]
+   },
+   {
+    "capitalSol": 5.789,
+    "profitUsd": 0.05,
+    "returnBps": 0.79,
+    "venues": [
+     "Meteora DLMM",
+     "PumpSwap AMM"
+    ]
+   },
+   {
+    "capitalSol": 1.9485,
+    "profitUsd": 0.16,
+    "returnBps": 7.95,
+    "venues": [
+     "Raydium AMM v4",
+     "Meteora DLMM",
+     "Orca Whirlpool"
+    ]
+   }
+  ],
+  "mostProfitable": [
+   {
+    "capitalSol": 1.0727,
+    "profitUsd": 2.13,
+    "returnBps": 187.44,
+    "venues": [
+     "Meteora DLMM",
+     "PumpSwap AMM"
+    ]
+   },
+   {
+    "capitalSol": 1.6261,
+    "profitUsd": 1.6,
+    "returnBps": 93.21,
+    "venues": [
+     "Meteora DLMM",
+     "Meteora DAMM v2",
+     "Orca Whirlpool"
+    ]
+   },
+   {
+    "capitalSol": 0.129,
+    "profitUsd": 0.64,
+    "returnBps": 469.33,
+    "venues": [
+     "Meteora DLMM",
+     "Meteora DAMM v2",
+     "Meteora Dynamic AMM"
+    ]
+   },
+   {
+    "capitalSol": 0.0729,
+    "profitUsd": 0.39,
+    "returnBps": 505.08,
+    "venues": [
+     "Meteora DLMM",
+     "PumpSwap AMM"
+    ]
+   },
+   {
+    "capitalSol": 0.1917,
+    "profitUsd": 0.39,
+    "returnBps": 191.53,
+    "venues": [
+     "Meteora DLMM",
+     "Orca Whirlpool",
+     "Raydium CPMM"
+    ]
+   }
+  ]
+ },
+ "rows": [
+  {
+   "signature": "yr6573YMsS2G9Rfwv1FmpMsQSjCqftQJ1CSfBFXhpDoPo48xjKAYxrBMX8rKX25mAgC8XgXbrdu8Vx9co8FbF3D",
+   "capitalLamports": 14543185204,
+   "netLamports": 151185,
+   "returnBps": 0.10395590641204076,
+   "venues": [
+    "Tessera V",
+    "Orca Whirlpool"
+   ]
+  },
+  {
+   "signature": "3dYQXkC4cEbBVYYBjcutyuCL7zZoit39YXE6uM12iyLbqi54KAWFsWBkhM557ivyYi9mg3NSo37Us7YBxfRCiiKP",
+   "capitalLamports": 12430079000,
+   "netLamports": 2506316,
+   "returnBps": 2.016331513259087,
+   "venues": [
+    "Meteora DLMM",
+    "Tessera V"
+   ]
+  },
+  {
+   "signature": "58hKgcmUxWB4cVDzXgk8dYKvvdGoAmQXvJSTE8tt3JhjuSyVCU8n1TgkbmHe83TZQojGFPnQ3g4xV39XCAic2uP8",
+   "capitalLamports": 11752900256,
+   "netLamports": 2859320,
+   "returnBps": 2.432863325407941,
+   "venues": [
+    "Tessera V",
+    "Raydium CPMM"
+   ]
+  },
+  {
+   "signature": "2QyBD8AKPxbZB556CdPoAsHzHLWWTGJpJGJH7HeivpMhG1iVbm5nr46ic8Ypf5NxC3SpXf95YMFy6p5nFz4AGQbP",
+   "capitalLamports": 5788980935,
+   "netLamports": 454866,
+   "returnBps": 0.7857445120433791,
+   "venues": [
+    "Meteora DLMM",
+    "PumpSwap AMM"
+   ]
+  },
+  {
+   "signature": "3HqqvsPtwwfGDmNBSmzBqpsLvmQvNiU9FgULf3vTwjSWeqySZ7YS8Gj94wirf7reB2nW8o8ubC43Tg5LrQdiJRHG",
+   "capitalLamports": 1948464798,
+   "netLamports": 1548368,
+   "returnBps": 7.946604945541337,
+   "venues": [
+    "Raydium AMM v4",
+    "Meteora DLMM",
+    "Orca Whirlpool"
+   ]
+  },
+  {
+   "signature": "4c3ndmaBqmbA6PWCtvJnreUcxXanUJLgH17UCZFgcEopWtfWsXNBWRmNHbee7BLVVhbYUe5CNrdwEqNHfSX3Zp6r",
+   "capitalLamports": 1626061383,
+   "netLamports": 15157066,
+   "returnBps": 93.21336917820402,
+   "venues": [
+    "Meteora DLMM",
+    "Meteora DAMM v2",
+    "Orca Whirlpool"
+   ]
+  },
+  {
+   "signature": "Y6aoKW1LTCse4r34uByUjuDkAhaUAwkhvMBBFZYAsqDUKBzhNtTEZ5YBThdXLCvLMYjbbPPoTDPAuB5W9bxtwwB",
+   "capitalLamports": 1285007717,
+   "netLamports": 821785,
+   "returnBps": 6.395175601890958,
+   "venues": [
+    "Meteora DLMM",
+    "Orca Whirlpool"
+   ]
+  },
+  {
+   "signature": "62rQRpzwm75FBQDAxo3MCghJFQaNsSLqQjjZYQRYPjfZEX2Edu1UXGrgnxQVscjCGC9za3RwxTGgeqar5W8y4rVx",
+   "capitalLamports": 1133007021,
+   "netLamports": 1983433,
+   "returnBps": 17.50591976252193,
+   "venues": [
+    "Raydium AMM v4",
+    "Meteora DLMM",
+    "Orca Whirlpool"
+   ]
+  },
+  {
+   "signature": "48pXX51SJymjEv7ydz3WjDRLapkDhqif9v4iXVdhdPShS4MoG3SXRxwdBZnrjU4CAZKXVYesNW2LmLf4MdsZsQSD",
+   "capitalLamports": 1072733833,
+   "netLamports": 20107425,
+   "returnBps": 187.44095116090182,
+   "venues": [
+    "Meteora DLMM",
+    "PumpSwap AMM"
+   ]
+  },
+  {
+   "signature": "3hdxJYeoBNUzc7RfUBqee5wS1RJC9TBqhp7GnNrLJRNF7hTovoohgo1cYFRDAPz9MchhVz1FbWNr84WbkMMyNuJV",
+   "capitalLamports": 988467474,
+   "netLamports": 962721,
+   "returnBps": 9.739531399087795,
+   "venues": [
+    "Meteora DLMM",
+    "Orca Whirlpool"
+   ]
+  },
+  {
+   "signature": "5P4ohua8C9YtGvdG9zEZN4z4LFRSmQ5t8DB18mi5CVkXKnNHLFbNVVRwzHxseKfiyDnwK625TXeU3DjdbuN8mdsw",
+   "capitalLamports": 988343533,
+   "netLamports": 545120,
+   "returnBps": 5.515491140467653,
+   "venues": [
+    "Meteora DLMM",
+    "Orca Whirlpool"
+   ]
+  },
+  {
+   "signature": "5KPH3JGkoUK67eg4t5aCyWnYprt88Ejh4HFJTskMdckPa1BmwvxP6Yeqibp4ohXb2DkwoSKtqqre1YN6PsnnXQxx",
+   "capitalLamports": 888330931,
+   "netLamports": 964992,
+   "returnBps": 10.862978720258024,
+   "venues": [
+    "Meteora DLMM",
+    "Orca Whirlpool"
+   ]
+  },
+  {
+   "signature": "3beYUHtZwj2LrNQf1cD5eYp7wFAHsYvuXtBh7NmCo8JS1YdYzycjtahiaLu5n23V14PzBNcxT1opSspVbhxQhhZR",
+   "capitalLamports": 569159513,
+   "netLamports": 68093,
+   "returnBps": 1.196378140832375,
+   "venues": [
+    "Orca Whirlpool",
+    "Meteora DLMM"
+   ]
+  },
+  {
+   "signature": "47nz8BnFvszXhQ3BQ7n7LYQ1BKfCNbLrhAGGZoefHXKKbU46Rb5bFnr4Fd6eFWbjHRPRi7Lyxg3FLG6UMSzf2D5A",
+   "capitalLamports": 560075223,
+   "netLamports": 185105,
+   "returnBps": 3.305002478211753,
+   "venues": [
+    "Orca Whirlpool",
+    "Meteora DLMM"
+   ]
+  },
+  {
+   "signature": "J8U1jjANMBjTAoVCZMP7e41owNHxMC9ixHS2An5sNRMRW9pMKhwDtZQdw2U5XM1vmMFNLjYGhjANrcrtR6SpQUn",
+   "capitalLamports": 515035890,
+   "netLamports": 18390,
+   "returnBps": 0.3570624951981502,
+   "venues": [
+    "Tessera V",
+    "Raydium CLMM"
+   ]
+  },
+  {
+   "signature": "5oD7evZxbgoQtHT5UZXFTqcb2yMx5FPX5ZwiLRe4XcsNw4yVkE9GwYkSTMXmR19J2xGo4iZ5poawbuUvDDsErmEf",
+   "capitalLamports": 500821025,
+   "netLamports": 343179,
+   "returnBps": 6.852328134586601,
+   "venues": [
+    "Orca Whirlpool",
+    "Meteora DLMM"
+   ]
+  },
+  {
+   "signature": "3J7rUrYTVye5h2MP5roqRt3fnFb1XxeMKDcTU3jqktoQM9iYwEa4vKfXqBGnN3KcWK2DFDk1qq7Hc9tcKVAEeGfV",
+   "capitalLamports": 500309688,
+   "netLamports": 303902,
+   "returnBps": 6.074277738151655,
+   "venues": [
+    "Meteora DLMM",
+    "Orca Whirlpool"
+   ]
+  },
+  {
+   "signature": "aoEZnBWeHcnS9DtcuZ1UDqkMjzaDsvSBjYKkk7DisNHfHcrJg9fWTqHg4PdEnHJio9WDnedw2xi8GTKs7R1qnD3",
+   "capitalLamports": 494233764,
+   "netLamports": 392278,
+   "returnBps": 7.9370943179835045,
+   "venues": [
+    "Meteora DLMM",
+    "Orca Whirlpool"
+   ]
+  },
+  {
+   "signature": "4NBoyBDsfUjETET3zRFMbZrFCECHRMSuVjWZcp3YcrhAxNViHfdvgCgkwQKoNCP1T7DAeMfKS3xeKXTSyjyXNab4",
+   "capitalLamports": 439954052,
+   "netLamports": 149651,
+   "returnBps": 3.4015143017707676,
+   "venues": [
+    "Meteora DLMM",
+    "Raydium CPMM",
+    "Orca Whirlpool"
+   ]
+  },
+  {
+   "signature": "279FtXAGWCa6XvzQ7aTSrQktSiRy29mK745eBAUJnXriSaXQTd7dKP3D5TvvZTAkjjpgavNAst6qjE5fCeRGDRqq",
+   "capitalLamports": 428900643,
+   "netLamports": 3892,
+   "returnBps": 0.09074362707355511,
+   "venues": [
+    "Meteora DLMM",
+    "Tessera V"
+   ]
+  },
+  {
+   "signature": "54MLiWAA2a6vzFS6CQofjRo1F1tw7F73roVGJJLQP1hKyWsNn62t1W6HZZCfm1uRJq2PNNEKEZ3Azfk5FCKKNyM",
+   "capitalLamports": 398267321,
+   "netLamports": 1073,
+   "returnBps": 0.026941703308868768,
+   "venues": [
+    "Orca Whirlpool",
+    "Meteora DLMM",
+    "Tessera V"
+   ]
+  },
+  {
+   "signature": "HC8rU3g9mUPCWA9UVWVDqeWKp573URny3e9dHm9Bq76LHJNXqKwh1atyUDKqf6h1e5q2sFchrTwKB1aZPDMezcJ",
+   "capitalLamports": 394640174,
+   "netLamports": 536072,
+   "returnBps": 13.583817242083418,
+   "venues": [
+    "Orca Whirlpool",
+    "Meteora DLMM",
+    "Meteora DAMM v2"
+   ]
+  },
+  {
+   "signature": "5ZhnPoDuJ6tkVYsAmaFJjppC7rWXi6sQFQaeUcjJZ7sUN4mJu8Z9sdfQBdJ3cWvL1CoT55cnvCi4AKComZxMAkJS",
+   "capitalLamports": 344864964,
+   "netLamports": 33049,
+   "returnBps": 0.9583171226405011,
+   "venues": [
+    "Meteora DLMM",
+    "PumpSwap AMM"
+   ]
+  },
+  {
+   "signature": "3M5zauwTNryi2WVk3ZVCBa9akWJCMebvuuyBBnaY93e1EnuYLoXvViKbxz52Cq5gepejywVgBhJSKQBNSW8frKwQ",
+   "capitalLamports": 330000000,
+   "netLamports": 20662,
+   "returnBps": 0.6261212121212121,
+   "venues": [
+    "Raydium CLMM",
+    "Tessera V",
+    "Orca Whirlpool"
+   ]
+  },
+  {
+   "signature": "2NhiEcMovFsmt1HZvTeQEt3LUiZpRrAmRkDKY3qLX8VUz98XGcst7dpLcJ9HSue7gptmaFYZaSqebgEafDdVJ4tg",
+   "capitalLamports": 280000000,
+   "netLamports": 10269,
+   "returnBps": 0.36674999999999996,
+   "venues": [
+    "Orca Whirlpool",
+    "Tessera V"
+   ]
+  },
+  {
+   "signature": "5hiSVhER3nC2Q9qQoLvAsKDpJjjMoPJ5CYP2b8UAhqRQLHsfY844dvN53iQk8GhTbsGZG5UZQXHk9vrqHphSzFHr",
+   "capitalLamports": 278718548,
+   "netLamports": 8715,
+   "returnBps": 0.31268102042494855,
+   "venues": [
+    "Orca Whirlpool",
+    "Raydium CLMM"
+   ]
+  },
+  {
+   "signature": "2kWkb5fN6SegsjmkZRLmvoQAezdQ976N4zNsnubLhRQ9TykxnjUy9s3hbMF1CAH93rpYcnEi4jYBJyrD1N9WnLw8",
+   "capitalLamports": 267680677,
+   "netLamports": 72773,
+   "returnBps": 2.7186497290575815,
+   "venues": [
+    "Tessera V",
+    "Orca Whirlpool"
+   ]
+  },
+  {
+   "signature": "Y4tt7iB91ZjhHbC4RJQMThufbw9YpMSKhfwf6rVf5tqS1Xgf5U6BfFrSLb4nZEVLkBanysSUx4c8rtgdZvXoYZw",
+   "capitalLamports": 250000000,
+   "netLamports": 3687,
+   "returnBps": 0.14748,
+   "venues": [
+    "Tessera V",
+    "Orca Whirlpool"
+   ]
+  },
+  {
+   "signature": "33jH8MTANB8hQU5UAMwceaz4EHErirsRY2hcYwKgigjrhRnMsCdeQbQGf5XkCpRYR5tzM2jGvL4gsJhjPnmCx6BA",
+   "capitalLamports": 224503561,
+   "netLamports": 15970,
+   "returnBps": 0.7113472912797137,
+   "venues": [
+    "Meteora DLMM",
+    "Tessera V",
+    "Orca Whirlpool"
+   ]
+  },
+  {
+   "signature": "59jr7HkwweCWJ4QeLLJYncgazUZpxnCCfk7A6ZGabyg3WcQyGCiskNPQ3hGhj9vsxUz8v77eeqbMkDSmVr45g2sU",
+   "capitalLamports": 212136539,
+   "netLamports": 1511,
+   "returnBps": 0.07122771056427955,
+   "venues": [
+    "Orca Whirlpool",
+    "Raydium CLMM"
+   ]
+  },
+  {
+   "signature": "3DHv96rXNEu2NJ7yddRtMqwo7NWXu2gVZqhoZHhkRQ7AzsykPnRSWuwxYH5wLxV449piGeBrKfLxnXuUKooLiHqK",
+   "capitalLamports": 191657230,
+   "netLamports": 3670871,
+   "returnBps": 191.5331344400626,
+   "venues": [
+    "Meteora DLMM",
+    "Orca Whirlpool",
+    "Raydium CPMM"
+   ]
+  },
+  {
+   "signature": "5CrFzBCFYzBnphJAhnsiEJCEgBqHGRREdreCYvguUoRoXts4rMZpvFLCz796QGtCxNVMEoXk7CpMufnvAG3JcutW",
+   "capitalLamports": 188359327,
+   "netLamports": 4782,
+   "returnBps": 0.253876464529946,
+   "venues": [
+    "Meteora DLMM",
+    "Orca Whirlpool",
+    "Raydium CPMM"
+   ]
+  },
+  {
+   "signature": "24KKPE6JiTzWeM6bQFCRZod1we2jwh6GCgRvvXeF9r1ndz227wTvgfeS9CEcQFjgtYsGhDCrL8NbHgLV5MMDciRZ",
+   "capitalLamports": 153770588,
+   "netLamports": 1701018,
+   "returnBps": 110.6205043580896,
+   "venues": [
+    "PumpSwap AMM",
+    "Meteora DAMM v2"
+   ]
+  },
+  {
+   "signature": "2LCNzd2EmmFDfTGSknCnVrSUnVAtgNWuX6FoGTFdZF8QTz5VdNn6B73MQw2Ae4re4FAVKJ8JYiv2VpKDHbjfm15R",
+   "capitalLamports": 129044201,
+   "netLamports": 6056431,
+   "returnBps": 469.329962374675,
+   "venues": [
+    "Meteora DLMM",
+    "Meteora DAMM v2",
+    "Meteora Dynamic AMM"
+   ]
+  },
+  {
+   "signature": "3A4o5fjQGBEpLBYqxp9jt2Mz7pzRMC7tbq1AgeRaRzK4EEqqgfE3UjNFxvneKPgRxcpw9Fk5SfEQJm29hHgLs8Rx",
+   "capitalLamports": 100078146,
+   "netLamports": 1845,
+   "returnBps": 0.18435593321243182,
+   "venues": [
+    "Orca Whirlpool",
+    "Tessera V"
+   ]
+  },
+  {
+   "signature": "4kpEpFXpjShQeJ7Z6DGxX1YNXitH4jhiBYtCjxeNTJcr9JQwSkD2dRujVVwVGnKUtUR2gscSrXQrg17s4KWrF93M",
+   "capitalLamports": 96187786,
+   "netLamports": 4443,
+   "returnBps": 0.4619089579627085,
+   "venues": [
+    "Orca Whirlpool",
+    "ZeroFi",
+    "Tessera V"
+   ]
+  },
+  {
+   "signature": "RFn9Yt8WyaSn1Urx7f8aENQf26E8PsSsa1fihNZQheRmW8dr1nZ2U1Emovxu1Yk78gmLF3uMDrMLwykj29Vpyu4",
+   "capitalLamports": 72869203,
+   "netLamports": 3680495,
+   "returnBps": 505.08237341363537,
+   "venues": [
+    "Meteora DLMM",
+    "PumpSwap AMM"
+   ]
+  },
+  {
+   "signature": "qhUhunugwDjVSXCpNQho3LPgJD5P2S4Vd9BKQMAFbK8DDnxVNNi2BJgm1ryTnsZ6vxoJm5Ss81xS5ucBKT5DDsa",
+   "capitalLamports": 70514544,
+   "netLamports": 1325836,
+   "returnBps": 188.02305521538932,
+   "venues": [
+    "Meteora DLMM",
+    "PumpSwap AMM"
+   ]
+  },
+  {
+   "signature": "2A1fAVPzbxmTspZempJETAqDW8h61k7exp6rZspcojEHgCE2Sp1aEe2fwvgtbEDg2p9cbCzGG6EwfpruFgZXSsLo",
+   "capitalLamports": 67427992,
+   "netLamports": 2330414,
+   "returnBps": 345.61521571041294,
+   "venues": [
+    "Meteora DLMM",
+    "Meteora DAMM v2"
+   ]
+  },
+  {
+   "signature": "4pJ5WKWh76sr2qDekgB2bbXRd7ecaxcDCZnPLq3YBCuQyoYqdz6Afz2nmaZ4DbGpK9SGgLiCCZ4Y4ceVwk3RhGYm",
+   "capitalLamports": 65570432,
+   "netLamports": 448891,
+   "returnBps": 68.45936290308413,
+   "venues": [
+    "Meteora DLMM",
+    "Meteora DAMM v2",
+    "PumpSwap AMM"
+   ]
+  },
+  {
+   "signature": "3wfHbeU5vyqQpczCqfZFk67XpAQJ5874TiAXLWc5eztee294dWYRo13xtnGBfemhKG3h5Lr2zmBRazrTCS2catvW",
+   "capitalLamports": 65477681,
+   "netLamports": 54030,
+   "returnBps": 8.251666701513146,
+   "venues": [
+    "Orca Whirlpool",
+    "Raydium CLMM"
+   ]
+  },
+  {
+   "signature": "5qzdUJBXC1wMcKqHavZMjdyg637KGn6V3GJQBLArgxxHjrf2123YweMu5kPNr1t9JV6mb3PAvbWRFJ6J6FcTVaoX",
+   "capitalLamports": 57475156,
+   "netLamports": 31451,
+   "returnBps": 5.4721034597974825,
+   "venues": [
+    "Meteora DLMM",
+    "Orca Whirlpool",
+    "Raydium CLMM"
+   ]
+  },
+  {
+   "signature": "55cCzzMxDLR9NkptyWZCv8P3JY6pkuuqysWUN9ND9A9fA49cvU2hdDes2d58aypGHonP3AhjVFWUFK1Vth4stmiW",
+   "capitalLamports": 56708157,
+   "netLamports": 976717,
+   "returnBps": 172.23571557791942,
+   "venues": [
+    "Meteora DAMM v2",
+    "Meteora Dynamic AMM"
+   ]
+  },
+  {
+   "signature": "5ZMYD3SJAUdDrzmxs8Q6Lx1GsiPMEWDaWuYK9GLmJgwgaszYKTbRRHpxMaG9oLSVgot1Ymw2T9cSkjdRiaoWW44V",
+   "capitalLamports": 38428837,
+   "netLamports": 2819,
+   "returnBps": 0.7335637037363373,
+   "venues": [
+    "PumpSwap AMM",
+    "Orca Whirlpool"
+   ]
+  },
+  {
+   "signature": "2QBJWsVPbyxEhdkJ8ZMreLMGnQF5QKsUd6wLYXbUhzSnxk6DzSUFnygNwTjFBsLEFvJxCLWYpCAMKfotLnGfzfB2",
+   "capitalLamports": 35639622,
+   "netLamports": 23925,
+   "returnBps": 6.713034161810135,
+   "venues": [
+    "Orca Whirlpool",
+    "Meteora Dynamic AMM"
+   ]
+  },
+  {
+   "signature": "3w6DyRvCuq2eyWLBoBgvzKcbMP8iVPG5JDSk9CmLT31jvCMndWm4MLPyU6krMd6KX4n9CssuJjFZ7PWiFAAAASHJ",
+   "capitalLamports": 27491676,
+   "netLamports": 4911,
+   "returnBps": 1.7863588964165007,
+   "venues": [
+    "Meteora DAMM v2",
+    "PumpSwap AMM",
+    "Raydium CLMM"
+   ]
+  },
+  {
+   "signature": "23phwznVVaRMeygcDfVvpf7jnxjBC5tQipSYwVxfxUKJriXSdCucgHRi6jgHGW8iHFrZqAmwcyDj4zmsuU24DYnJ",
+   "capitalLamports": 25811338,
+   "netLamports": 160030,
+   "returnBps": 61.9998854766847,
+   "venues": [
+    "Raydium AMM v4",
+    "Raydium CLMM"
+   ]
+  },
+  {
+   "signature": "q7wy4tMgA9EvKe8WPGgF3CteBBmNZmtqXMTvLzjsDd8J23u2LgByE3ZjdBBc6TtceRrDy7PTCS9ukZuR8tEE5mG",
+   "capitalLamports": 23545847,
+   "netLamports": 59,
+   "returnBps": 0.02505749740070935,
+   "venues": [
+    "Raydium AMM v4",
+    "Raydium CPMM"
+   ]
+  },
+  {
+   "signature": "2VD5vyKB3Nay7WQnu4mrraZWJjWGDrNdrxTa1bfYyZFFk2HYTq1ypuF2LKy2Ls4nWMwFHeTYXpkuPrMZ9FHrqwFp",
+   "capitalLamports": 22376162,
+   "netLamports": 301,
+   "returnBps": 0.13451815373878684,
+   "venues": [
+    "Orca Whirlpool",
+    "Raydium CPMM"
+   ]
+  },
+  {
+   "signature": "3yKNVUd9yd9L2fvbYJENbLUpZE24ySAvTSYwkBM34qTShdEXGih2mU5dRpCWuqK1853aK6Z1mzs8Mkownho1wJzH",
+   "capitalLamports": 20107574,
+   "netLamports": 21190,
+   "returnBps": 10.538317551386358,
+   "venues": [
+    "Meteora DLMM",
+    "PumpSwap AMM"
+   ]
+  },
+  {
+   "signature": "2k4G8mNC7wicizzmkpxsXPaLf2eKFwTbmZvrEa2q264maitLLoyfpQJrMm1A4m9wHGLmZNbuFJgLZEqGrwToABqx",
+   "capitalLamports": 19103902,
+   "netLamports": 1535,
+   "returnBps": 0.8035007717271581,
+   "venues": [
+    "Orca v2",
+    "Raydium AMM v4",
+    "Tessera V"
+   ]
+  },
+  {
+   "signature": "4kECgrGr7j2HuEvZXfPNoaDEbaMrFMSiWhmxdccqrYLgHQMUpX1AYvPR8SXVnJiy9kMFFzXFT73zZzJBo5HfA2Pg",
+   "capitalLamports": 14609372,
+   "netLamports": 6430,
+   "returnBps": 4.401284326253038,
+   "venues": [
+    "Orca v2",
+    "Raydium AMM v4",
+    "Raydium CLMM"
+   ]
+  },
+  {
+   "signature": "5TtzE9WGba8D5PFvv6raMLVZ1gyp6Mnn2g8LpcuLp3ng7a4tRS78pDB5XjZtP2kjGwqHqjU1NogU2QXKN284srmL",
+   "capitalLamports": 14376508,
+   "netLamports": 24585,
+   "returnBps": 17.10081474583397,
+   "venues": [
+    "Raydium AMM v4",
+    "Meteora DLMM",
+    "Orca Whirlpool"
+   ]
+  },
+  {
+   "signature": "2Hz7Kc5ekBoaRyf1foBpYvibMhy5pZobjpiT3EERRo8oDY9uj2fY313X4XM1TcsvJxt75JozJ2HjGjxktE4BsZGM",
+   "capitalLamports": 14238015,
+   "netLamports": 184930,
+   "returnBps": 129.88467844710095,
+   "venues": [
+    "Meteora DAMM v2",
+    "PumpSwap AMM",
+    "Raydium CLMM"
+   ]
+  },
+  {
+   "signature": "2M85aAi9f7rrahKYs9Hu5mzGK8VxnTRWq7RbSZxVUUj7fAMBfRQu1SpQv5aYCEpYWztUpCSByKZAT9Ak2rWLaspf",
+   "capitalLamports": 13743362,
+   "netLamports": 6518,
+   "returnBps": 4.7426532168766276,
+   "venues": [
+    "Orca Whirlpool",
+    "Raydium CPMM"
+   ]
+  },
+  {
+   "signature": "3HxWSSjSiNeQFhVVHeMmZuFgB6CpvFTiTewDUxS6tSWewzXnEw1SbGndoPYAezjx5tx3cFtqopSRbgyZFWkpUwKU",
+   "capitalLamports": 12779937,
+   "netLamports": 218565,
+   "returnBps": 171.0219698266118,
+   "venues": [
+    "Meteora DLMM",
+    "Meteora DAMM v2",
+    "Raydium CLMM",
+    "Raydium CPMM"
+   ]
+  },
+  {
+   "signature": "3yq58HEpvzd3dUYTvm2zdHuDD168oGcbYp5d9cJZyZHPiS78dT9ZR98aicbv5GdkfdnpLuYcVXPnkzWhDTg9sZLA",
+   "capitalLamports": 11639135,
+   "netLamports": 38442,
+   "returnBps": 33.02822761313448,
+   "venues": [
+    "Orca Whirlpool",
+    "Raydium AMM v4",
+    "Raydium CLMM"
+   ]
+  },
+  {
+   "signature": "5fwm424exHmiPeP6BobECvyFtAD1C2uzYuCQZCFTZeiw2j7y92rokEwQ1ZXubxQM2J4e2WY4m9WqLDiUrrcWfHVG",
+   "capitalLamports": 10424445,
+   "netLamports": 102211,
+   "returnBps": 98.04934459340522,
+   "venues": [
+    "Meteora DLMM",
+    "Meteora DAMM v2",
+    "Raydium CLMM",
+    "Raydium CPMM"
+   ]
+  },
+  {
+   "signature": "2RMuTozr6GkLL5qe5LaHqybU4eaRgUvuAmqp8x8c8aC6U5KDAXybzfnaTx3ufigwW6wkCsfRz8td9AhN1b2uw2Ts",
+   "capitalLamports": 9891398,
+   "netLamports": 710044,
+   "returnBps": 717.8398847159926,
+   "venues": [
+    "Meteora DAMM v2",
+    "Raydium CPMM",
+    "Meteora DLMM"
+   ]
+  },
+  {
+   "signature": "UFkFsfm3K5beQgCHkWk2zjghow8jwdo3WcibUCQD1jd3ESksdPL5fzh3kjGgE9kZnTGxtM3eP9SKVDLY5jDWjPV",
+   "capitalLamports": 9477553,
+   "netLamports": 44567,
+   "returnBps": 47.02374125473104,
+   "venues": [
+    "Meteora DLMM",
+    "PumpSwap AMM"
+   ]
+  },
+  {
+   "signature": "rjw4py2emaNC4gNfqxyBmMDHLgF42tS9yZMAB95jAfK6Gq1YUnLDESYVfC5bXeWnaCmVhHeRsbXPhUXDnpyxNFi",
+   "capitalLamports": 8319295,
+   "netLamports": 8592,
+   "returnBps": 10.32779820886265,
+   "venues": [
+    "Meteora DLMM",
+    "PumpSwap AMM"
+   ]
+  },
+  {
+   "signature": "2RxQhP62hnau4emyWMbYtS4mao91buvpf479zbYDnCJeYgadaRfX67cxpjLpfBEBkGCZR1m6Ahe71gM2nogHffni",
+   "capitalLamports": 6352752,
+   "netLamports": 764,
+   "returnBps": 1.2026284041939619,
+   "venues": [
+    "Orca Whirlpool",
+    "Raydium AMM v4",
+    "Raydium CLMM"
+   ]
+  },
+  {
+   "signature": "5ciqNvjrLrED4oXBm94GhqUyM2xvGn4duT5crikRuvNDSpDr3eLeuhtFSZpWb9gzdnFv5MzAmbRM9vhq2jbm2jqR",
+   "capitalLamports": 5745835,
+   "netLamports": 4570,
+   "returnBps": 7.95358725059108,
+   "venues": [
+    "Meteora DLMM",
+    "Orca Whirlpool"
+   ]
+  },
+  {
+   "signature": "3ph9VpLkbJLrMGbmDtcXYoM38SdKrSmzCHm5dXDGWocDzBbFFs3jZoKHGbFuJ7PokVVoGuHxzZzohE3eCgMEdWpW",
+   "capitalLamports": 5720404,
+   "netLamports": 1464,
+   "returnBps": 2.5592598005315708,
+   "venues": [
+    "Orca Whirlpool",
+    "Raydium CLMM",
+    "Tessera V"
+   ]
+  },
+  {
+   "signature": "3FmKz97MnPPg62tZuw2XoVsTaks2VArgFhD5Nq1NRqp72KpvE9m8ThF9A7vMP2HZpiMpVWviHrXmkTXXC4s7HzWE",
+   "capitalLamports": 5500003,
+   "netLamports": 64983,
+   "returnBps": 118.15084464499384,
+   "venues": [
+    "Raydium AMM v4",
+    "Raydium CLMM"
+   ]
+  },
+  {
+   "signature": "3esevN6T8cwTcP2nNJe1DzSkfSY9h5JRsRHjLkFk25bpHL6EBNZ58SCoL2RQtv7vTDKUrEJsimh8JhKp75MuVQCu",
+   "capitalLamports": 4423217,
+   "netLamports": 413,
+   "returnBps": 0.9337095602589699,
+   "venues": [
+    "Raydium AMM v4",
+    "Raydium CPMM",
+    "Tessera V"
+   ]
+  },
+  {
+   "signature": "Y5z8ExgxnS42XTixh8vmNZSPD7H7b5NSpzPbfb1UZs8Gb2vZA6GVj9PqGRqoyfGbQCez1ZdxvYu5gn9FK2eSEDa",
+   "capitalLamports": 3740001,
+   "netLamports": 50652,
+   "returnBps": 135.43311886815005,
+   "venues": [
+    "Meteora DAMM v2",
+    "Meteora Dynamic AMM"
+   ]
+  },
+  {
+   "signature": "3uBiNag3nKeHQjgQLw9XG8x8aFYTQTihPuzUgPLtTKb288TxLg2uhLeQzpMcrbgVyCG9GuZCPhJ4WRhY449dS887",
+   "capitalLamports": 3405215,
+   "netLamports": 3124,
+   "returnBps": 9.174163745901506,
+   "venues": [
+    "Orca Whirlpool",
+    "Raydium AMM v4",
+    "Raydium CPMM"
+   ]
+  },
+  {
+   "signature": "4gbN9KRi4KNRafwwsh5W1v6dwRoV7wW7exJPR1WZPP1UCyK6yS2eWdXXV9Q3mE6Z5ywScapFih69ZcPDzYbwpnsc",
+   "capitalLamports": 3404257,
+   "netLamports": 12916,
+   "returnBps": 37.94073126676393,
+   "venues": [
+    "Meteora DAMM v2",
+    "PumpSwap AMM"
+   ]
+  },
+  {
+   "signature": "vgNq5wULnYhcAuzAAcd3978j8uXzxGWZBoxWknSYoaBe987SUB4PhfgBwQGd58rUHDVuyyqEyf2x5YkMJtWG9Ca",
+   "capitalLamports": 3373966,
+   "netLamports": 534184,
+   "returnBps": 1583.2524690527407,
+   "venues": [
+    "Orca Whirlpool",
+    "Raydium CPMM"
+   ]
+  },
+  {
+   "signature": "4iet3rfV6kshcfuxCBFf9xALvgwxFmKbUQ8uBcCx6sFqDfpo4aYiXUyMw34trhohGbHLjfbMEeFv9K4CSfYGrDQe",
+   "capitalLamports": 3356663,
+   "netLamports": 67402,
+   "returnBps": 200.80061656472515,
+   "venues": [
+    "Raydium CLMM",
+    "Meteora DLMM",
+    "Meteora DAMM v2",
+    "Orca Whirlpool"
+   ]
+  },
+  {
+   "signature": "3r7Dst7zC5UbK624EduLEiZ6PJXvh1rUHThm9Tzr7yP9mt9Tm3t17nT3bRKcyzXFSrAZ319SUW5BrStnaB6Jds1k",
+   "capitalLamports": 3313500,
+   "netLamports": 24241,
+   "returnBps": 73.15829183642674,
+   "venues": [
+    "Raydium CLMM",
+    "Meteora DLMM",
+    "Meteora DAMM v2"
+   ]
+  },
+  {
+   "signature": "3VSAwyPN2p8cXVqYB9uqyoVieapeqp33sB6NPaqAT1yu65UrvhfF5MjVHUjcu8ZNYS1KVEpSQDGsbQ7u2gcm7ATJ",
+   "capitalLamports": 2579594,
+   "netLamports": 38921,
+   "returnBps": 150.88033233136687,
+   "venues": [
+    "Meteora DAMM v2",
+    "PumpSwap AMM"
+   ]
+  },
+  {
+   "signature": "5dMBcFcKwzmL3XeW91RaBFnJcBvFRhbjGurWjkDighoQT6j53EiVQ3xBLt2srbpMfMpNnpDpiBmwPaa7n61Ybi28",
+   "capitalLamports": 2349433,
+   "netLamports": 10790,
+   "returnBps": 45.925974479800026,
+   "venues": [
+    "Meteora DAMM v2",
+    "PumpSwap AMM"
+   ]
+  },
+  {
+   "signature": "RawbbX4TU4EooL6YaKxwurzWbbXBzcs6qQdWGeiEws2YFaRtoJh7Vw1kdJ3WNh9H6Kf1KiZ92W8DsVoZaxCdxQk",
+   "capitalLamports": 1795141,
+   "netLamports": 17785,
+   "returnBps": 99.0729976085444,
+   "venues": [
+    "Meteora DLMM",
+    "Meteora DAMM v2",
+    "Raydium CPMM"
+   ]
+  },
+  {
+   "signature": "EQf7Pd745HPGBUGyYRCZGDNdeiLPbjAZsSLsSa3ieykprckSnrizXrfWrKRkHvvLxBQo3bVhx5PgcRWLyMia63k",
+   "capitalLamports": 1484584,
+   "netLamports": 718,
+   "returnBps": 4.836371670447749,
+   "venues": [
+    "Raydium AMM v4",
+    "Raydium CLMM"
+   ]
+  },
+  {
+   "signature": "35tYziCzinwcjbBzovipNBtrwrRXaSv1tK6fmE9wrgZtDiVCEQS5jMhzToPacSVT9eLcpBU2VuLui5gucxe2xZRB",
+   "capitalLamports": 1314468,
+   "netLamports": 300051,
+   "returnBps": 2282.68014131953,
+   "venues": [
+    "Meteora DLMM",
+    "Orca Whirlpool",
+    "Raydium CPMM"
+   ]
+  },
+  {
+   "signature": "5risgWABfFGkzDEJqsVZosxrF4itw1ddXxHU3A6wTkCGo6ad2Gk2eKokrD1dSzrEuDLr689ivPikwEonW2UDRjo",
+   "capitalLamports": 1125248,
+   "netLamports": 1493,
+   "returnBps": 13.268186213172564,
+   "venues": [
+    "Meteora DAMM v2",
+    "PumpSwap AMM",
+    "Raydium CPMM"
+   ]
+  },
+  {
+   "signature": "4EzK5bRyB9KKWUiRqxbibp5fx8mXRg4yT7dDwrxB9dLhMvkuUaChpNy69GFRRrBvPfyjJkxc1QN1iCP3o6MfVvYF",
+   "capitalLamports": 1116873,
+   "netLamports": 101085,
+   "returnBps": 905.0715703575967,
+   "venues": [
+    "Meteora DLMM",
+    "Orca Whirlpool"
+   ]
+  },
+  {
+   "signature": "4Wu4MQGYetiTvJp6d1pYstkkBJZqhVogX91PppryyR7uCMRmqdNi5TGV64dohWqq2tKZtopUBnPmsJyoBjM7ZDXr",
+   "capitalLamports": 1021557,
+   "netLamports": 13274,
+   "returnBps": 129.93890698218502,
+   "venues": [
+    "Orca Whirlpool",
+    "Raydium CPMM"
+   ]
+  },
+  {
+   "signature": "5QLhXvus5pFHLQT1YtdphHnCYvd56L3dyeHKuF98BCsmuHST1y2bKuxK59VCm4aqf5p7JA7NfqwcAKxf7izEsMWi",
+   "capitalLamports": 985494,
+   "netLamports": 1807,
+   "returnBps": 18.335981751284127,
+   "venues": [
+    "Orca Whirlpool",
+    "Raydium AMM v4"
+   ]
+  },
+  {
+   "signature": "QyKX83Ped9pfbMxhCeBDqKQg1Dw485eFhvEwoxVsXfntuLrbNeGWde9Hk7Gk3dPXCp3TkawV3bP5n6uKqgGnTER",
+   "capitalLamports": 883511,
+   "netLamports": 20613,
+   "returnBps": 233.307791300844,
+   "venues": [
+    "Meteora DLMM",
+    "Meteora DAMM v2"
+   ]
+  },
+  {
+   "signature": "556nWefTWNoyMQ1nF4hwAkNnpmnAatyucqLnqY8QTUGD7281kcNoraTAQMogAJWatpwb1cWwLnuFZS3rWYWZetfR",
+   "capitalLamports": 729456,
+   "netLamports": 29052,
+   "returnBps": 398.2693952753833,
+   "venues": [
+    "Meteora DLMM",
+    "Meteora DAMM v2",
+    "Raydium CPMM"
+   ]
+  },
+  {
+   "signature": "5X44ruXv74nogsxXY7ntZWfzmCv1uaGxcRFhQuqS5o6PTpGY3Ad6R6Fkdf7vBXA1Vp7EZgCh8cMyzKk4AGECqS59",
+   "capitalLamports": 649159,
+   "netLamports": 16888,
+   "returnBps": 260.15198125574784,
+   "venues": [
+    "Orca Whirlpool",
+    "Raydium CPMM"
+   ]
+  },
+  {
+   "signature": "23QWtrjcmR2D9bdv59w3LkhPyKYYdyVchqLEYozkPYGtvZsUq6EbrXLHzqVhBXSWMC4uURDXtDFj3giiEaAhzXgn",
+   "capitalLamports": 645338,
+   "netLamports": 399,
+   "returnBps": 6.182806529291627,
+   "venues": [
+    "Raydium CLMM",
+    "Meteora DLMM",
+    "Orca Whirlpool"
+   ]
+  },
+  {
+   "signature": "5dQkcrPHRaGENkocYvwuop3WjcRiZwh3tNM4R6jbMdRJVDGeCcbTiRwbx82nn4gNwB3iJMukh6pokvHafdZyu9FZ",
+   "capitalLamports": 642262,
+   "netLamports": 1392,
+   "returnBps": 21.673398083648106,
+   "venues": [
+    "Raydium CLMM",
+    "Meteora DAMM v2",
+    "Raydium CPMM"
+   ]
+  },
+  {
+   "signature": "4ZS5J5UNys7N9Xj73msq8ZD21eV11e1Mn9J7PyzRLsjjzmx5Y3UFnafva1QMGeuPyGQQUmMSapUjr4xG9NzynJAm",
+   "capitalLamports": 635826,
+   "netLamports": 287751,
+   "returnBps": 4525.62493512376,
+   "venues": [
+    "Orca Whirlpool",
+    "Raydium CPMM"
+   ]
+  },
+  {
+   "signature": "62b1VinP5RkX8VSTtvhtoPwUQUgKrFYmAcdCxWynt3ywPQAQfs5CrP96EyLGmbwpibam89BUhwHYFf2FECWztDBh",
+   "capitalLamports": 624541,
+   "netLamports": 160578,
+   "returnBps": 2571.13624245646,
+   "venues": [
+    "Orca Whirlpool",
+    "Raydium CPMM"
+   ]
+  },
+  {
+   "signature": "5k7tTHbhVgB53W3ULi7hp4mwi2mjQcxwHv8kqhcpDiAtbpcMoQDUZqVCB5iuJhTehSMC6x4qAzQjc1yxu1hzLXde",
+   "capitalLamports": 580735,
+   "netLamports": 129028,
+   "returnBps": 2221.805126262409,
+   "venues": [
+    "Orca Whirlpool",
+    "Raydium CPMM"
+   ]
+  },
+  {
+   "signature": "2PVK15SBxp27PZrcXP7Gr49SF5zoS8fRqVSdEKYydL6kr3LByRKjEtzgrd7thvcwBdJpo7PN6UasRxqYP6ijFqGk",
+   "capitalLamports": 510897,
+   "netLamports": 18,
+   "returnBps": 0.35232150511746985,
+   "venues": [
+    "PumpSwap AMM",
+    "Meteora DAMM v2"
+   ]
+  },
+  {
+   "signature": "Wg9kHJpX82Kcvza9X1LDeNo2yS5x6xtB3VFVvCendopEUspHHFynEzYnSo6KByYC6bBSKW4Zr3NbNFP9VhEa3Wq",
+   "capitalLamports": 483215,
+   "netLamports": 16782,
+   "returnBps": 347.29882143559286,
+   "venues": [
+    "Orca Whirlpool",
+    "Raydium AMM v4",
+    "Raydium CPMM"
+   ]
+  },
+  {
+   "signature": "ZiwURZXCwhifr2xiyEWNtkcJsznBkxHse8iYXQiDX9mHH4mpBVeTsUuBMr9v2CHb4rgvPz9d66CPKN1FXjhHLjL",
+   "capitalLamports": 472099,
+   "netLamports": 1737,
+   "returnBps": 36.79313025445934,
+   "venues": [
+    "Raydium CLMM",
+    "Meteora DAMM v2"
+   ]
+  },
+  {
+   "signature": "3naMDsG2KnsgeLkjmpf7QSMV4R3RA22CKgs9452BC2jtkjtziJQvv9u6iyCAybFxLkxnKpb9QaYwi8tzgho41uhx",
+   "capitalLamports": 408042,
+   "netLamports": 2585,
+   "returnBps": 63.351321677670434,
+   "venues": [
+    "Meteora DAMM v2",
+    "Raydium CPMM"
+   ]
+  },
+  {
+   "signature": "37tvSdjjc62e2uahw2MEHaLNf5aBJimdHTQ27BuBikcC2G1y2D93wA72ZiifoNcMktLjneaCbFr7q6z41msdUWhf",
+   "capitalLamports": 349420,
+   "netLamports": 6029,
+   "returnBps": 172.54307137542213,
+   "venues": [
+    "Orca Whirlpool",
+    "Raydium CPMM"
+   ]
+  },
+  {
+   "signature": "3RRyZ7Wysap5hrRWEJ4wPMLDypcyXbsnfwNCjktj6faHMbbaZf9urLAuKSyieu4j7UtyWhzUJ13M8BBcVk31HYmu",
+   "capitalLamports": 298910,
+   "netLamports": 1282,
+   "returnBps": 42.88916396239671,
+   "venues": [
+    "PumpSwap AMM",
+    "Meteora DAMM v2"
+   ]
+  },
+  {
+   "signature": "udCdj6S7XJU26fiJhHd8pJC6ADAUMMfRUTkCi3NQg4wR5kfEUHCtDxCPirU7u752EnaX6C45rpYgGFdTjn4JZK4",
+   "capitalLamports": 170136,
+   "netLamports": 242,
+   "returnBps": 14.223914985658531,
+   "venues": [
+    "PumpSwap AMM",
+    "Meteora DAMM v2"
+   ]
+  }
+ ]
+}

@@ -1,0 +1,537 @@
+{
+ "captured_utc": "2026-09-18T20:08:04.791162+00:00",
+ "source": "github code search: jupiter-amm-interface in Cargo.toml",
+ "repos": [
+  {
+   "name": "hylo-so/sdk",
+   "pushed": "2026-09-18T05:03:25Z",
+   "stars": 8,
+   "desc": "Hylo Rust SDK",
+   "archived": false,
+   "org": "hylo-so",
+   "days_since_push": 0
+  },
+  {
+   "name": "Bonasa-Tech/manifest",
+   "pushed": "2026-09-17T03:00:30Z",
+   "stars": 155,
+   "desc": "The Spot CLOB on Solana",
+   "archived": false,
+   "org": "Bonasa-Tech",
+   "days_since_push": 1
+  },
+  {
+   "name": "ballista-tech/archer-jup",
+   "pushed": "2026-09-17T12:43:33Z",
+   "stars": 0,
+   "desc": "Interface for integrating Jupiter with Archer",
+   "archived": false,
+   "org": "ballista-tech",
+   "days_since_push": 1
+  },
+  {
+   "name": "metaDAOproject/programs",
+   "pushed": "2026-09-16T15:25:59Z",
+   "stars": 119,
+   "desc": "",
+   "archived": false,
+   "org": "metaDAOproject",
+   "days_since_push": 2
+  },
+  {
+   "name": "jup-ag/jupiter-amm-interface",
+   "pushed": "2026-08-28T15:11:06Z",
+   "stars": 81,
+   "desc": "",
+   "archived": false,
+   "org": "jup-ag",
+   "days_since_push": 21
+  },
+  {
+   "name": "Quay-Markets/quay-jupiter-integration",
+   "pushed": "2026-08-26T20:02:33Z",
+   "stars": 0,
+   "desc": "",
+   "archived": false,
+   "org": "Quay-Markets",
+   "days_since_push": 23
+  },
+  {
+   "name": "otter-sec/anchor-community",
+   "pushed": "2026-08-25T21:04:10Z",
+   "stars": 1,
+   "desc": "",
+   "archived": false,
+   "org": "otter-sec",
+   "days_since_push": 23
+  },
+  {
+   "name": "quineco/bankineco-amm-interface",
+   "pushed": "2026-08-20T16:48:55Z",
+   "stars": 0,
+   "desc": "",
+   "archived": false,
+   "org": "quineco",
+   "days_since_push": 29
+  },
+  {
+   "name": "deriverse/jupiter-deriverse",
+   "pushed": "2026-08-07T09:39:35Z",
+   "stars": 0,
+   "desc": "Jupiter-Deriverse integration",
+   "archived": false,
+   "org": "deriverse",
+   "days_since_push": 42
+  },
+  {
+   "name": "DFlowProtocol/dflow-amm-interface",
+   "pushed": "2026-07-30T18:32:52Z",
+   "stars": 1,
+   "desc": "DFlow AMM trait",
+   "archived": false,
+   "org": "DFlowProtocol",
+   "days_since_push": 50
+  },
+  {
+   "name": "MetalLegBob/drfraudsworth-jupiter-adapter",
+   "pushed": "2026-07-18T17:20:04Z",
+   "stars": 0,
+   "desc": "Jupiter AMM adapter SDK for the Dr. Fraudsworth DEX protocol on Solana",
+   "archived": false,
+   "org": "MetalLegBob",
+   "days_since_push": 62
+  },
+  {
+   "name": "igneous-labs/sanctum-router-jup-interface",
+   "pushed": "2026-06-19T15:12:37Z",
+   "stars": 0,
+   "desc": "jupiter-amm-interface for Sanctum Router program ",
+   "archived": false,
+   "org": "igneous-labs",
+   "days_since_push": 91
+  },
+  {
+   "name": "byreal-git/byreal-jupiter-integration",
+   "pushed": "2026-06-17T11:22:48Z",
+   "stars": 3,
+   "desc": "",
+   "archived": false,
+   "org": "byreal-git",
+   "days_since_push": 93
+  },
+  {
+   "name": "trends-fun/bonding-curve-jup-sdk",
+   "pushed": "2026-04-30T10:41:13Z",
+   "stars": 0,
+   "desc": "",
+   "archived": false,
+   "org": "trends-fun",
+   "days_since_push": 141
+  },
+  {
+   "name": "MetalLegBob/drfraudsworth",
+   "pushed": "2026-04-22T12:01:43Z",
+   "stars": 11,
+   "desc": "Dr. Fraudsworth's Finance Factory - A Solana DeFi protocol with tax-driven yield",
+   "archived": false,
+   "org": "MetalLegBob",
+   "days_since_push": 149
+  },
+  {
+   "name": "Still-Tech/k2-amm-sdk",
+   "pushed": "2026-04-22T06:01:01Z",
+   "stars": 1,
+   "desc": "k2 solana amm sdk for jupiter metis",
+   "archived": false,
+   "org": "Still-Tech",
+   "days_since_push": 149
+  },
+  {
+   "name": "jup-ag/jupiter-amm-implementation",
+   "pushed": "2026-04-14T04:15:56Z",
+   "stars": 110,
+   "desc": "",
+   "archived": false,
+   "org": "jup-ag",
+   "days_since_push": 157
+  },
+  {
+   "name": "kylesamani/lemmingsfi-jupiter",
+   "pushed": "2026-04-02T14:05:38Z",
+   "stars": 7,
+   "desc": "LemmingsFi Jupiter AMM integration \u2014 SDK, IDL, and docs",
+   "archived": false,
+   "org": "kylesamani",
+   "days_since_push": 169
+  },
+  {
+   "name": "Turbin3/accel-Enclave",
+   "pushed": "2026-03-26T06:47:46Z",
+   "stars": 0,
+   "desc": "a private prop amm on solana",
+   "archived": false,
+   "org": "Turbin3",
+   "days_since_push": 176
+  },
+  {
+   "name": "scalecrx/jupiter-sdk-vmm",
+   "pushed": "2026-03-10T10:49:20Z",
+   "stars": 0,
+   "desc": "Scale VMM adapter implementing Jupiter AMM interface",
+   "archived": false,
+   "org": "scalecrx",
+   "days_since_push": 192
+  },
+  {
+   "name": "omnipair/omnipair-amm-sdk",
+   "pushed": "2026-03-04T09:13:38Z",
+   "stars": 1,
+   "desc": "",
+   "archived": false,
+   "org": "omnipair",
+   "days_since_push": 198
+  },
+  {
+   "name": "scalecrx/jupiter-sdk-amm",
+   "pushed": "2026-02-26T22:12:41Z",
+   "stars": 0,
+   "desc": "Scale AMM adapter implementing Jupiter AMM interface",
+   "archived": false,
+   "org": "scalecrx",
+   "days_since_push": 203
+  },
+  {
+   "name": "dhruvja/manifest",
+   "pushed": "2026-02-24T21:13:50Z",
+   "stars": 0,
+   "desc": "The Unlimited Perp Orderbook DEX on Solana",
+   "archived": false,
+   "org": "dhruvja",
+   "days_since_push": 205
+  },
+  {
+   "name": "voltrxyz/aggregator-integration",
+   "pushed": "2026-02-24T19:01:23Z",
+   "stars": 0,
+   "desc": "",
+   "archived": false,
+   "org": "voltrxyz",
+   "days_since_push": 206
+  },
+  {
+   "name": "deauraofficial/jup-metis-integration",
+   "pushed": "2026-02-12T13:09:09Z",
+   "stars": 0,
+   "desc": "",
+   "archived": false,
+   "org": "deauraofficial",
+   "days_since_push": 218
+  },
+  {
+   "name": "igneous-labs/inf-jup-interface",
+   "pushed": "2026-02-09T10:03:08Z",
+   "stars": 0,
+   "desc": "jupiter-amm-interface for INF program",
+   "archived": false,
+   "org": "igneous-labs",
+   "days_since_push": 221
+  },
+  {
+   "name": "orca-so/jup-xorca-integration",
+   "pushed": "2025-12-22T13:42:05Z",
+   "stars": 1,
+   "desc": "Integration of the xORCA staking program with Jupiter\u2019s `jupiter-amm-interface`.",
+   "archived": false,
+   "org": "orca-so",
+   "days_since_push": 270
+  },
+  {
+   "name": "stabbleorg/amm-sdk",
+   "pushed": "2025-12-11T07:43:54Z",
+   "stars": 12,
+   "desc": "",
+   "archived": false,
+   "org": "stabbleorg",
+   "days_since_push": 281
+  },
+  {
+   "name": "0xendale/example-dlmm-app",
+   "pushed": "2025-12-08T04:57:23Z",
+   "stars": 0,
+   "desc": "Example saros-dlmm-app, use for testing",
+   "archived": false,
+   "org": "0xendale",
+   "days_since_push": 284
+  },
+  {
+   "name": "saros-xyz/saros-dlmm-sdk-rs",
+   "pushed": "2025-12-04T04:19:41Z",
+   "stars": 16,
+   "desc": "",
+   "archived": false,
+   "org": "saros-xyz",
+   "days_since_push": 288
+  },
+  {
+   "name": "igneous-labs/S",
+   "pushed": "2025-11-19T08:25:42Z",
+   "stars": 49,
+   "desc": "",
+   "archived": false,
+   "org": "igneous-labs",
+   "days_since_push": 303
+  },
+  {
+   "name": "DeFi-Carrot/jup-carrot-integration",
+   "pushed": "2025-11-18T16:25:23Z",
+   "stars": 0,
+   "desc": "",
+   "archived": false,
+   "org": "DeFi-Carrot",
+   "days_since_push": 304
+  },
+  {
+   "name": "jozef-pridavok/arbitrage",
+   "pushed": "2025-11-17T14:46:19Z",
+   "stars": 10,
+   "desc": "Solana MEV arbitrage bot in Rust. Real-time DEX monitoring with custom deseriali",
+   "archived": false,
+   "org": "jozef-pridavok",
+   "days_since_push": 305
+  },
+  {
+   "name": "0xendale/saros-sdk-rs-demo",
+   "pushed": "2025-10-06T06:43:36Z",
+   "stars": 1,
+   "desc": "An simple demo using saros-dlmm-sdk-rs",
+   "archived": false,
+   "org": "0xendale",
+   "days_since_push": 347
+  },
+  {
+   "name": "saurabh-sol/Saros-SDK-Bug-Hunt",
+   "pushed": "2025-08-25T19:44:36Z",
+   "stars": 0,
+   "desc": "Optimize Gas Usage in Bin Traversal Algorithm",
+   "archived": false,
+   "org": "saurabh-sol",
+   "days_since_push": 389
+  },
+  {
+   "name": "ElodinLTD/nova-psm-jup",
+   "pushed": "2025-07-31T15:12:10Z",
+   "stars": 0,
+   "desc": "",
+   "archived": false,
+   "org": "ElodinLTD",
+   "days_since_push": 414
+  },
+  {
+   "name": "GooseFX1/gamma-swap",
+   "pushed": "2025-07-10T18:56:54Z",
+   "stars": 23,
+   "desc": "GooseFX constant product AMM with dynamic fees GAMMA7meSFWaBXF25oSUgmGRwaW6sCMFL",
+   "archived": false,
+   "org": "GooseFX1",
+   "days_since_push": 435
+  },
+  {
+   "name": "sablevsky/exponent-jupiter-amm-implementation",
+   "pushed": "2025-07-08T08:06:35Z",
+   "stars": 0,
+   "desc": "",
+   "archived": false,
+   "org": "sablevsky",
+   "days_since_push": 437
+  },
+  {
+   "name": "808putnam/qtrade2",
+   "pushed": "2025-07-07T10:04:27Z",
+   "stars": 7,
+   "desc": "",
+   "archived": false,
+   "org": "808putnam",
+   "days_since_push": 438
+  },
+  {
+   "name": "starke-labs/starke-jup-amm",
+   "pushed": "2025-06-12T18:13:14Z",
+   "stars": 0,
+   "desc": "Amm implementation for integrating Starke vaults into Jupiter swap",
+   "archived": false,
+   "org": "starke-labs",
+   "days_since_push": 463
+  },
+  {
+   "name": "mgild/mint_parser",
+   "pushed": "2025-05-30T14:30:17Z",
+   "stars": 1,
+   "desc": "",
+   "archived": false,
+   "org": "mgild",
+   "days_since_push": 476
+  },
+  {
+   "name": "igneous-labs/stakedex-sdk",
+   "pushed": "2025-05-17T17:11:56Z",
+   "stars": 10,
+   "desc": "",
+   "archived": false,
+   "org": "igneous-labs",
+   "days_since_push": 489
+  },
+  {
+   "name": "NFD-LABS/jup-sc-implementation",
+   "pushed": "2025-05-14T11:39:55Z",
+   "stars": 1,
+   "desc": "",
+   "archived": false,
+   "org": "NFD-LABS",
+   "days_since_push": 492
+  },
+  {
+   "name": "Ellipsis-Labs/jupiter-plasma",
+   "pushed": "2025-05-10T17:48:11Z",
+   "stars": 3,
+   "desc": "Sample code to integrate Plasma with Jupiter",
+   "archived": false,
+   "org": "Ellipsis-Labs",
+   "days_since_push": 496
+  },
+  {
+   "name": "woonetwork/woofi-jupiter-integration",
+   "pushed": "2025-05-01T07:46:51Z",
+   "stars": 2,
+   "desc": "Solana Jupiter integration for WOOFi Swap.",
+   "archived": false,
+   "org": "woonetwork",
+   "days_since_push": 505
+  },
+  {
+   "name": "blockworks-foundation/autobahn",
+   "pushed": "2025-03-17T08:53:58Z",
+   "stars": 373,
+   "desc": "Dex aggregator on Solana",
+   "archived": false,
+   "org": "blockworks-foundation",
+   "days_since_push": 550
+  },
+  {
+   "name": "buildwithcode888/Arbitrage-trading-bot",
+   "pushed": "2025-03-05T08:22:29Z",
+   "stars": 9,
+   "desc": "About Arbitrage trading Bot cross dex swap program with rust language architectu",
+   "archived": false,
+   "org": "buildwithcode888",
+   "days_since_push": 562
+  },
+  {
+   "name": "solanaDOTfun/amm-interface",
+   "pushed": "2024-12-12T13:14:41Z",
+   "stars": 0,
+   "desc": "",
+   "archived": false,
+   "org": "solanaDOTfun",
+   "days_since_push": 645
+  },
+  {
+   "name": "solayer-labs/jupiter-amm-integration",
+   "pushed": "2024-11-06T22:18:07Z",
+   "stars": 1,
+   "desc": "",
+   "archived": false,
+   "org": "solayer-labs",
+   "days_since_push": 680
+  },
+  {
+   "name": "AdrenaFoundation/jupiter-adrena",
+   "pushed": "2024-10-19T08:29:35Z",
+   "stars": 0,
+   "desc": "",
+   "archived": false,
+   "org": "AdrenaFoundation",
+   "days_since_push": 699
+  },
+  {
+   "name": "staccDOTsol/zutalors",
+   "pushed": "2024-10-12T04:28:09Z",
+   "stars": 1,
+   "desc": "",
+   "archived": false,
+   "org": "staccDOTsol",
+   "days_since_push": 706
+  },
+  {
+   "name": "saml33/manifest-landing",
+   "pushed": "2024-09-13T00:03:54Z",
+   "stars": 1,
+   "desc": "",
+   "archived": false,
+   "org": "saml33",
+   "days_since_push": 735
+  },
+  {
+   "name": "cosmic-lab-inc/jupiter-amm-interface",
+   "pushed": "2024-08-30T22:15:40Z",
+   "stars": 0,
+   "desc": "",
+   "archived": false,
+   "org": "cosmic-lab-inc",
+   "days_since_push": 748
+  },
+  {
+   "name": "openbook-dex/openbook-v2",
+   "pushed": "2024-07-15T22:16:49Z",
+   "stars": 261,
+   "desc": "openbook-v2 monorepo, contains solana program and ts client",
+   "archived": false,
+   "org": "openbook-dex",
+   "days_since_push": 794
+  },
+  {
+   "name": "Clone-Protocol/clone-protocol",
+   "pushed": "2024-07-05T13:27:57Z",
+   "stars": 4,
+   "desc": "",
+   "archived": false,
+   "org": "Clone-Protocol",
+   "days_since_push": 805
+  },
+  {
+   "name": "dmsoltech/obric-jupiter-integration",
+   "pushed": "2024-06-04T14:25:12Z",
+   "stars": 7,
+   "desc": "",
+   "archived": false,
+   "org": "dmsoltech",
+   "days_since_push": 836
+  },
+  {
+   "name": "goat0x1/rust-amm-implementation",
+   "pushed": "2024-06-02T02:47:55Z",
+   "stars": 0,
+   "desc": "",
+   "archived": false,
+   "org": "goat0x1",
+   "days_since_push": 838
+  },
+  {
+   "name": "GooseFX1/gfx-ssl-v2-sdk",
+   "pushed": "2024-01-26T17:09:39Z",
+   "stars": 1,
+   "desc": "Public SDK and CLI for the GFX SSLv2 protocol",
+   "archived": false,
+   "org": "GooseFX1",
+   "days_since_push": 966
+  },
+  {
+   "name": "GigaDAO-GigaDEX/DD_DEX_GigadexJupiterInterface",
+   "pushed": "2023-09-10T08:19:05Z",
+   "stars": 0,
+   "desc": "",
+   "archived": false,
+   "org": "GigaDAO-GigaDEX",
+   "days_since_push": 1104
+  }
+ ]
+}
