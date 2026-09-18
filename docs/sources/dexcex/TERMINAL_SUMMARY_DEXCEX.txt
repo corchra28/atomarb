@@ -1,0 +1,28 @@
+SCOPE                       = DEX (Solana pools via Jupiter) vs CEX (Binance, OKX, MEXC, Gate) spot arbitrage
+MEASUREMENT_WINDOW          = 2026-09-18 08:44Z - 09:13Z
+ASSETS_COVERED              = 24 Solana-native (10 requested + 14 added), 170 order books walked level by level
+METHOD                      = public unauthenticated market data only; books walked, not mids; Jupiter quotes at slippageBps=0
+CROSS_CEX_OBSERVATIONS      = 130 (24 assets x 3 sizes x 2 snapshots), gross of all fees
+CROSS_CEX_POSITIVE          = 0 | best gap any asset any size = 0.00 bps (SOL)
+DEX_VS_CEX_MATCHED_SAMPLES  = 160 (SOL, JUP, TRUMP; USDT on both legs; 10 min; $2,000 notional)
+DEX_VS_CEX_ABOVE_5BPS       = 0 | best single observation = +0.70 bps (SOL)
+DEX_VS_CEX_UNMATCHED        = 64 readings above 5 bps - ALL of them the USDC/USDT basis (7.50 bps on Binance, 7.67 on Jupiter)
+SELF_CORRECTION             = my earlier "+6.3 bps on SOL" was a denomination artifact, not an edge
+CEX_LEG_COST_FLOOR          = 5.47 bps (SOL on MEXC: 5.00 taker MEASURED + 0.47 slippage)
+DEX_LEG_COST                = 0.19 bps one way at $10k (SOL) | network fee 0.001 bps at $10k
+WITHDRAWAL_FEE              = ~$0.50 flat per SPL token, $0.106 for SOL (Binance, MEASURED) = 0.5 bps at $10k
+FORCED_EXTRA_LEG            = 0 /SOL-quoted spot pairs on any of the 4 venues -> cycle needs a 3rd leg, >= 5.00 bps more
+DETERMINISTIC_FLOOR         = ~10.8 bps on the single best asset
+ATOMICITY                   = NONE - two legs, two venues, transfer in between
+EXPOSURE_WINDOW             = 1 min (Binance published estimate) to 60 min (MEXC published ceiling), unbounded on manual review
+HOLDING_PERIOD_RISK         = SOL 1-min 1 sigma = 7.55 bps > any gap observed | BONK = 22.98 bps
+FROZEN_LEGS_NOW             = 10 of 61 Binance Solana-network assets have deposit or withdrawal disabled (~1 in 9)
+CAPITAL_REQUIREMENT         = 2*k*S for the inventory model (e.g. $200,000 for a $10,000 clip, 10 trades per rebalance)
+ENGINE_ADAPTER_COVERAGE     = 5 of 244 routed hops (2.05%); 1 leg of 80 routed entirely inside raydium_cpmm + pumpswap
+ORDERS_PLACED               = 0
+TRANSACTIONS_BROADCAST      = 0
+CREDENTIAL_FILES_READ       = 0
+LIVE_TRADING_ENABLED        = NO
+ECONOMIC_VERDICT            = NO_VERIFIED_EDGE
+UNMEASURED                  = MEXC withdrawal fee, OKX taker fee, OKX/MEXC network status, real transfer latency, whether quoted depth fills
+NEXT_DECISIVE_TEST          = run the matched sampler across the CEX-intersect-Solana population for days, conditioned on realised volatility
