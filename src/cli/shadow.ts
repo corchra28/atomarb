@@ -72,12 +72,21 @@ export async function shadow(loaded: LoadedConfig, flags: Record<string, string 
     wss = new WssManager(ep.wssUrl, config.rpc.commitment, { onAccount: n => { const t = vaultToToken.get(n.account.pubkey.toBase58()); if (t) dirty.add(t); db.event(runId, n.account.receivedAtUtc, n.account.receivedMonoMs, 'wss_account', n.account.pubkey.toBase58(), n.account.contextSlot, { identity: n.identity, lamports: n.account.lamports }) }, onGap: g => { gaps.push(g); db.event(runId, nowUtcIso(), monoMs(), 'wss_gap', null, null, g) } }, log)
     try { await wss.start(); wss.subscribe([...vaultToToken.keys()].map(k => new PublicKey(k))) } catch (e) { log.warn('wss_unavailable', { error: (e as Error).message }); wss = null }
   }
-  const lat = { snapshot: [] as number[], quote: [] as number[], build: [] as number[], sim: [] as number[], age: [] as number[] }
+  // state age is measured at every stage that matters, from the snapshot's receive time: one number taken right after the snapshot measures nothing (audit finding F2)
+  const lat = { snapshot: [] as number[], quote: [] as number[], build: [] as number[], sim: [] as number[], ageAtQuote: [] as number[], ageAtDecision: [] as number[], ageAtBuild: [] as number[], ageAtSim: [] as number[] }
   const episodes = new Map<string, Episode>()
-  const counters = { capitalRejected: 0, polls: 0, routePolls: 0, snapshotIncomplete: 0, circuitsEvaluated: 0, positiveEvaluations: 0, candidates: 0, simsAttempted: 0, simsOk: 0, localAttempted: 0, localOk: 0, localMatch: 0, stale: 0, errors: 0 }
+  const counters = { capitalRejected: 0, capitalResized: 0, polls: 0, routePolls: 0, snapshotIncomplete: 0, circuitsEvaluated: 0, positiveEvaluations: 0, candidates: 0, simsAttempted: 0, simsOk: 0, localAttempted: 0, localOk: 0, localMatch: 0, stale: 0, staleAtDecision: 0, staleAtSimulation: 0, errors: 0 }
   const simTimes: number[] = []
   // capital budget, pending positions and concurrency for prospective probes (hypothetical mode: probe PnLs never change capital)
   const ledger = new CapitalLedger({ capitalLamports: BigInt(config.sizing.maxCapitalLamports), maxEpisodeFrac: 0.2, maxAggregateOpenFrac: 0.4, reserveFrac: 0.3, maxConcurrent: 3, hypothetical: true })
+  // external costs do not depend on the size (they come from config): one estimate for the whole run. `total` = definitive costs (base fee + priority + tip),
+  // `locked` = recoverable deposits of the accounts the circuit creates (ATA rent). Both must be available, only `total` is spent.
+  const ext = externalCosts({ baseFeeLamports: BigInt(config.costs.baseFeeLamportsPerSignature), signatures: 1, computeUnitLimit: config.costs.computeUnitLimit, computeUnitPriceMicroLamports: config.costs.computeUnitPriceMicroLamports, jitoTipLamports: BigInt(config.costs.jitoTipLamports), nonRecoverableRentLamports: 0n, recoverableRentLamports: BigInt(config.costs.ataRentLamports) })
+  const feeBudget = ext.total
+  const depositLamports = ext.locked.reduce((s, c) => s + c.amount, 0n)
+  const grid = config.sizing.grid.map(BigInt)
+  const maxCapital = BigInt(config.sizing.maxCapitalLamports)
+  const stalenessMaxMs = config.execution.stalenessMaxMs
   const closest = new Map<string, { bps: number; amountIn: bigint; utc: string; category: string }>()
   let stopReason: string | null = null
   const programsCache = new Map<string, boolean>()
