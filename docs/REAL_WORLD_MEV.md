@@ -111,7 +111,7 @@ The honest summary of all three audits together:
 
 1. **Atomic on-chain arbitrage works and is being done profitably right now.** The previous verdicts were about my implementation and my measurement window, not about the strategy.
 2. **The total prize is about $21,000 a day for everyone combined**, with a median trade worth a quarter of a cent. It is a volume business, not a margin business.
-3. **It is won on latency, not on capital or on fee budget.** A majority of winners pay the base fee and no tip. Competing means seeing state before the next person does, which means a co-located node with a direct block-engine or shred feed, not polling a public RPC every four seconds and not a websocket subscription either.
+3. **It is an auction, and you have to be fast enough to enter it.** 101 of 104 winners pay for block position, nearly all through the Jito tip. Latency gets you to the auction; the tip wins it. Competing means a co-located node with a direct block-engine or shred feed, not polling a public RPC every four seconds and not a websocket subscription either.
 4. **The venue pair matters more than anything else in the engine.** Constant-product against constant-product is the one combination that provably does not pay. Concentrated liquidity against anything is 94% of the real winners.
 
 **What would actually change the result,** in order:
