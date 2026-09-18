@@ -17,7 +17,28 @@
 - **The executor is not deployed** (`MAINNET_ATOMIC_GUARD_NOT_DEPLOYED`), so the dynamic-amount circuit cannot land on mainnet even if it were profitable.
 - **Coverage is a lower bound.** The Raydium listing was capped at the 5,000 most liquid Standard WSOL pools (tvl floor about $10.3k) and the PumpSwap inventory is a snapshot from 2026-09-04. Pools below that rank or created since are not covered.
 
-## Economic result
+## Economic result — re-measured on a private endpoint (2026-09-18)
+
+The public endpoint was the binding limit in the first run. With a paid endpoint (about 150 ms per call), the WebSocket path working, and the audit fixes in place, the same engine ran the full hour over 367 pools and 151 routes:
+
+| | first run (public) | second run (private) |
+|---|---|---|
+| duration / stop reason | 55 min, HTTP budget | **60 min, deadline** |
+| route snapshots | 4,860 | **18,670** |
+| circuit evaluations | 17,676 | **75,542** |
+| positive gross evaluations | 0 | **26** |
+| candidates above the minimum net profit | 0 | **0** |
+| RPC requests / errors | 10,000 / 276 rate-limited | **37,357 / 0** |
+| WebSocket | not used | **4,560 notifications, 0 dropped, 0 gaps, 0 reconnects** |
+| state age at the decision (p50) | 3 ms, measured at the wrong instant | **21 ms, measured at the decision itself** |
+
+The 26 positive evaluations are the first ever recorded, and they say exactly what the sweep said: all of them fall on one mint, at about 0.0015 SOL, worth 5,123 to 5,489 lamports gross, which is **3,511 to 3,877 lamports short of the 9,000-lamport network fee**. The gap persisted across thirteen minutes and twelve consecutive observations, so it was not a snapshot artefact; it was simply never large enough to pay for the transaction that would capture it.
+
+The full-population sweep with the liquidity filter tells the same story without any time dimension: 151 mints, 206 dust pools dropped, 96 real circuits, zero positive at any size.
+
+Two things the fixes bought that are worth recording: the scanner saw 20 cases where a vault notification landed while the route was being processed, each of which the old dirty-set would have dropped, and not a single decision was stale at the 1,500 ms threshold.
+
+## Economic result (first run, public endpoint)
 
 **NO_VERIFIED_EDGE.** Two independent measurements say the same thing.
 

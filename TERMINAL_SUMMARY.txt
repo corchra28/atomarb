@@ -1,20 +1,20 @@
 IMPLEMENTATION_STATUS       = MVP COMPLETE (adapters, discovery, routing/sizing, accounting, simulation, executor, CLI, reports)
 ADAPTERS_IMPLEMENTED        = raydium_cpmm, pumpswap
 ADAPTERS_INTEGRATION_TESTED = raydium_cpmm, pumpswap (real mainnet ELFs executed in LiteSVM)
-DISCOVERED_POOLS            = raydium_cpmm 12043 (API, 12036 mints) / pumpswap 25061 (local inventory 2026-09-04, 24617 mints); both unverified until snapshot
-POOL_INTERSECTION           = cross-adapter mints 26 (routes 63) | pumpswap mints with >=2 pools 123 (routes 653) | raydium mints with >=2 pools 7 (routes 7); routes truncated by per-mint cap 4501
-ELIGIBLE_ROUTES             = shortlist 367 pools / 294 routes; validated on-chain in the run: 50 pools / 22 routes (dropped 0)
-QUOTE_COUNT                 = 17676 circuit evaluations (each over the sizing grid) in run shadow_2026-09-17T18-09-25-841Z_32a7b818; route-gap diagnostic: 612 circuits, best 266.3 bps
+DISCOVERED_POOLS            = raydium_cpmm UNKNOWN (API, ? mints) / pumpswap UNKNOWN (local inventory 2026-09-04, ? mints); both unverified until snapshot
+POOL_INTERSECTION           = cross-adapter mints ? (routes ?) | pumpswap mints with >=2 pools ? (routes ?) | raydium mints with >=2 pools ? (routes ?); routes truncated by per-mint cap ?
+ELIGIBLE_ROUTES             = shortlist 367 pools / UNKNOWN routes; validated on-chain in the run: 367 pools / 151 routes (dropped 0)
+QUOTE_COUNT                 = 75542 circuit evaluations (each over the sizing grid) in run shadow_2026-09-18T07-07-11-904Z_05942733; route-gap diagnostic: 612 circuits, best 266.3 bps
 ATOMIC_SIM_ATTEMPTED        = mainnet 2 | local real-program 3 | executor-guarded 4
 ATOMIC_SIM_SUCCEEDED        = mainnet 0 | local real-program 3 (quote matched exactly: 3) | executor passed 0, reverted by guard 2
 SIMULATION_ENVIRONMENT      = LOCAL_REAL_PROGRAM_SIMULATION (LiteSVM + mainnet ELFs + real accounts + labelled synthetic balances) and MAINNET_RPC_SIMULATION (simulateTransaction, sigVerify=false, unfunded identity)
 ACCOUNTING_STATUS           = COMPLETE for local probes (exact token/lamport deltas, observed base+priority+rent); ESTIMATED external costs elsewhere; REALIZED = NOT_OBSERVED
 SIMULATED_POSITIVE_EPISODES = 0
 REALIZED_NET_PNL            = NOT_OBSERVED
-RPC_USAGE                   = 10000 requests in the run (errors 276, retries 276)
-DATA_GAPS                   = wss not used (no WSS endpoint configured); snapshot_incomplete 0; stale decisions 0; errors 0
-LATENCY_P50_P95_P99         = snapshot 349/1409/2140 ms | quote 17/87/354 ms | state age at decision 3/8/12 ms
-TESTS_PASS / FAIL / SKIPPED = 278 / 0 / 2 (fixtures: 25 json)
+RPC_USAGE                   = 37357 requests in the run (errors 0, retries 0)
+DATA_GAPS                   = wss 0 gap(s); snapshot_incomplete 0; stale decisions 0; errors 0
+LATENCY_P50_P95_P99         = snapshot 160/288/365 ms | quote 17/95/122 ms | state age at decision 21/28/48 ms
+TESTS_PASS / FAIL / SKIPPED = 291 / 0 / 2 (fixtures: 25 json)
 MAINNET_ATOMIC_GUARD_STATUS = MAINNET_ATOMIC_GUARD_NOT_DEPLOYED (arb_executor built locally: 42416 bytes, sha256 1ae6519d19afe390…)
 AUDIT_FINDINGS              = 7/7 fixed (independent audit of 2c78a61; see docs/AUDIT_RESPONSE.md)
 TRANSACTIONS_BROADCAST      = 0

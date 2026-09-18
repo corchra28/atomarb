@@ -1,12 +1,12 @@
-# TEST_REPORT (generated 2026-09-18T06:54:44.639Z)
+# TEST_REPORT (generated 2026-09-18T08:09:24.332Z)
 
-vitest exit code: 0; total=280 passed=278 failed=0 skipped=2
+vitest exit code: 0; total=293 passed=291 failed=0 skipped=2
 
 | category | files | pass | fail | skipped |
 |---|---|---|---|---|
 | local_real_program_integration | 4 | 46 | 0 | 0 |
 | network | 1 | 0 | 0 | 1 |
-| unit | 25 | 232 | 0 | 1 |
+| unit | 26 | 245 | 0 | 1 |
 
 mainnet_simulation tests: none in the suite (mainnet simulations are produced by the simulate/shadow commands and recorded in reports/runs; they are not unit tests).
 

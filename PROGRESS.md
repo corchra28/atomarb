@@ -52,6 +52,10 @@ Seven findings, all reproduced here before touching anything: `docs/sources/audi
 
 The economic verdict does not change: repairing control defects is not evidence of profit, and the observed run had zero positive evaluations out of 17,676.
 
+## Second measurement on a private endpoint (2026-09-18)
+
+60 minutes, 367 pools, 151 routes, WebSocket-driven: 18,670 route snapshots, 75,542 circuit evaluations, 37,357 RPC requests with zero errors, 4,560 notifications with none dropped and no gaps, decisions 21 ms old at the median. **26 positive gross evaluations, all on one mint at about 0.0015 SOL, each 3,511 to 3,877 lamports short of the 9,000-lamport fee; zero candidates.** The full-population sweep with the liquidity filter: 151 mints, 206 dust pools dropped, 96 real circuits, zero positive at any size. Reports: `reports/runs/shadow_2026-09-18T07-07-11-904Z_05942733/`, `reports/population_sweep_*.json`.
+
 ## Finished
 
 - **60-minute prospective run** (`shadow_2026-09-17T18-09-25-841Z_32a7b818`): 50 pools validated on-chain, 22 routes, 17,676 circuit evaluations over the sizing grid, **zero positive**; stopped on the 10,000-request budget at 55 min; snapshot latency p50 349 ms; no data gaps.

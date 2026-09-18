@@ -1,0 +1,287 @@
+{
+ "runId": "shadow_2026-09-18T07-07-11-904Z_05942733",
+ "stopReason": "DEADLINE",
+ "elapsedMs": 3600042,
+ "durationMin": 60,
+ "pools": 367,
+ "validPools": 367,
+ "dropped": [],
+ "routes": 151,
+ "counters": {
+  "revisionRacesObserved": 20,
+  "wssDrivenPolls": 123,
+  "capitalRejected": 0,
+  "capitalResized": 0,
+  "sizingCapExhausted": 0,
+  "polls": 124,
+  "routePolls": 18670,
+  "snapshotIncomplete": 0,
+  "circuitsEvaluated": 75542,
+  "positiveEvaluations": 26,
+  "candidates": 0,
+  "simsAttempted": 0,
+  "simsOk": 0,
+  "localAttempted": 0,
+  "localOk": 0,
+  "localMatch": 0,
+  "stale": 0,
+  "staleAtDecision": 0,
+  "staleAtSimulation": 0,
+  "errors": 0
+ },
+ "latencyMs": {
+  "snapshot": {
+   "n": 18670,
+   "p50": 160,
+   "p95": 288,
+   "p99": 365
+  },
+  "quote": {
+   "n": 18670,
+   "p50": 17,
+   "p95": 95,
+   "p99": 122
+  },
+  "build": {
+   "n": 0,
+   "p50": null,
+   "p95": null,
+   "p99": null
+  },
+  "simulation": {
+   "n": 0,
+   "p50": null,
+   "p95": null,
+   "p99": null
+  },
+  "stateAgeAtDecision": {
+   "n": 26,
+   "p50": 21,
+   "p95": 28,
+   "p99": 48
+  },
+  "stateAge": {
+   "atQuoteDone": {
+    "n": 18670,
+    "p50": 20,
+    "p95": 101,
+    "p99": 129
+   },
+   "atDecision": {
+    "n": 26,
+    "p50": 21,
+    "p95": 28,
+    "p99": 48
+   },
+   "atBuildDone": {
+    "n": 0,
+    "p50": null,
+    "p95": null,
+    "p99": null
+   },
+   "atSimulationIssued": {
+    "n": 0,
+    "p50": null,
+    "p95": null,
+    "p99": null
+   },
+   "maxMs": 1500
+  }
+ },
+ "rpc": {
+  "total": 37357,
+  "errors": 0,
+  "retries": 0,
+  "byMethod": {
+   "getMultipleAccounts": {
+    "count": 37357,
+    "errors": 0,
+    "n": 37357,
+    "p50": 72,
+    "p95": 185,
+    "p99": 261
+   }
+  }
+ },
+ "wss": {
+  "notifications": 4560,
+  "duplicates": 0,
+  "dropped": 0,
+  "reconnects": 0,
+  "gaps": [],
+  "connectFailures": 0
+ },
+ "capital": {
+  "capital": "1000000000",
+  "initial": "1000000000",
+  "realisedNet": "0",
+  "locked": "0",
+  "budget": "200000000",
+  "pending": [],
+  "stats": {
+   "reserved": 0,
+   "rejected": 0,
+   "settled": 0,
+   "filled": 0,
+   "reverted": 0,
+   "notLanded": 0,
+   "feesPaid": "0",
+   "hypotheticalPnl": "0"
+  },
+  "hypothetical": true,
+  "note": "hypothetical mode: probe PnLs are independent interventions and are NOT a portfolio"
+ },
+ "closestToBreakeven": [
+  {
+   "circuit": "pumpswap:AEq12YgRZnzfChbYJramuuGpriu4urfp7LHkSuzhHrXZ>raydium_cpmm:G8kgi7aUpeX8EVR8VMkrth9SKEv5BietWC33UjAiiMGh",
+   "bps": 47.56,
+   "amountIn": "1000000",
+   "utc": "2026-09-18T07:39:30.974Z",
+   "category": "cross_adapter"
+  },
+  {
+   "circuit": "pumpswap:BZiqi94r5CP2nVc3JgR15i8Rg7gN3Xyb9xLcLy27ewLF>pumpswap:83QiEeSqNKd3HkYMd87rbfnaMTThfvBUmwVVGvKdtZ5W",
+   "bps": 2.73,
+   "amountIn": "587792",
+   "utc": "2026-09-18T07:51:18.317Z",
+   "category": "same_adapter"
+  },
+  {
+   "circuit": "raydium_cpmm:CeMyZDRTfPGsRYXLMPu51rhETCdxvGsMNNSnjS7iUxiw>pumpswap:5WguHFQRoyvh1mQJfb8WcRrFJ3p3GHQ5E8rSQ6dmsppM",
+   "bps": -0.28,
+   "amountIn": "1000000",
+   "utc": "2026-09-18T07:07:17.888Z",
+   "category": "cross_adapter"
+  },
+  {
+   "circuit": "raydium_cpmm:H5gndJaYQn59VaNd7iPnW4KS1kisk8sG4UMeZAtjX4WZ>raydium_cpmm:73frby6kZ8NwxmmBgdJ8sXmgsXbi3rAv6vuDAXh1We9x",
+   "bps": -0.67,
+   "amountIn": "1000000",
+   "utc": "2026-09-18T07:53:14.880Z",
+   "category": "same_adapter"
+  },
+  {
+   "circuit": "raydium_cpmm:9sV7boHWPnShnrM4ZWt5je8Yqk6PP2yZzPMZBkrvNKTa>pumpswap:ArnWdnyKHDosGL7xSQELo65HqDK4uMa3nw5CnmoYgtWn",
+   "bps": -1.71,
+   "amountIn": "1000000",
+   "utc": "2026-09-18T07:07:18.402Z",
+   "category": "cross_adapter"
+  },
+  {
+   "circuit": "pumpswap:AypFy111g9Nt1JvUNYmtJd9iS2m8C3PbVEosmX9ecHEu>raydium_cpmm:HMcsLqREEer8Q7VuRTxrxaNnyDgJRYc77XJ9K3gcARWv",
+   "bps": -1.77,
+   "amountIn": "1000000",
+   "utc": "2026-09-18T07:27:54.847Z",
+   "category": "cross_adapter"
+  },
+  {
+   "circuit": "pumpswap:H99xSrbgC5LPbp7KTk13mogPG1g81hYhewwbWoZPKw8A>pumpswap:5bns2je5vrMvtYqa7X8PsyFARja8PLFybLA5PjgkUyZ9",
+   "bps": -5.22,
+   "amountIn": "1000000",
+   "utc": "2026-09-18T07:13:02.673Z",
+   "category": "same_adapter"
+  },
+  {
+   "circuit": "raydium_cpmm:BTKGNLss7wic4wDwSvSSMpfSZYDTeD6aDYoeeDARkGAZ>pumpswap:8jnWKj9qMqTfqbWFWhDziGG7cU6DWFAuxRCjZJHfVa3d",
+   "bps": -14.43,
+   "amountIn": "1000000",
+   "utc": "2026-09-18T07:07:19.090Z",
+   "category": "cross_adapter"
+  },
+  {
+   "circuit": "raydium_cpmm:BakaWqcYAhwR2oGWBw3iHzmSiJqQ3j1uvvBm4DPxg1dU>pumpswap:FDXvtVFZAXzbW9ABYbg9p1mH7MZV2BxbTuVWGSh85Qkh",
+   "bps": -18.04,
+   "amountIn": "1000000",
+   "utc": "2026-09-18T07:28:25.391Z",
+   "category": "cross_adapter"
+  },
+  {
+   "circuit": "pumpswap:9k62CKYYGpAnReMD1UnQjTf7dg3jR95t2cjs53MSw4q3>pumpswap:EswBoyB8be8J2KQr7pcUStUBHPdRCse99FYiGinFF3CH",
+   "bps": -25.69,
+   "amountIn": "1000000",
+   "utc": "2026-09-18T07:07:25.371Z",
+   "category": "same_adapter"
+  },
+  {
+   "circuit": "pumpswap:GTeKipedV6TwDwRgvQSJ8owRLsE1WGfAsCuRVCFGFTwv>pumpswap:G9qjxP2PAsvWRUarHNht5T49Gw7LKaQGLtNDr7u9KqHj",
+   "bps": -25.92,
+   "amountIn": "1000000",
+   "utc": "2026-09-18T07:07:23.429Z",
+   "category": "same_adapter"
+  },
+  {
+   "circuit": "raydium_cpmm:CB7CeSUwCHFptDg18MeN8NQiP3KRV5HN6L45BPCpv2cp>pumpswap:JBwuyZai99UaNedXXxihdJiZ4cJdotJZnSxBsCz1inja",
+   "bps": -34.69,
+   "amountIn": "1000000",
+   "utc": "2026-09-18T08:03:03.422Z",
+   "category": "cross_adapter"
+  },
+  {
+   "circuit": "pumpswap:83QiEeSqNKd3HkYMd87rbfnaMTThfvBUmwVVGvKdtZ5W>pumpswap:BZiqi94r5CP2nVc3JgR15i8Rg7gN3Xyb9xLcLy27ewLF",
+   "bps": -42.15,
+   "amountIn": "1000000",
+   "utc": "2026-09-18T08:01:47.962Z",
+   "category": "same_adapter"
+  },
+  {
+   "circuit": "raydium_cpmm:G8kgi7aUpeX8EVR8VMkrth9SKEv5BietWC33UjAiiMGh>pumpswap:AEq12YgRZnzfChbYJramuuGpriu4urfp7LHkSuzhHrXZ",
+   "bps": -42.81,
+   "amountIn": "1000000",
+   "utc": "2026-09-18T07:58:05.740Z",
+   "category": "cross_adapter"
+  },
+  {
+   "circuit": "raydium_cpmm:FSGpn2mQCCy31FGFcDoDqq8iS3x5M2iNLz4RG4EPhYon>pumpswap:AebGNkwB97vhhe8itVqmAL2JEMYnY4tLgxb64S5jjbdv",
+   "bps": -43.88,
+   "amountIn": "1000000",
+   "utc": "2026-09-18T07:07:18.296Z",
+   "category": "cross_adapter"
+  },
+  {
+   "circuit": "pumpswap:FDXvtVFZAXzbW9ABYbg9p1mH7MZV2BxbTuVWGSh85Qkh>raydium_cpmm:BakaWqcYAhwR2oGWBw3iHzmSiJqQ3j1uvvBm4DPxg1dU",
+   "bps": -45.6,
+   "amountIn": "1000000",
+   "utc": "2026-09-18T07:09:07.660Z",
+   "category": "cross_adapter"
+  },
+  {
+   "circuit": "raydium_cpmm:2higKRf25Q9WMcYfgyK96AAuFVv5zucfDAFHHDuVETcq>pumpswap:J6F4eB4iJwa29gNPFXwaK5j8jGCJ6dWQovdqLcPDmxkG",
+   "bps": -47.48,
+   "amountIn": "1000000",
+   "utc": "2026-09-18T07:07:15.612Z",
+   "category": "cross_adapter"
+  },
+  {
+   "circuit": "raydium_cpmm:As5e4ZDPgnXAJbt88TRy6amGWipepBSAjgopDCcQMDCE>pumpswap:DD36MKnoHFG3yLhWBDcUwRrAZqCptLiMyWVwj6nKwfbL",
+   "bps": -49.47,
+   "amountIn": "1000000",
+   "utc": "2026-09-18T07:07:16.355Z",
+   "category": "cross_adapter"
+  },
+  {
+   "circuit": "raydium_cpmm:4BDk8hu6XadgFspmxHtkQf5xaD5tJ4KqnD2ZFQbHnAX4>raydium_cpmm:EW9akAzihzBhPh1kFWMrTyJmLAjGczJeKn5ni2YMj5tV",
+   "bps": -49.6,
+   "amountIn": "1000000",
+   "utc": "2026-09-18T07:19:24.303Z",
+   "category": "same_adapter"
+  },
+  {
+   "circuit": "pumpswap:Eph5WmFa4x5ZbdYQeij96rJPd1n6iWijhaXGZ5RtZrLy>raydium_cpmm:A4wvpiogBMgFdmrKbH1gwNbQDDzavMaUbLVdGXZpk84v",
+   "bps": -50.15,
+   "amountIn": "1000000",
+   "utc": "2026-09-18T07:55:43.195Z",
+   "category": "cross_adapter"
+  }
+ ],
+ "episodes": {
+  "total": 0,
+  "byCategory": {},
+  "byToken": {},
+  "maxRefreshes": 0,
+  "simulatedOk": 0,
+  "localOk": 0,
+  "localMatch": 0,
+  "list": []
+ },
+ "note": "Every probe is an independent hypothetical intervention on real state; probe sums are not a realised portfolio. REALIZED_NET_PNL = NOT_OBSERVED. TRANSACTIONS_BROADCAST = 0."
+}
