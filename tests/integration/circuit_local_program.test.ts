@@ -10,7 +10,7 @@ import { loadAdapters, requireAdapters } from '../../src/adapters/registry.js'
 import type { AdapterId, PoolRef, AccountBundle, RawAccount } from '../../src/adapters/types.js'
 import { isUnsupported } from '../../src/adapters/types.js'
 import { enumerateCircuits, evaluateCircuit, sizeCircuit } from '../../src/routing/circuit.js'
-import { localProbe, localProbeExecutor } from '../../src/simulation/probe.js'
+import { localProbe, localProbeExecutor, recoverDeposits, depositCandidates, userAccountsFor } from '../../src/simulation/probe.js'
 import { writeU64LE } from '../../src/util/bytes.js'
 import { WSOL_MINT } from '../../src/state/token.js'
 const COST = { baseFeeLamportsPerSignature: 5000, computeUnitLimit: 400_000, computeUnitPriceMicroLamports: 10_000, jitoTipLamports: 0, ataRentLamports: 2_039_280 }
@@ -81,6 +81,46 @@ for (const R of ROUTES) {
       expect(lamportsLost).toBeLessThanOrEqual(5000n + 4000n)               // base fee + prioritisation only, no rent for accounts that were never created
       expect(l.accounting.status).toBe('ACCOUNTING_INCOMPLETE')
       expect(l.accounting.notes.join(' ') + (l.err ?? '')).toMatch(/.+/)
+    }, 120_000)
+    it('accounting reconciles every lamport, and the deposits the circuit parks are recoverable (audit finding F1)', async () => {
+      const adapters = await adaptersP; const bundle = bundleFromFixture(loadFixture(path))
+      const [c] = enumerateCircuits(decodeRoute(adapters, bundle, R.pools))
+      const ev = evaluateCircuit(adapters, c!, R.amount); expect(ev.ok).toBe(true); if (!ev.ok) return
+      const l = await localProbe(null, adapters, c!, ev.value, COST, { bundle })
+      expect(l.ok, l.err ?? '').toBe(true)
+      const a = l.accounting
+      // 1. the listed costs sum to exactly what is deducted (the old code deducted 9,000 while listing 3,892,680)
+      expect(a.definitiveCosts.reduce((s, x) => s + x.amount, 0n)).toBe(a.definitiveTotal)
+      expect(a.netAfterDefinitiveCosts).toBe(a.tradingPnl - a.definitiveTotal)
+      // 2. every native lamport that left the wallet is explained by a cost or a recoverable deposit
+      expect(a.reconciliation.unexplained).toBe(0n)
+      expect(a.reconciliation.ok).toBe(true)
+      expect(a.reconciliation.observedNativeSpend).toBe(a.reconciliation.explainedByCosts + a.reconciliation.explainedByLocked)
+      expect(a.status).toBe('COMPLETE')
+      // 3. a deposit is never both a cost and locked capital
+      expect(a.definitiveCosts.map(x => x.name).some(n => n.startsWith('deposit:'))).toBe(false)
+      expect(a.lockedTotal).toBe(l.createdAccounts.reduce((s, x) => s + x.lamports, 0n))
+      // 4. the liquid wallet delta is the base-asset move plus the native move, not the trading PnL alone
+      expect(a.liquidWalletDelta).toBe(l.deltas!.baseAta + l.deltas!.userLamports)
+    }, 120_000)
+    it('the PumpSwap user_volume_accumulator deposit comes back when the engine closes it (the old comment claimed it could not)', async () => {
+      const adapters = await adaptersP; const bundle = bundleFromFixture(loadFixture(path))
+      // the user_volume_accumulator is created by a PumpSwap BUY, i.e. only when the PumpSwap pool is leg A
+      const c = enumerateCircuits(decodeRoute(adapters, bundle, R.pools)).find(x => x.poolA.adapter === 'pumpswap')
+      if (!c) return
+      const ev = evaluateCircuit(adapters, c, R.amount); expect(ev.ok).toBe(true); if (!ev.ok) return
+      const l = await localProbe(null, adapters, c, ev.value, COST, { bundle, keepSvm: true })
+      expect(l.ok).toBe(true)
+      expect(l.createdAccounts.map(x => x.kind)).toContain('pumpswap_user_volume_accumulator')
+      const svm = l.svm!; const user = new PublicKey(l.synthetic.find(x => x.note.startsWith('synthetic user'))!.pubkey)
+      const ua = userAccountsFor(user, c)
+      expect(depositCandidates(user, ua, c).length).toBeGreaterThanOrEqual(2)
+      const rec = recoverDeposits(svm, user, l.createdAccounts, ua.interTokenProgram, 5000n)
+      expect(rec.attempted).toBe(true)
+      expect(rec.ok, rec.err ?? '').toBe(true)
+      expect(rec.closed.length).toBe(l.createdAccounts.length)          // every account the circuit created is closed
+      expect(rec.recoveredLamports).toBe(l.accounting.lockedTotal)      // and exactly the locked capital comes back
+      expect(rec.netRecovered).toBe(l.accounting.lockedTotal - 5000n)   // minus the close transaction's own fee
     }, 120_000)
     it('executor: guard reverts the losing circuit with ProfitBelowMin after both real CPIs (leg A min-out == quote is accepted)', async () => {
       const adapters = await adaptersP; const bundle = bundleFromFixture(loadFixture(path))

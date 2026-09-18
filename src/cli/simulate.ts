@@ -51,7 +51,11 @@ export async function simulate(loaded: LoadedConfig, flags: Record<string, strin
     try {
       const l = await localProbe(rpc, adapters, c, ev.value, config.costs)
       out['local'] = l
-      printBlock('LOCAL_REAL_PROGRAM_SIMULATION', [['ok', l.ok], ['err', l.err], ['units', l.unitsConsumed], ['deltas', l.deltas], ['quoted', l.quoted], ['realised', l.realised], ['accounting', l.accounting.status], ['pnl_after_external', l.accounting.pnlAfterExternal], ['external_costs', l.accounting.externalCosts.map(x => `${x.name}=${x.amount}(${x.status})`)], ['synthetic', l.synthetic.length], ['programs', l.loadedPrograms], ['accounts_loaded', l.accountsLoaded], ['missing_on_chain', l.accountsMissingOnChain], ['snapshot', l.snapshot], ['logs_tail', l.logs.slice(-8)]])
+      printBlock('LOCAL_REAL_PROGRAM_SIMULATION', [['ok', l.ok], ['err', l.err], ['units', l.unitsConsumed], ['deltas', l.deltas], ['quoted', l.quoted], ['realised', l.realised],
+        ['accounting_status', l.accounting.status], ['trading_pnl', l.accounting.tradingPnl], ['net_after_definitive_costs', l.accounting.netAfterDefinitiveCosts],
+        ['definitive_costs', l.accounting.definitiveCosts.map(x => `${x.name}=${x.amount}(${x.status})`)], ['locked_recoverable', l.accounting.lockedRecoverable.map(x => `${x.name}=${x.amount}`)],
+        ['liquid_wallet_delta', l.accounting.liquidWalletDelta], ['reconciliation', l.accounting.reconciliation], ['created_accounts', l.createdAccounts],
+        ['synthetic', l.synthetic.length], ['programs', l.loadedPrograms], ['accounts_loaded', l.accountsLoaded], ['missing_on_chain', l.accountsMissingOnChain], ['snapshot', l.snapshot], ['logs_tail', l.logs.slice(-8)]])
     } catch (e) { out['local'] = { error: (e as Error).message }; console.error(`LOCAL_PROBE_ERROR ${(e as Error).message}`) }
   }
   if (!flags['no-local'] && !flags['no-executor']) {

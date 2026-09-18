@@ -331,3 +331,22 @@ export class PumpswapAdapter implements PoolAdapter {
     return { instruction, accountsWritten: keys.filter(x => x.isWritable).map(x => x.pubkey) }
   }
 }
+
+/**
+ * `close_user_volume_accumulator` — reclaims the deposit that the first PumpSwap buy parks in the user_volume_accumulator PDA.
+ * Accounts (pump_amm IDL, instruction `close_user_volume_accumulator`): user (signer, writable), user_volume_accumulator (writable),
+ * event_authority, program. No arguments. The audit proved on the real program that the 1,844,400 lamports come back, so the deposit is
+ * LOCKED CAPITAL, not a cost; this builder is what makes that recovery reachable from the engine instead of only from the vendor SDK.
+ */
+export function buildCloseUserVolumeAccumulatorIx(user: PublicKey): TransactionInstruction {
+  return new TransactionInstruction({
+    programId: PUMP_AMM_PROGRAM_ID,
+    keys: [
+      { pubkey: user, isSigner: true, isWritable: true },
+      { pubkey: userVolumeAccumulatorPda(user), isSigner: false, isWritable: true },
+      { pubkey: EVENT_AUTHORITY_PDA, isSigner: false, isWritable: false },
+      { pubkey: PUMP_AMM_PROGRAM_ID, isSigner: false, isWritable: false },
+    ],
+    data: Buffer.from(IX_DISC.closeUserVolumeAccumulator, 'hex'),
+  })
+}

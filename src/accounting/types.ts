@@ -40,4 +40,31 @@ export interface OperatingPnl {
   attempts: number
   status: 'NOT_TESTED' | 'INCOMPLETE' | 'COMPLETE'
 }
+/**
+ * Full reconciliation of one attempt, so that no number in a report can contradict another.
+ * Invariants enforced by `reconcileAttempt` and by tests:
+ *   sum(definitiveCosts)        === definitiveTotal
+ *   netAfterDefinitiveCosts     === tradingPnl - definitiveTotal
+ *   observedNativeSpend         === definitiveTotal(native part) + sum(lockedRecoverable) + unexplained
+ *   liquidWalletDelta           === baseAssetDelta + nativeLamportDelta   (what the wallet can actually spend next)
+ */
+export interface AttemptAccounting {
+  /** what the swaps produced in the base asset (DEX and transfer fees already inside the quotes) */
+  tradingPnl: bigint
+  /** costs that are gone for good: network base fee, prioritization fee, tip, flash premium, rent of accounts that will not be closed, close-transaction fees */
+  definitiveCosts: CostItem[]
+  definitiveTotal: bigint
+  /** deposits parked in accounts the circuit created: recoverable ONLY by a successful close, which itself costs a fee */
+  lockedRecoverable: CostItem[]
+  lockedTotal: bigint
+  /** tradingPnl - definitiveTotal (locked capital is NOT a loss) */
+  netAfterDefinitiveCosts: bigint
+  /** base-asset delta + native lamport delta: how much the spendable wallet moved */
+  liquidWalletDelta: bigint
+  /** every native lamport that left the wallet must be explained by a definitive cost or a locked deposit */
+  reconciliation: { observedNativeSpend: bigint; explainedByCosts: bigint; explainedByLocked: bigint; unexplained: bigint; ok: boolean }
+  status: 'COMPLETE' | 'ACCOUNTING_INCOMPLETE'
+  incompleteReasons: string[]
+  notes: string[]
+}
 export type EvidenceLevel = 'QUOTE_ONLY' | 'LOCAL_MOCK_SIMULATION' | 'LOCAL_REAL_PROGRAM_SIMULATION' | 'MAINNET_RPC_SIMULATION' | 'CONFIRMED_EXECUTION'

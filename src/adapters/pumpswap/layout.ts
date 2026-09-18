@@ -267,4 +267,6 @@ export function decodeFeeConfig(data: Uint8Array): PumpFeeConfig | Unsupported {
 // §6 instruction discriminators
 // ---------------------------------------------------------------------------------------------------------------------
 /** pumpswap.md §6: `buy` = 66063d1201daebea, `buy_exact_quote_in` = c62e1552b4d9e870, `sell` = 33e685a4017f83ad. */
-export const IX_DISC = { buy: '66063d1201daebea', buyExactQuoteIn: 'c62e1552b4d9e870', sell: '33e685a4017f83ad' } as const
+export const IX_DISC = { buy: '66063d1201daebea', buyExactQuoteIn: 'c62e1552b4d9e870', sell: '33e685a4017f83ad',
+  /** close_user_volume_accumulator: reclaims the 1,844,400-lamport deposit the first buy parks in the UVA (pump_amm IDL @81091419; sha256("global:close_user_volume_accumulator")[..8]) */
+  closeUserVolumeAccumulator: 'f945a4da9667548a' } as const

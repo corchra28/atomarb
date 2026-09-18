@@ -8,10 +8,12 @@ import type { RpcClient, SimulateResult } from '../state/rpc.js'
 import { buildV0, computeBudgetIxs, MAX_TX_BYTES, type BuiltTx } from './tx_build.js'
 import { LocalSvm, dumpProgram, type ProgramDump } from './local_svm.js'
 import { associatedTokenAddress, TOKEN_PROGRAM_ID, TOKEN_2022_PROGRAM_ID, ASSOCIATED_TOKEN_PROGRAM_ID, SYSTEM_PROGRAM_ID, WSOL_MINT, ACCOUNT_SIZE } from '../state/token.js'
+import { userVolumeAccumulatorPda } from '../adapters/pumpswap/layout.js'
+import { buildCloseUserVolumeAccumulatorIx } from '../adapters/pumpswap/adapter.js'
 import { sha256Hex } from '../util/hash.js'
 import { nowUtcIso, monoMs } from '../util/time.js'
-import type { EvidenceLevel, CostItem } from '../accounting/types.js'
-import { externalCosts, transactionPnl, tradingPnl } from '../accounting/pnl.js'
+import type { EvidenceLevel, CostItem, AttemptAccounting } from '../accounting/types.js'
+import { externalCosts, transactionPnl, tradingPnl, reconcileAttempt } from '../accounting/pnl.js'
 
 export interface CostConfig { baseFeeLamportsPerSignature: number; computeUnitLimit: number; computeUnitPriceMicroLamports: number; jitoTipLamports: number; ataRentLamports: number }
 export interface UserAccounts { user: PublicKey; baseAta: PublicKey; interAta: PublicKey; baseTokenProgram: PublicKey; interTokenProgram: PublicKey }
@@ -119,7 +121,11 @@ export interface LocalProbeEvidence {
   loadedPrograms: { programId: string; bytes: number; slot: number }[]
   accountsLoaded: number; accountsMissingOnChain: string[]
   snapshot: { minSlot: number; maxSlot: number; singleBatch: boolean }
-  accounting: { status: 'COMPLETE' | 'ACCOUNTING_INCOMPLETE'; pnlAfterExternal: bigint; externalCosts: CostItem[]; locked: CostItem[]; notes: string[] }
+  accounting: AttemptAccounting
+  /** accounts this circuit created, with the deposit parked in each and whether the engine can close it */
+  createdAccounts: CreatedAccount[]
+  /** the post-execution SVM, only when opts.keepSvm was set (used to prove deposit recovery on the same state) */
+  svm?: LocalSvm
   durationMs: number
 }
 /** Programs that a DEX program invokes by CPI and that must therefore be loaded alongside it (docs/sources/pumpswap.md §1: pump_amm -> pump_fees GetFeesWithQuoteMint). */
@@ -149,7 +155,7 @@ const SYSVARS = new Set(['SysvarC1ock11111111111111111111111111111111', 'SysvarR
  * LOCAL_REAL_PROGRAM_SIMULATION with EXACT accounting: real program ELFs + real accounts (one getMultipleAccounts for all instruction keys when they fit in 100),
  * synthetic user balances (labelled), execution in LiteSVM, token/lamport deltas measured before/after. NOT a mainnet result.
  */
-export async function localProbe(rpc: RpcClient | null, adapters: Record<AdapterId, PoolAdapter>, c: Circuit, ev: CircuitEval, cost: CostConfig, opts: { fundLamports?: bigint; extraAccounts?: RawAccount[]; programIds?: PublicKey[]; bundle?: AccountBundle; programDirs?: string[] } = {}): Promise<LocalProbeEvidence> {
+export async function localProbe(rpc: RpcClient | null, adapters: Record<AdapterId, PoolAdapter>, c: Circuit, ev: CircuitEval, cost: CostConfig, opts: { fundLamports?: bigint; extraAccounts?: RawAccount[]; programIds?: PublicKey[]; bundle?: AccountBundle; programDirs?: string[]; keepSvm?: boolean } = {}): Promise<LocalProbeEvidence> {
   const t0 = monoMs()
   const user = PublicKey.unique()
   const ua = userAccountsFor(user, c)
@@ -178,6 +184,7 @@ export async function localProbe(rpc: RpcClient | null, adapters: Record<Adapter
     const ixs = [...computeBudgetIxs(cost.computeUnitLimit, cost.computeUnitPriceMicroLamports), createAtaIdempotentIx(ua.user, ua.interAta, ua.user, c.token, ua.interTokenProgram), direct.ixA, direct.ixB]
     tx = buildV0(ua.user, svm.svm.latestBlockhash(), ixs, [alt]).tx; usedAlt = true
   }
+  const existedBefore = new Set(depositCandidates(user, ua, c).filter(x => svm.getAccount(x.pubkey) !== null).map(x => x.pubkey.toBase58()))
   const before = { base: svm.tokenAmount(ua.baseAta) ?? 0n, inter: svm.tokenAmount(ua.interAta) ?? 0n, lamports: svm.getAccount(user)?.lamports ?? 0n }
   const r = svm.execute(tx)
   const after = { base: svm.tokenAmount(ua.baseAta) ?? 0n, inter: svm.tokenAmount(ua.interAta) ?? 0n, lamports: svm.getAccount(user)?.lamports ?? 0n }
@@ -185,16 +192,27 @@ export async function localProbe(rpc: RpcClient | null, adapters: Record<Adapter
   const deltas = r.ok ? { baseAta: after.base - before.base, interAta: after.inter - before.inter, userLamports: after.lamports - before.lamports } : null
   const realised = deltas ? { pnl: deltas.baseAta, matchesQuote: deltas.baseAta === quoted.pnl && deltas.interAta === 0n } : null
   const notes: string[] = []
-  // LiteSVM charges base fee (5000/signature) + prioritization fee (ceil(cu_limit*cu_price/1e6)); the remainder of the user's lamport delta is rent for accounts created in the tx
-  const prio = (BigInt(cost.computeUnitLimit) * BigInt(cost.computeUnitPriceMicroLamports) + 999_999n) / 1_000_000n
-  const spent = deltas ? -deltas.userLamports : 0n
-  const rentPaid = deltas ? spent - 5000n - prio : 0n
   if (deltas && deltas.interAta !== 0n) notes.push(`INTERMEDIATE_INVENTORY_LEFT=${deltas.interAta} (direct tx codes leg B amount = quoted A output)`)
   if (usedAlt) notes.push('USED_FABRICATED_ALT (local only): direct tx exceeded 1232 bytes')
-  const ext = externalCosts({ baseFeeLamports: BigInt(cost.baseFeeLamportsPerSignature), signatures: 1, computeUnitLimit: cost.computeUnitLimit, computeUnitPriceMicroLamports: cost.computeUnitPriceMicroLamports, jitoTipLamports: BigInt(cost.jitoTipLamports), nonRecoverableRentLamports: 0n, recoverableRentLamports: rentPaid > 0n ? rentPaid : 0n })
-  if (deltas) { for (const c0 of ext.costs) c0.status = 'OBSERVED'; ext.costs.push({ name: 'rent_for_accounts_created_in_tx', unit: 'lamports', amount: rentPaid, status: 'OBSERVED', source: `LiteSVM user lamport delta ${spent} minus base fee 5000 minus prioritization fee ${prio}`, note: 'locked capital, recoverable only after CloseAccount; PumpSwap user_volume_accumulator rent (1,844,400) is NOT recoverable' }); notes.push(`OBSERVED_LAMPORTS_SPENT=${spent} (base 5000 + priority ${prio} + rent ${rentPaid})`) }
-  const pnlTx = transactionPnl(tradingPnl(WSOL_MINT, ev.quoteA, ev.quoteB), ext, r.ok ? [] : ['EXECUTION_FAILED'])
-  return { level: 'LOCAL_REAL_PROGRAM_SIMULATION', environment: 'LOCAL_REAL_PROGRAM_SIMULATION', ok: r.ok, err: r.err, logs: r.logs, unitsConsumed: r.unitsConsumed, deltas, balances: { before: { baseAta: before.base, interAta: before.inter, userLamports: before.lamports }, after: { baseAta: after.base, interAta: after.inter, userLamports: after.lamports } }, quoted, realised, synthetic: svm.synthetic.map(s => ({ pubkey: s.pubkey.toBase58(), note: s.note })), loadedPrograms: svm.loadedPrograms, accountsLoaded: fetched.bundle.accounts.size, accountsMissingOnChain: missing, snapshot: { minSlot: fetched.bundle.minSlot, maxSlot: fetched.bundle.maxSlot, singleBatch: fetched.bundle.singleBatch }, accounting: { status: pnlTx.status, pnlAfterExternal: realised ? realised.pnl - ext.total : pnlTx.pnlAfterExternal, externalCosts: pnlTx.externalCosts, locked: pnlTx.lockedCapital, notes }, durationMs: monoMs() - t0 }
+  // F1 of the independent audit: every native lamport that left the wallet is attributed to a DEFINITIVE cost (fees) or to a RECOVERABLE deposit of an
+  // account this circuit created, measured account by account. A deposit is capital, not a loss, and the engine can reclaim it (see recoverDeposits).
+  const prio = (BigInt(cost.computeUnitLimit) * BigInt(cost.computeUnitPriceMicroLamports) + 999_999n) / 1_000_000n
+  const spent = deltas ? -deltas.userLamports : 0n
+  const createdAccounts = deltas ? measureCreatedAccounts(svm, user, ua, existedBefore) : []
+  const depositsTotal = createdAccounts.reduce((x, a) => x + a.lamports, 0n)
+  const ext = externalCosts({ baseFeeLamports: BigInt(cost.baseFeeLamportsPerSignature), signatures: 1, computeUnitLimit: cost.computeUnitLimit, computeUnitPriceMicroLamports: cost.computeUnitPriceMicroLamports, jitoTipLamports: BigInt(cost.jitoTipLamports), nonRecoverableRentLamports: 0n, recoverableRentLamports: depositsTotal })
+  if (deltas) for (const c0 of ext.costs) c0.status = 'OBSERVED'
+  for (const a of createdAccounts) ext.locked.push({ name: `deposit:${a.kind}`, unit: 'lamports', amount: a.lamports, status: 'OBSERVED', source: `account ${a.pubkey} created by this circuit (${a.bytes} bytes); recoverable by closing it`, note: a.closable ? 'the engine can close it (see recoverDeposits)' : 'no close path implemented for this account type' })
+  // the generic entry from externalCosts would double count the per-account entries above
+  ext.locked = ext.locked.filter(l => l.name !== 'rent_locked_recoverable')
+  const acct = reconcileAttempt({
+    tradingPnl: realised ? realised.pnl : ev.pnl.pnl, observedNativeSpend: spent,
+    definitiveCosts: ext.costs, lockedRecoverable: ext.locked,
+    ...(deltas ? { baseAssetDelta: deltas.baseAta, nativeLamportDelta: deltas.userLamports } : {}),
+    incompleteReasons: r.ok ? [] : ['EXECUTION_FAILED'],
+    notes: [...notes, ...(deltas ? [`OBSERVED_NATIVE_SPEND=${spent} (base ${cost.baseFeeLamportsPerSignature} + priority ${prio} + deposits ${depositsTotal})`] : [])],
+  })
+  return { level: 'LOCAL_REAL_PROGRAM_SIMULATION', environment: 'LOCAL_REAL_PROGRAM_SIMULATION', ok: r.ok, err: r.err, logs: r.logs, unitsConsumed: r.unitsConsumed, deltas, balances: { before: { baseAta: before.base, interAta: before.inter, userLamports: before.lamports }, after: { baseAta: after.base, interAta: after.inter, userLamports: after.lamports } }, quoted, realised, synthetic: svm.synthetic.map(s => ({ pubkey: s.pubkey.toBase58(), note: s.note })), loadedPrograms: svm.loadedPrograms, accountsLoaded: fetched.bundle.accounts.size, accountsMissingOnChain: missing, snapshot: { minSlot: fetched.bundle.minSlot, maxSlot: fetched.bundle.maxSlot, singleBatch: fetched.bundle.singleBatch }, accounting: acct, createdAccounts, ...(opts.keepSvm ? { svm } : {}), durationMs: monoMs() - t0 }
 }
 export function quoteSummary(q: Quote): Record<string, unknown> {
   return { adapter: q.adapter, pool: q.pool.toBase58(), in: q.amountIn, out: q.amountOutToUser, fees: q.fees.map(f => `${f.name}=${f.amount}`), impactBps: q.priceImpactBps, slot: q.contextSlot, rejects: q.rejectReasons }
@@ -264,4 +282,54 @@ export async function localProbeExecutor(rpc: RpcClient | null, adapters: Record
   const first = runs[0]!
   const verdict = first.ok ? (runs.length > 1 && runs[1]!.ok ? 'GUARD_PASSED_AT_QUOTED_PROFIT (quote reproduced on-chain locally)' : 'BREAK_EVEN_OR_BETTER_AT_MIN_PROFIT_0') : (first.executorError === 'ProfitBelowMin' ? 'GUARD_REVERTED_LOSING_CIRCUIT (executor guard works; circuit loses after DEX fees)' : `FAILED: ${first.executorError ?? first.err}`)
   return { level: 'LOCAL_REAL_PROGRAM_SIMULATION', environment: 'LOCAL_REAL_PROGRAM_SIMULATION', guard: 'ARB_EXECUTOR_LOCAL', executorSha256: sha256Hex(elf), executorBytes: elf.length, runs, quoted: { amountIn: ev.amountIn, pnl: ev.pnl.pnl }, txBytes, usedAlt, synthetic: syntheticCount, accountsLoaded: fetched.bundle.accounts.size, accountsMissingOnChain: fetched.missing.map(m => m.toBase58()), snapshot: { minSlot: fetched.bundle.minSlot, maxSlot: fetched.bundle.maxSlot, singleBatch: fetched.bundle.singleBatch }, verdict, durationMs: monoMs() - t0 }
+}
+
+export interface CreatedAccount { kind: string; pubkey: string; lamports: bigint; bytes: number; closable: boolean }
+/** Accounts a circuit may create for the user, each holding a refundable deposit (pumpswap.md §6: the first buy initialises user_volume_accumulator). */
+export function depositCandidates(user: PublicKey, ua: UserAccounts, c: Circuit): { kind: string; pubkey: PublicKey; closable: boolean }[] {
+  const out = [{ kind: 'intermediate_ata', pubkey: ua.interAta, closable: true }]
+  if (c.poolA.adapter === 'pumpswap' || c.poolB.adapter === 'pumpswap') out.push({ kind: 'pumpswap_user_volume_accumulator', pubkey: userVolumeAccumulatorPda(user), closable: true })
+  return out
+}
+function measureCreatedAccounts(svm: LocalSvm, user: PublicKey, ua: UserAccounts, existedBefore: Set<string>): CreatedAccount[] {
+  const out: CreatedAccount[] = []
+  for (const cand of depositCandidatesFromUa(user, ua)) {
+    if (existedBefore.has(cand.pubkey.toBase58())) continue          // pre-existing: the circuit paid no deposit for it
+    const a = svm.getAccount(cand.pubkey); if (!a) continue
+    out.push({ kind: cand.kind, pubkey: cand.pubkey.toBase58(), lamports: a.lamports, bytes: a.data.length, closable: cand.closable })
+  }
+  return out
+}
+function depositCandidatesFromUa(user: PublicKey, ua: UserAccounts): { kind: string; pubkey: PublicKey; closable: boolean }[] {
+  return [{ kind: 'intermediate_ata', pubkey: ua.interAta, closable: true }, { kind: 'pumpswap_user_volume_accumulator', pubkey: userVolumeAccumulatorPda(user), closable: true }]
+}
+export interface RecoveryEvidence {
+  attempted: boolean; ok: boolean; err: string | null
+  recoveredLamports: bigint; closeTxFeeLamports: bigint; netRecovered: bigint
+  closed: string[]; stillOpen: string[]; logsTail: string[]
+}
+/**
+ * Proves whether the deposits are real capital: closes the accounts the circuit created, in a SEPARATE transaction, and measures what comes back.
+ * The audit showed the previous code's claim that the PumpSwap deposit is unrecoverable was false, so the engine now owns the close path
+ * (`buildCloseUserVolumeAccumulatorIx`) instead of leaving the money parked.
+ */
+export function recoverDeposits(svm: LocalSvm, user: PublicKey, created: CreatedAccount[], interTokenProgram: PublicKey, baseFeeLamports: bigint): RecoveryEvidence {
+  const closable = created.filter(a => a.closable)
+  if (!closable.length) return { attempted: false, ok: true, err: null, recoveredLamports: 0n, closeTxFeeLamports: 0n, netRecovered: 0n, closed: [], stillOpen: created.map(a => a.pubkey), logsTail: [] }
+  const ixs: TransactionInstruction[] = []
+  for (const a of closable) {
+    if (a.kind === 'intermediate_ata') ixs.push(closeTokenAccountIx(new PublicKey(a.pubkey), user, interTokenProgram))
+    else if (a.kind === 'pumpswap_user_volume_accumulator') ixs.push(buildCloseUserVolumeAccumulatorIx(user))
+  }
+  const lamportsBefore = svm.getAccount(user)?.lamports ?? 0n
+  const built = buildV0(user, svm.svm.latestBlockhash(), ixs)
+  const r = svm.execute(built.tx)
+  const lamportsAfter = svm.getAccount(user)?.lamports ?? 0n
+  const gross = lamportsAfter - lamportsBefore + baseFeeLamports     // the close transaction pays its own base fee
+  const closed = closable.filter(a => svm.getAccount(new PublicKey(a.pubkey)) === null).map(a => a.pubkey)
+  return { attempted: true, ok: r.ok, err: r.err, recoveredLamports: r.ok ? gross : 0n, closeTxFeeLamports: baseFeeLamports, netRecovered: r.ok ? gross - baseFeeLamports : -baseFeeLamports, closed, stillOpen: created.filter(a => !closed.includes(a.pubkey)).map(a => a.pubkey), logsTail: r.logs.slice(-6) }
+}
+/** SPL / Token-2022 CloseAccount (instruction tag 9): destination and owner are the user. */
+export function closeTokenAccountIx(account: PublicKey, owner: PublicKey, tokenProgram: PublicKey): TransactionInstruction {
+  return new TransactionInstruction({ programId: tokenProgram, keys: [{ pubkey: account, isSigner: false, isWritable: true }, { pubkey: owner, isSigner: false, isWritable: true }, { pubkey: owner, isSigner: true, isWritable: false }], data: Buffer.from([9]) })
 }
