@@ -2,7 +2,7 @@
  * One-off, read-only diagnostic: for every route in the shortlist, ONE snapshot (getMultipleAccounts x2 per route), then both circuit directions at
  * sizes 1e5..1e9 lamports. Reports per circuit: pnl in bps at each size, DEX fee bps (sum of fee items in WSOL terms at the smallest size),
  * and the implied pre-fee price gap (pnl_bps + fee_bps at the smallest size, where impact is negligible). Shows how far each route is from break-even.
- * Usage: npx tsx scripts/route_gaps.ts [--max-requests 120]
+ * Usage: npx tsx scripts/route_gaps.ts [--max-requests 120] [--max-rps 3]
  */
 import { writeFileSync, readFileSync, mkdirSync } from 'node:fs'
 import { PublicKey } from '@solana/web3.js'
@@ -15,9 +15,17 @@ import { enumerateCircuits, evaluateCircuit } from '../src/routing/circuit.js'
 import { JsonlLogger } from '../src/telemetry/log.js'
 import { WSOL_MINT } from '../src/state/token.js'
 import { jsonReplacer } from '../src/util/bigint.js'
-const maxReq = Number(process.argv[process.argv.indexOf('--max-requests') + 1] || 120)
+import { positiveIntFlag, exitOnFlagError } from '../src/util/flags.js'
+// Explicit flag parsing: a missing flag takes the documented default, a present flag must be a positive integer. `Number(argv[indexOf(flag) + 1] || d)`
+// parsed argv[0] (the node binary) when the flag was absent and produced NaN, which disabled the HTTP budget entirely (audit finding F6).
+const USAGE = 'usage: npx tsx scripts/route_gaps.ts [--max-requests <positive integer, default 120>] [--max-rps <positive integer, default 3>]'
+const args = process.argv.slice(2)
+const { maxReq, maxRps } = exitOnFlagError(() => ({
+  maxReq: positiveIntFlag(args, '--max-requests', 120),
+  maxRps: positiveIntFlag(args, '--max-rps', 3),
+}), USAGE)
 const { config } = loadConfig('config/config.example.json')
-const rpc = new RpcClient(resolveEndpoints(config).httpUrl, { ...config.rpc, maxRequestsPerSecond: 3, maxTotalHttpRequests: maxReq }, 'confirmed', new JsonlLogger({ stderr: false }))
+const rpc = new RpcClient(resolveEndpoints(config).httpUrl, { ...config.rpc, maxRequestsPerSecond: maxRps, maxTotalHttpRequests: maxReq }, 'confirmed', new JsonlLogger({ stderr: false }))
 const adapters = requireAdapters((await loadAdapters()).adapters)
 const sl = JSON.parse(readFileSync('data/discovery/shortlist.json', 'utf8')) as { adapter: AdapterId; address: string; mint: string }[]
 const byMint = new Map<string, PoolRef[]>()
@@ -46,7 +54,7 @@ for (const [mint, refs] of byMint) {
 const stamp = new Date().toISOString().replace(/[:.]/g, '-')
 mkdirSync('reports', { recursive: true })
 const sides = rows.map(r => r['minSideWsolSol']).filter((x): x is number => typeof x === 'number').sort((a, b) => a - b)
-const summary = { generatedUtc: new Date().toISOString(), rpcRequests: rpc.usage.total, circuits: rows.filter(r => 'circuit' in r).length,
+const summary = { generatedUtc: new Date().toISOString(), rpcRequests: rpc.usage.total, httpBudget: maxReq, maxRps, circuits: rows.filter(r => 'circuit' in r).length,
   minSideWsolSol: { min: sides[0] ?? null, median: sides.length ? sides[Math.floor(sides.length / 2)] : null, max: sides[sides.length - 1] ?? null }, positiveAtAnySize: rows.filter(r => typeof r['bestBps'] === 'number' && (r['bestBps'] as number) > 0).length, bestBps: Math.max(...rows.map(r => (typeof r['bestBps'] === 'number' ? (r['bestBps'] as number) : -1e9))), note: 'QUOTE_ONLY diagnostic from one snapshot per route; fee bps count only WSOL-side fee items (token-side fees are embedded in the pnl but not in this column); implied gap = pnl_bps + wsol_fee_bps at 1e5 lamports.' }
 writeFileSync(`reports/route_gaps_${stamp}.json`, JSON.stringify({ summary, rows }, jsonReplacer, 1))
 const md = ['# Route gaps (QUOTE_ONLY)', '', '```', JSON.stringify(summary, jsonReplacer, 1), '```', '', '| category | circuit (A>B) | min side WSOL | best bps | pnl bps @1e5 | @1e7 | @1e9 | wsol fee bps | implied gap bps |', '|---|---|---|---|---|---|---|---|---|',

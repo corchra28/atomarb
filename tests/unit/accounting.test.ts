@@ -72,3 +72,37 @@ describe('failure-cost scenarios', () => {
     expect(breakEvenLandingRate(-1n, 9_000n)).toBeNull()
   })
 })
+
+
+import { reconcileAttempt } from '../../src/accounting/pnl.js'
+import type { CostItem } from '../../src/accounting/types.js'
+const lam = (name: string, amount: bigint, status: CostItem['status'] = 'OBSERVED'): CostItem => ({ name, unit: 'lamports', amount, status, source: 't' })
+describe('attempt reconciliation (audit finding F1)', () => {
+  it('the listed costs sum to the deducted total and a deposit is never a cost', () => {
+    const a = reconcileAttempt({ tradingPnl: -95_553_322n, observedNativeSpend: 3_892_680n,
+      definitiveCosts: [lam('base_fee', 5_000n), lam('priority_fee', 4_000n)],
+      lockedRecoverable: [lam('deposit:intermediate_ata', 2_039_280n), lam('deposit:pumpswap_user_volume_accumulator', 1_844_400n)],
+      baseAssetDelta: -95_553_322n, nativeLamportDelta: -3_892_680n })
+    expect(a.definitiveTotal).toBe(9_000n)
+    expect(a.definitiveCosts.reduce((s, c) => s + c.amount, 0n)).toBe(a.definitiveTotal)
+    expect(a.netAfterDefinitiveCosts).toBe(-95_562_322n)
+    expect(a.lockedTotal).toBe(3_883_680n)
+    expect(a.liquidWalletDelta).toBe(-99_446_002n)          // the number the wallet actually feels
+    expect(a.reconciliation).toMatchObject({ observedNativeSpend: 3_892_680n, explainedByCosts: 9_000n, explainedByLocked: 3_883_680n, unexplained: 0n, ok: true })
+    expect(a.status).toBe('COMPLETE')
+  })
+  it('an unexplained native outflow downgrades the status instead of disappearing', () => {
+    const a = reconcileAttempt({ tradingPnl: 0n, observedNativeSpend: 3_892_680n, definitiveCosts: [lam('base_fee', 5_000n), lam('priority_fee', 4_000n)], lockedRecoverable: [] })
+    expect(a.reconciliation.unexplained).toBe(3_883_680n)
+    expect(a.reconciliation.ok).toBe(false)
+    expect(a.status).toBe('ACCOUNTING_INCOMPLETE')
+    expect(a.incompleteReasons[0]).toMatch(/NATIVE_SPEND_UNEXPLAINED/)
+  })
+  it('the close fee of a planned recovery is a definitive cost, the deposit itself is not', () => {
+    const e = externalCosts({ baseFeeLamports: 5_000n, signatures: 1, computeUnitLimit: 0, computeUnitPriceMicroLamports: 0, jitoTipLamports: 0n, nonRecoverableRentLamports: 0n, recoverableRentLamports: 2_039_280n, recoveryTxFeeLamports: 5_000n })
+    expect(e.costs.map(c => c.name)).toContain('recovery_tx_fee')
+    expect(e.total).toBe(10_000n)
+    expect(e.locked.reduce((s, c) => s + c.amount, 0n)).toBe(2_039_280n)
+    expect(e.costs.some(c => c.amount === 2_039_280n)).toBe(false)
+  })
+})

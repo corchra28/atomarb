@@ -19,7 +19,16 @@ export interface CapitalConfig {
   /** when true (default) realised PnL does NOT change capital: probes are independent hypotheticals */
   hypothetical?: boolean
 }
-export interface PendingPosition { id: string; amountIn: bigint; feeBudget: bigint; pools: string[]; mint: string; openedUtc: string }
+export interface PendingPosition {
+  id: string
+  amountIn: bigint
+  feeBudget: bigint
+  /** recoverable deposits the circuit must park to CREATE accounts (ATA rent): not a cost, but capital that must be available and is therefore locked */
+  depositLamports: bigint
+  pools: string[]
+  mint: string
+  openedUtc: string
+}
 export type ReserveResult = { ok: true; position: PendingPosition } | { ok: false; code: 'EPISODE_CAP' | 'AGGREGATE_CAP' | 'RESERVE_FLOOR' | 'CONCURRENCY' | 'POOL_CONFLICT' | 'MINT_CONFLICT' | 'DUPLICATE_ID' | 'NON_POSITIVE'; detail: string; budget: bigint }
 export interface SettleOutcome { id: string; realisedPnl: bigint; feePaid: bigint; status: 'FILLED' | 'REVERTED' | 'NOT_LANDED' }
 
@@ -45,14 +54,29 @@ export class CapitalLedger {
   }
   locked(): bigint { return this.lockedAmount }
   available(): bigint { return this.budget() }
+  /**
+   * The largest `amountIn` this ledger would grant RIGHT NOW for a probe that also has to pay `feeBudget` and park `depositLamports`.
+   * `reserve` checks `amountIn + feeBudget + depositLamports` against exactly the three limits `budget()` already minimises over, so this is
+   * the honest cap a sizer must search inside — searching above it produces sizes that are always rejected (audit finding F7). Never negative.
+   */
+  capacityFor(p: { feeBudget: bigint; depositLamports?: bigint }): bigint {
+    const room = this.budget() - p.feeBudget - (p.depositLamports ?? 0n)
+    return room > 0n ? room : 0n
+  }
   currentCapital(): bigint { return this.capital }
   realisedNet(): bigint { return this.capital - this.initial }
   openPositions(): PendingPosition[] { return [...this.pending.values()] }
-  /** Reserves capital for one probe. `feeBudget` is the network cost that is lost even when the circuit reverts. */
-  reserve(p: { id: string; amountIn: bigint; feeBudget: bigint; pools: string[]; mint: string; utc: string }): ReserveResult {
+  /**
+   * Reserves capital for one probe. `feeBudget` is the network cost that is lost even when the circuit reverts; `depositLamports` is the recoverable
+   * deposit of the accounts the circuit creates (ATA rent). The deposit is NOT a cost, but it must be available at the decision, so it is part of what
+   * is locked and it is released in full at settlement (audit finding F7: ignoring it under-reserved every probe that creates an ATA).
+   */
+  reserve(p: { id: string; amountIn: bigint; feeBudget: bigint; depositLamports?: bigint; pools: string[]; mint: string; utc: string }): ReserveResult {
     const budget = this.budget()
-    const need = p.amountIn + p.feeBudget
+    const deposit = p.depositLamports ?? 0n
+    const need = p.amountIn + p.feeBudget + deposit
     if (p.amountIn <= 0n) return this.reject('NON_POSITIVE', `amountIn=${p.amountIn}`, budget)
+    if (p.feeBudget < 0n || deposit < 0n) return this.reject('NON_POSITIVE', `feeBudget=${p.feeBudget} depositLamports=${deposit}`, budget)
     if (this.pending.has(p.id)) return this.reject('DUPLICATE_ID', p.id, budget)
     if (this.pending.size >= this.cfg.maxConcurrent) return this.reject('CONCURRENCY', `${this.pending.size} pending >= ${this.cfg.maxConcurrent}`, budget)
     for (const q of this.pending.values()) {
@@ -60,7 +84,7 @@ export class CapitalLedger {
       if (clash) return this.reject('POOL_CONFLICT', `pool ${clash} already used by ${q.id}`, budget)
       if (q.mint === p.mint) return this.reject('MINT_CONFLICT', `mint ${p.mint} already used by ${q.id}`, budget)
     }
-    if (need > this.frac(this.cfg.maxEpisodeFrac)) return this.reject('EPISODE_CAP', `need ${need} > episode cap ${this.frac(this.cfg.maxEpisodeFrac)}`, budget)
+    if (need > this.frac(this.cfg.maxEpisodeFrac)) return this.reject('EPISODE_CAP', `need ${need} (amountIn ${p.amountIn} + fee ${p.feeBudget} + deposit ${deposit}) > episode cap ${this.frac(this.cfg.maxEpisodeFrac)}`, budget)
     if (this.lockedAmount + need > this.frac(this.cfg.maxAggregateOpenFrac)) return this.reject('AGGREGATE_CAP', `locked ${this.lockedAmount} + ${need} > ${this.frac(this.cfg.maxAggregateOpenFrac)}`, budget)
     if (this.lockedAmount + need > this.capital - this.frac(this.cfg.reserveFrac)) return this.reject('RESERVE_FLOOR', `would touch the ${this.cfg.reserveFrac} reserve`, budget)
     const position: PendingPosition = { id: p.id, amountIn: p.amountIn, feeBudget: p.feeBudget, pools: [...p.pools], mint: p.mint, openedUtc: p.utc }
