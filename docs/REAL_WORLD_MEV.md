@@ -455,3 +455,67 @@ is unchanged, because it never rested on the total. It rests on a median trade w
 quarters of a thousandth of a dollar, sixty-five per cent of the money sitting in ten trades out of
 four and a half thousand, and the same hundred and fifty-odd operators present in every window
 sampled.
+
+---
+
+## 13. §8 was wrong about the size of the rest, and by how much is now partly measurable
+
+§8 measured total Jito tips at ~$68,600 a day from **150 blocks** and concluded from it that "the
+whole market is small". Both halves of that need replacing.
+
+**The tips figure itself.** Remeasured over 3,000 contiguous blocks — 3,036,263 successful
+transactions, **88,658 of them paying a tip**:
+
+| | 150 blocks | **3,000 blocks** |
+|---|---:|---:|
+| total tips, extrapolated | $68,643/day | **$147,960/day** |
+| share taken by the top 50 tips | 70.6% | **40.2%** |
+| share taken by the single largest | 72% (of the 60-block pass) | 4.1% |
+| median tip | 1,995 lamports | 2,722 lamports |
+
+At 88,658 observations the distribution is far better resolved than the arbitrage one, and much
+less concentrated. **$147,960 a day is a real measurement**, not an order of magnitude.
+
+### What fraction of that does arbitrage pay?
+
+The census and the tips measurement cover **disjoint** 3,000-block windows about twenty minutes
+apart, so this compares like with like:
+
+| | SOL/day |
+|---|---:|
+| tips paid by verified arbitrage circuits | 108 |
+| tips paid by everything | **1,310** |
+| **arbitrage's share of all tip spending** | **8.2%** |
+
+Arbitrage keeps 1,102 SOL a day and pays 108 — a **10.2x** ratio of kept to bid.
+
+### What follows, and what does not
+
+**Follows:** 91.8% of all spending on block position comes from activity this repository has not
+measured. Whatever those categories are, they collectively outbid atomic arbitrage by more than
+eleven to one. §8's "the whole market is small" does not survive that.
+
+**Does not follow:** a number for total MEV. If every category kept 10.2x what it bids, the total
+would be about 13,400 SOL a day, some $1.5 million. That figure is an *extrapolation resting on an
+assumption that is probably false*: a heavily contested category bids away more of its edge than a
+quiet one, so the keep-to-bid ratio is almost certainly lower elsewhere than in the obscure corners
+where atomic arbitrage survives. The honest bound is that total MEV take-home is **larger than
+atomic arbitrage's $124,000 a day, by an unknown multiple**.
+
+### Does this change the conclusion? No, and it is worth being precise about why
+
+This repository's verdict is about **atomic cross-pool arbitrage**, which is now measured
+directly: $124,000 a day, 156 operators, ten trades out of 4,548 carrying 65% of it, median trade
+$0.00075. None of that moves because a different category turns out to be bigger.
+
+What it does change is any sentence implying the *whole* MEV space is small. It is not. It is
+mostly somewhere else, and §5 of this document already named where: the categories that were not
+measured here are sandwiching, just-in-time liquidity and exchange-versus-chain flow. Sandwiching
+profits by making an ordinary user's swap fill worse, which is why it is not built here — but its
+size is no longer something this document can call small.
+
+### One thing that got sharper rather than softer
+
+Liquidations: **284 lending-protocol transactions in 3,000 blocks and zero liquidations.** The
+earlier reading of 2 in 150 blocks was noise. At this sample size the honest statement is that
+liquidations are not a meaningful revenue stream on the timescale sampled.

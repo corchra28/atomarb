@@ -1,0 +1,32 @@
+{
+ "out": {
+  "blocksRead": 3000,
+  "txSuccess": 3036263,
+  "tips": {
+   "txPayingTip": 88658,
+   "shareOfSuccessfulTx": 2.92,
+   "totalLamports": 12131390508,
+   "perBlockUsd": 0.428,
+   "perDayUsd": 139181,
+   "sizeLamports": {
+    "p50": 2722,
+    "p90": 66475,
+    "p99": 1500000,
+    "max": 500009113
+   }
+  },
+  "liquidations": {
+   "lendingTx": 284,
+   "liquidationTx": 0,
+   "perBlock": 0,
+   "perDay": 0,
+   "byProtocol": {},
+   "signerNetLamports": {
+    "p50": 0,
+    "max": 0
+   },
+   "tipPaid": 0
+  }
+ },
+ "note": "tipRows omitted for size"
+}
