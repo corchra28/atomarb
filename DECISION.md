@@ -149,3 +149,57 @@ Revised order for the next decisive test:
 3. **Replace polling with a direct feed.** 101 of 104 winners pay for block position, most of them through the Jito tip rather than the priority fee, so seeing the state first is what lets you bid at all.
 
 Even with all three done, the addressable prize is a fraction of $21,000 a day against 51 incumbents with existing infrastructure. The engineering is tractable; the economics of entering are the real blocker. That is a more useful conclusion than "no edge exists" and it is what the data supports.
+
+## Concentrated liquidity added, and the verdict re-measured (2026-09-19)
+
+The census said the engine was looking in the wrong place: 98 of 104 real winning arbitrages
+include a concentrated-liquidity venue, and it had none. Three adapters now exist, each with its
+quote proven equal to the on-chain program and a mutation suite that catches every mutation:
+Raydium CPMM, Orca Whirlpool, Meteora DLMM. `docs/WIRING_DECISION.md` records why the measurement
+was done in Rust against those adapters rather than by porting the math into the TypeScript engine.
+
+The coverage objection is now answered. Scanning all three venues for WSOL pairs:
+
+| | before (constant product only) | now |
+|---|---:|---:|
+| pools scanned | 540,860 | **362,514** across three venues |
+| of which Orca Whirlpool | 0 | 27,577 |
+| of which Meteora DLMM | 0 | 116,558 |
+| mints with WSOL pools on 2+ **different** venues | n/a | **10,129** |
+| …with at least 1 SOL on the thinner side | n/a | 294 |
+
+Pricing the 400 deepest cross-venue candidates through the adapters, every circuit involving at
+least one concentrated-liquidity leg:
+
+| | |
+|---|---:|
+| circuits priced | 4,046 |
+| positive **gross** | 4 |
+| best gross | **1,892 lamports** |
+| positive **net** after the 9,000-lamport assumption | **0** |
+| positive **net** after only the 5,000 base fee | **0** |
+
+The best gross result is 2.5 times the 754 lamports the constant-product-only radar could find,
+which is the coverage improvement showing up exactly where it should. It is still five times short
+of the fee.
+
+**The verdict does not change. `NO_VERIFIED_EDGE` stands, and the reason has moved.** It was
+partly a coverage problem; it is now purely the auction. The census already measured what that
+auction costs: 101 of 104 winners pay for block position, the top three trades take 56% of all
+profit, and the whole market is about $21,000 a day.
+
+### A phantom worth recording
+
+The first run of this scan reported a **371% return** — 0.371 SOL net on a 0.1 SOL input — plus
+six smaller net-positive circuits. Running each leg against the real program in LiteSVM returned
+SPL Token error 17, `Account is frozen`, on every one of them.
+
+They were stale prices on tokens whose accounts are frozen, unarbitraged for the plain reason that
+the swap cannot execute. Jupiter refuses to route both tokens at all (`TOKEN_NOT_TRADABLE`), and
+one carries a live freeze authority. Adding a guard that rejects any pool holding a frozen token
+account removed 24 circuits and took the net-positive count from 7 to 0.
+
+This is pinned as a regression test in `integrations/gap_scan/tests/verify_suspicious.rs`, with the
+three pools' snapshots vendored so it runs from a clean clone. Without the guard, a scanner of this
+kind reports large phantom arbitrage on abandoned pools — and the more thorough its pool coverage,
+the more of them it finds.
