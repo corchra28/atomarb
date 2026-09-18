@@ -14,6 +14,17 @@ The audit is accurate. Every one of F1 to F7 reproduces in the code as published
 | F6 | `scripts/route_gaps.ts` parses `argv[0]` when `--max-requests` is absent, so the budget is `NaN` and the limit silently disappears. | yes, line 17 | fixed |
 | F7 | Sizing searches up to the full capital while the ledger caps an episode at 20 % including the fee, and a refused size is never retried smaller; the reservation also ignores the deposits the circuit must pay. | yes, `shadow.ts:101/127` vs `capital.ts` | fixed |
 
+## The auditor's own counter-examples, replayed against the fixed code
+
+| Counter-example | Before (auditor) | After (this repository) |
+|---|---|---|
+| F4: budget 1, concurrency 1, eight concurrent calls | 8 HTTP requests sent, 8 successes, `usage.total` 8 | **1 HTTP request**, 1 success, 7 rejected with `RPC_BUDGET_EXHAUSTED`, `usage.total` 1 |
+| F5: timeout 50 ms, body delayed 300 ms | success after ~310 ms, 0 errors, latency recorded as ~9 ms | **rejects** with `RPC_TIMEOUT: no body within 50ms`, retried as a transient failure, each attempt's latency recorded as ~51 ms |
+| F3: first handshake 503, second accepted | `start()` still unresolved after 2 s | **`start()` resolves** on the retry's open (measured 2,321 ms with the default backoff); `stop()` and a start timeout also settle it |
+| F6: `--max-requests` absent | budget `NaN`, limit disabled | **120** (the documented default); a present flag must be a positive integer, garbage is refused |
+
+F1, F2 and F7 are covered by regression tests inside the suite rather than by a replay script: `tests/integration/circuit_local_program.test.ts` asserts the reconciliation and the deposit recovery on the real programs, `tests/unit/shadow_policy.test.ts` asserts that an injected delay after the snapshot makes the decision stale, and `tests/unit/capital.test.ts` asserts that a size the ledger refuses is retried smaller with the deposits counted.
+
 ## What the fix for F1 actually changes
 
 Four quantities are now separated and reconciled (`src/accounting/types.ts`, `reconcileAttempt` in `src/accounting/pnl.ts`): trading PnL, definitive costs, locked recoverable deposits, and the liquid wallet delta. Two invariants are enforced by tests: the listed costs sum to the total that is deducted, and every native lamport that left the wallet is explained by a cost or by a deposit, otherwise the status is `ACCOUNTING_INCOMPLETE`.

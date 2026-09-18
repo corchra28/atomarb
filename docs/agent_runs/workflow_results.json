@@ -1,5 +1,5 @@
 {
- "captured_utc": "2026-09-17T19:07:19.551943+00:00",
+ "captured_utc": "2026-09-18T06:55:01.962546+00:00",
  "wf_1b386fa2-b51": {
   "agents": [
    {
@@ -2324,6 +2324,68 @@
    {
     "type": "failed",
     "agentId": "ae4c0bf2a564d24b1"
+   }
+  ]
+ },
+ "wf_db905bc6-fb1": {
+  "agents": [
+   {
+    "agent": "transport",
+    "status": "DONE",
+    "fixes": [
+     {
+      "finding": "F3 (P1) \u2014 WssManager.start() never settles when the first handshake fails",
+      "file": "/home/rares/trading/sol/atomarb/src/state/wss.ts",
+      "change": "start/retry/stop now share ONE lifecycle and ONE promise. start() builds the promise once (stored in startPromise, settled through a single `settle` closure that can only fire once) and returns it; every connect attempt is opened by the non-promise-returning openSocket(attempt), and the 'open' handler of ANY attempt settles start() \u2014 not only the first. start() also settles on stop() (reject WssStartFailed code WSS_START_STOPPED) and on an optional start timeout (reject WSS_START_TIMEOUT, default 20 s, overridable via the new 6th ctor arg WssOptions.startTimeoutMs or start({timeoutMs})); the timeout stops the manager after settling, so no retry loop is left running behind a caller that gave up. stop() is idempotent: it clears the pending retry timer, settles a start() that never opened, closes the socket (a CONNECTING socket too) and clears startPromise so a later start() begins a fresh lifecycle. Reconnect behaviour is preserved: backoff+jitter retry (now via a cancellable retryTimer instead of an unawaited `void this.connect()`), GAP marking, full resubscribe, dedup, stats. Two refinements: the backoff resets after a successful open, and a handshake that never opened is counted in the new stats.connectFailures instead of stats.reconnects and does NOT mark a GAP (nothing was subscribed, so no notification was missed).",
+      "regression_test": "tests/unit/wss_manager.test.ts :: 'F3: start() settles on a LATER attempt (first handshake answered 503) and notifications then flow'; 'F3: stop() while the handshake is still pending settles start() instead of hanging'; 'F3: start() rejects with WSS_START_TIMEOUT and stops retrying when nothing ever opens'",
+      "fails_before_fix": true
+     },
+     {
+      "finding": "F3 (second part) \u2014 the scanner's dirty-set can drop a notification that arrives while a route is being processed (shadow.ts is not mine, so the manager now exposes what it needs)",
+      "file": "/home/rares/trading/sol/atomarb/src/state/wss.ts",
+      "change": "Added a monotonic revision counter bumped once per ACCEPTED (non-duplicate) notification, before onAccount is called: `currentRevision` (global), `revisionOf(pubkey)` (per key, 0 = never seen), `maxRevisionOf(keys)` (max over a route's vaults), and `revision` on AccountNotification. Plus an atomic drain path: `drainDirty()` returns the keys touched since the last drain and clears them in the same synchronous step (nothing can arrive in between), with `dirtyCount` to peek without clearing, and a `connected` getter. Either one removes the lost-notification window in shadow.ts \u2014 see notes_for_integrator for the exact patch.",
+      "regression_test": "tests/unit/wss_manager.test.ts :: 'F3: start() settles on a LATER attempt (first handshake answered 503) and notifications then flow' (asserts revisionOf/currentRevision after a notification, drainDirty() returns the key and the second drainDirty() returns [])",
+      "fails_before_fix": true
+     },
+     {
+      "finding": "F4 (P2) \u2014 RpcClient.acquire() checks the HTTP budget before the concurrency wait and the token-bucket sleep, while usage.total is incremented later",
+      "file": "/home/rares/trading/sol/atomarb/src/state/rpc.ts",
+      "change": "acquire(stat) now reserves the budget unit in the SAME synchronous step as the check: `if (usage.total >= maxTotalHttpRequests) throw new RpcBudgetExhausted(usage.total); usage.total++; stat.count++` with no await in between, before the concurrency wait and before the token bucket. The later `usage.total++; stat.count++` in call() is gone, so a reservation and a request are the same thing. Every attempt (retries included) goes through acquire(), so retries consume the same budget; on exhaustion the throw happens before inflight++ and before any waiter is queued, so nothing that was not reserved is released.",
+      "regression_test": "tests/unit/rpc_client.test.ts :: 'F4: reserves the HTTP budget atomically - 8 concurrent calls with budget 1 send exactly 1 request'",
+      "fails_before_fix": true
+     },
+     {
+      "finding": "F5 (P2) \u2014 the abort timer is cleared when the response HEADERS arrive, so `await res.json()` runs with no timeout and the recorded latency is headers-only",
+      "file": "/home/rares/trading/sol/atomarb/src/state/rpc.ts",
+      "change": "One HTTP attempt moved into the new private attempt<T>(): the AbortController timer is cleared only in a finally that wraps BOTH `fetch` and `res.json()`, so the signal covers headers and body; the same finally pushes monoMs()-t0 (start -> parsed body) into usage.byMethod[method].ms for every attempt, success or failure. A `timedOut` flag turns the raw AbortError into the new explicit RpcTimeout('headers'|'body', timeoutMs) (extends RpcError, carries retryable=true and name 'RpcTimeout'), which the transient predicate retries like any other transient failure, so a stalled body is retried and finally surfaces as a timeout instead of hanging the scanner. 429/5xx responses now cancel their unread body instead of leaking the socket. Also removed a double count found while editing: a non-retryable JSON-RPC error incremented stat.errors/usage.errors once in the body branch and again in the catch; it is now counted exactly once per failed attempt.",
+      "regression_test": "tests/unit/rpc_client.test.ts :: 'F5: a response body that stalls past the timeout rejects and is counted as an error'; 'F5: the recorded latency covers the response body, not just the headers'",
+      "fails_before_fix": true
+     }
+    ],
+    "tests": {
+     "command": "npx tsc -p tsconfig.json --noEmit  (exit 0)  &&  npx vitest run tests/unit",
+     "passed": 229,
+     "failed": 0
+    },
+    "notes_for_integrator": "WHAT I OWN, WHAT I TOUCHED \u2014 only src/state/rpc.ts, src/state/wss.ts, tests/unit/rpc_client.test.ts, tests/unit/wss_manager.test.ts. No RPC/WebSocket call leaves loopback in any test (node:http + ws servers on 127.0.0.1:0), no keys, no submit path, no git commit/push by me.\n\nVERIFICATION (old-code proof, both directions)\n- New code: `npx vitest run tests/unit/rpc_client.test.ts tests/unit/wss_manager.test.ts` -> 14 passed. Full `npx vitest run tests/unit` -> 229 passed, 1 skipped (pre-existing skip), 0 failed. `npx tsc -p tsconfig.json --noEmit` -> exit 0.\n- Old code (temporarily restored from a scratch copy, then reverted): rpc_client.test.ts -> 3 failed / 7 passed: \"expected [ \u2026(8) ] to have a length of 1 but got 8\" (F4, the auditor's 8 requests on a budget of 1), \"promise resolved \\\"1\\\" instead of rejecting\" (F5 slow body succeeded), \"expected 1 to be greater than or equal to 100\" (F5 latency recorded 1 ms of headers instead of the ~120 ms body). wss_manager.test.ts -> 3 failed / 1 passed: \"expected 'HUNG' to be 'open'\" (F3 startResolved FALSE), \"expected 'HUNG' not to be 'HUNG'\" (stop() while connecting), \"expected undefined to be 'WSS_START_TIMEOUT'\". The pre-existing dedup/reconnect/GAP test passes on both old and new code.\n\nAPI CHANGES (all additive; every existing call site compiles unchanged)\n- new WssManager(url, commitment, events, log?, maxQueue?, opts?) \u2014 opts: { startTimeoutMs=20_000, retryBaseMs=1000, maxBackoffMs=30_000, handshakeTimeoutMs=15_000 }. Only the tests pass opts today; defaults reproduce the old timings.\n- start() returns Promise<'open'> and can now REJECT with WssStartFailed (.code 'WSS_START_TIMEOUT' | 'WSS_START_STOPPED' | 'WSS_START_FAILED'). shadow.ts's existing `try { await wss.start() } catch { wss = null }` is already correct: on a timeout the manager has stopped itself, so setting wss = null leaks no retry loop. 20 s is the budget before shadow proceeds without WSS \u2014 change it with `wss.start({ timeoutMs })` if you want a different one.\n- stats gained `connectFailures` (failed handshakes, previously miscounted as `reconnects`); shadow's `{ ...wss.stats, gaps }` picks it up automatically in RUN_REPORT.json.\n- AccountNotification gained `revision`. New members: currentRevision, revisionOf(pubkey), maxRevisionOf(keys), drainDirty(), dirtyCount, connected.\n- rpc.ts exports the new RpcTimeout (extends RpcError, name 'RpcTimeout', .phase 'headers'|'body'). Callers that used to see a raw AbortError after the timeout now see this; nothing in src/ branched on AbortError. usage.total is incremented at reservation time (a few microseconds earlier than before) \u2014 RunControl.check(rpc.usage.total) is unaffected. usage.errors is now exactly one per failed attempt (non-retryable JSON-RPC errors used to count 2).\n\nSHADOW.TS OWNER \u2014 the `dirty` fix I could not make myself (src/cli/shadow.ts:67, 72, 197, 202)\nThe current code adds to `dirty` inside onAccount and calls `dirty.delete(token)` at the end of the route body (line 197): a notification that arrives while the route is being snapshotted/quoted is deleted right after, so that update is never re-polled. Two race-free options, both already exposed and tested:\n(a) Revision watermark (preferred, per route). Build `vaultsOfToken: Map<string, string[]>` next to vaultToToken; keep `processedRev: Map<string, number>`. In the route loop, BEFORE `snapshotPools`: `const revAtStart = wss ? wss.maxRevisionOf(vaultsOfToken.get(token) ?? []) : 0`. Replace line 197 `dirty.delete(token)` with `processedRev.set(token, revAtStart)`. Replace the wait condition at line 202 with `routes.some(([t]) => (wss?.maxRevisionOf(vaultsOfToken.get(t) ?? []) ?? 0) > (processedRev.get(t) ?? 0))`. Because the watermark is captured before the work starts, a notification that lands during the work stays above it and the route is polled again.\n(b) Atomic drain (smaller diff). Drop the `dirty.add(t)` from onAccount and the `dirty.delete(token)` at line 197; at the top of each poll cycle do `for (const k of wss?.drainDirty() ?? []) { const t = vaultToToken.get(k); if (t) dirty.add(t) }`, and break the wait loop on `wss.dirtyCount > 0`. Keys touched during processing stay in the manager's set and are drained next cycle.\nEither way `n.revision` is on the notification if you want it in the db.event payload.\n\nONE THING TO KNOW: while I was working, commit 6638978 (\"audit F2-F7 \u2026\") was created by another agent and already contains my four files exactly as they stand now (`git diff HEAD` is empty for them). I did not run git commit/push. src/cli/shadow.ts currently has an uncommitted change from another agent (F7 sizing cap); tsc and the whole unit suite are green with it in place.",
+    "blockers": []
+   }
+  ],
+  "events": [
+   {
+    "type": "launched"
+   },
+   {
+    "type": "started",
+    "agentId": "a63cdbfd21b0b6ea5",
+    "label": "fix:transport",
+    "phase": "Fix"
+   },
+   {
+    "type": "started",
+    "agentId": "a97a9b2308c1867ae",
+    "label": "fix:scanner",
+    "phase": "Fix"
    }
   ]
  },

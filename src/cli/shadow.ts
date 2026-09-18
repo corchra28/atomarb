@@ -75,7 +75,7 @@ export async function shadow(loaded: LoadedConfig, flags: Record<string, string 
   // state age is measured at every stage that matters, from the snapshot's receive time: one number taken right after the snapshot measures nothing (audit finding F2)
   const lat = { snapshot: [] as number[], quote: [] as number[], build: [] as number[], sim: [] as number[], ageAtQuote: [] as number[], ageAtDecision: [] as number[], ageAtBuild: [] as number[], ageAtSim: [] as number[] }
   const episodes = new Map<string, Episode>()
-  const counters = { capitalRejected: 0, capitalResized: 0, polls: 0, routePolls: 0, snapshotIncomplete: 0, circuitsEvaluated: 0, positiveEvaluations: 0, candidates: 0, simsAttempted: 0, simsOk: 0, localAttempted: 0, localOk: 0, localMatch: 0, stale: 0, staleAtDecision: 0, staleAtSimulation: 0, errors: 0 }
+  const counters = { capitalRejected: 0, capitalResized: 0, sizingCapExhausted: 0, polls: 0, routePolls: 0, snapshotIncomplete: 0, circuitsEvaluated: 0, positiveEvaluations: 0, candidates: 0, simsAttempted: 0, simsOk: 0, localAttempted: 0, localOk: 0, localMatch: 0, stale: 0, staleAtDecision: 0, staleAtSimulation: 0, errors: 0 }
   const simTimes: number[] = []
   // capital budget, pending positions and concurrency for prospective probes (hypothetical mode: probe PnLs never change capital)
   const ledger = new CapitalLedger({ capitalLamports: BigInt(config.sizing.maxCapitalLamports), maxEpisodeFrac: 0.2, maxAggregateOpenFrac: 0.4, reserveFrac: 0.3, maxConcurrent: 3, hypothetical: true })
@@ -89,6 +89,7 @@ export async function shadow(loaded: LoadedConfig, flags: Record<string, string 
   const stalenessMaxMs = config.execution.stalenessMaxMs
   const closest = new Map<string, { bps: number; amountIn: bigint; utc: string; category: string }>()
   let stopReason: string | null = null
+  let warnedSizingCap = false
   const programsCache = new Map<string, boolean>()
   outer: while (true) {
     const stop = control.check(rpc.usage.total); if (stop) { stopReason = stop; break }
@@ -107,10 +108,12 @@ export async function shadow(loaded: LoadedConfig, flags: Record<string, string 
       const circuits = enumerateCircuits(decoded)
       const t1 = monoMs()
       const evals: { c: Circuit; best: CircuitEval | null; points: number; cap: bigint }[] = []
+      // F7: search inside the budget the ledger will actually grant (its own caps minus the fee budget and the recoverable deposits), not
+      // config.sizing.maxCapitalLamports: a size above that cap is refused with EPISODE_CAP every single time. The caps themselves are untouched.
+      // (The ledger cannot move during this loop: nothing is reserved before the decision loop below.)
+      const cap = effectiveSizingCap(ledger, maxCapital, feeBudget, depositLamports)
+      if (cap <= 0n) { counters.sizingCapExhausted++; if (!warnedSizingCap) { warnedSizingCap = true; log.warn('sizing_cap_zero', { budget: ledger.budget(), feeBudget, depositLamports, note: 'no size can be reserved: fee budget + deposits exceed the ledger budget; nothing will be simulated' }) } }
       for (const c of circuits) {
-        // F7: search inside the budget the ledger will actually grant (its own caps minus the fee budget and the deposits), not config.sizing.maxCapitalLamports:
-        // a size above that cap is rejected with EPISODE_CAP every single time. The caps themselves are untouched.
-        const cap = effectiveSizingCap(ledger, maxCapital, feeBudget, depositLamports)
         const s = sizeCircuit(adapters, c, grid, cap, config.sizing.refineSteps); evals.push({ c, best: s.best, points: s.evaluated.length, cap }); counters.circuitsEvaluated++
         // distance to break-even even when no size is positive: best pnl in bps over all evaluated sizes (QUOTE_ONLY)
         for (const e of s.evaluated) if (e.pnl !== null) { const bps = Number((e.pnl * 1_000_000n) / e.amountIn) / 100; const prev = closest.get(c.id); if (prev === undefined || bps > prev.bps) closest.set(c.id, { bps, amountIn: e.amountIn, utc: nowUtcIso(), category: c.category }) }
@@ -118,7 +121,7 @@ export async function shadow(loaded: LoadedConfig, flags: Record<string, string 
       lat.quote.push(monoMs() - t1)
       if (clock) lat.ageAtQuote.push(markStage(clock, 'quoteDone', monoMs()))   // stage 1: receive -> quote done
       const nowIso = nowUtcIso()
-      for (const { c, best, cap } of evals) {
+      for (const { c, best, cap: sizingCap } of evals) {
         const ep0 = episodes.get(c.id)
         if (!best) { if (ep0 && ep0.open) { ep0.open = false; db.event(runId, nowIso, monoMs(), 'episode_end', c.id, snap.bundle?.maxSlot ?? null, ep0) } continue }
         counters.positiveEvaluations++
@@ -130,7 +133,7 @@ export async function shadow(loaded: LoadedConfig, flags: Record<string, string 
         const decisionMonoMs = monoMs()
         const atDecision = clock ? stalenessGate(clock.receivedMonoMs, decisionMonoMs, stalenessMaxMs) : null
         if (clock) lat.ageAtDecision.push(markStage(clock, 'decision', decisionMonoMs))
-        db.db.prepare('INSERT OR IGNORE INTO candidates (id,run_id,ts_utc,mono_ms,mint,pool_a,pool_b,direction,amount_in,amount_out,trading_pnl,tx_pnl,state_hash,min_slot,max_slot,single_batch,evidence,status,payload) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)').run(candidateId, runId, nowIso, monoMs(), token, c.poolA.address.toBase58(), c.poolB.address.toBase58(), c.category, best.amountIn.toString(), best.quoteB.amountOutToUser.toString(), best.pnl.pnl.toString(), txPnl.toString(), sha256Hex(c.poolA.stateHash + c.poolB.stateHash), snap.bundle?.minSlot ?? null, snap.bundle?.maxSlot ?? null, snap.bundle?.singleBatch ? 1 : 0, 'QUOTE_ONLY', isCandidate ? 'CANDIDATE' : 'BELOW_MIN_NET', JSON.stringify({ legA: { in: best.quoteA.amountIn, out: best.quoteA.amountOutToUser }, legB: { in: best.quoteB.amountIn, out: best.quoteB.amountOutToUser }, ext: ext.costs, locked: ext.locked, sizingCapLamports: cap, stateAgeMsAtDecision: atDecision?.ageMs ?? null, stale: atDecision === null ? true : !atDecision.fresh }, jsonReplacer))
+        db.db.prepare('INSERT OR IGNORE INTO candidates (id,run_id,ts_utc,mono_ms,mint,pool_a,pool_b,direction,amount_in,amount_out,trading_pnl,tx_pnl,state_hash,min_slot,max_slot,single_batch,evidence,status,payload) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)').run(candidateId, runId, nowIso, monoMs(), token, c.poolA.address.toBase58(), c.poolB.address.toBase58(), c.category, best.amountIn.toString(), best.quoteB.amountOutToUser.toString(), best.pnl.pnl.toString(), txPnl.toString(), sha256Hex(c.poolA.stateHash + c.poolB.stateHash), snap.bundle?.minSlot ?? null, snap.bundle?.maxSlot ?? null, snap.bundle?.singleBatch ? 1 : 0, 'QUOTE_ONLY', isCandidate ? 'CANDIDATE' : 'BELOW_MIN_NET', JSON.stringify({ legA: { in: best.quoteA.amountIn, out: best.quoteA.amountOutToUser }, legB: { in: best.quoteB.amountIn, out: best.quoteB.amountOutToUser }, ext: ext.costs, locked: ext.locked, sizingCapLamports: sizingCap, stateAgeMsAtDecision: atDecision?.ageMs ?? null, stale: atDecision === null ? true : !atDecision.fresh }, jsonReplacer))
         // episodes: consecutive positive (candidate-level) evaluations of the same circuit
         if (isCandidate) {
           const e = ep0 && ep0.open ? ep0 : { circuitId: c.id, token, category: c.category, startUtc: nowIso, lastUtc: nowIso, refreshes: 0, maxPnl: txPnl, maxPnlAmountIn: best.amountIn, minSlot: snap.bundle?.minSlot ?? 0, maxSlot: snap.bundle?.maxSlot ?? 0, simulated: 0, simOk: 0, localOk: 0, localMatch: 0, open: true }

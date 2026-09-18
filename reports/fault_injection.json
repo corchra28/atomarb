@@ -1,11 +1,94 @@
 {
- "generatedUtc": "2026-09-18T06:47:28.241Z",
- "mutations": 1,
- "caught": 1,
+ "generatedUtc": "2026-09-18T06:54:27.454Z",
+ "mutations": 9,
+ "caught": 9,
  "holes": [],
  "workingTreeCleanAfterRun": false,
- "dirty": "M reports/fault_injection.json\n M scripts/fault_injection.ts\n M src/accounting/capital.ts",
+ "dirty": "M docs/AUDIT_RESPONSE.md\n M src/cli/shadow.ts\n M tests/unit/capital.test.ts",
  "results": [
+  {
+   "id": "pumpswap_drop_creator_fee",
+   "invariant": "creator fee is charged on PumpSwap buys",
+   "file": "src/adapters/pumpswap/math.ts",
+   "applied": true,
+   "caughtBy": [
+    "tests/unit/pumpswap_math.test.ts",
+    "tests/unit/pumpswap_sdk_crosscheck.test.ts",
+    "tests/integration/pumpswap_local_program.test.ts"
+   ],
+   "missedBy": [],
+   "hole": false
+  },
+  {
+   "id": "raydium_raw_vault_reserves",
+   "invariant": "pricing reserves exclude protocol/fund/creator fees held in the vault",
+   "file": "src/adapters/raydium_cpmm/math.ts",
+   "applied": true,
+   "caughtBy": [
+    "tests/unit/raydium_adapter.test.ts",
+    "tests/integration/raydium_local_program.test.ts"
+   ],
+   "missedBy": [],
+   "hole": false
+  },
+  {
+   "id": "accounting_double_count_dex_fees",
+   "invariant": "fees already inside the quotes are never subtracted a second time",
+   "file": "src/accounting/pnl.ts",
+   "applied": true,
+   "caughtBy": [
+    "tests/unit/accounting.test.ts"
+   ],
+   "missedBy": [],
+   "hole": false
+  },
+  {
+   "id": "routing_sell_preexisting_inventory",
+   "invariant": "leg B consumes exactly leg A output (no pre-existing inventory)",
+   "file": "src/routing/circuit.ts",
+   "applied": true,
+   "caughtBy": [
+    "tests/unit/routing.test.ts",
+    "tests/integration/circuit_local_program.test.ts"
+   ],
+   "missedBy": [],
+   "hole": false
+  },
+  {
+   "id": "probe_ignore_realised_delta",
+   "invariant": "realised PnL is measured from on-chain balance deltas, never copied from the quote",
+   "file": "src/simulation/probe.ts",
+   "applied": true,
+   "caughtBy": [
+    "tests/integration/circuit_local_program.test.ts"
+   ],
+   "missedBy": [],
+   "hole": false
+  },
+  {
+   "id": "rpc_allow_send",
+   "invariant": "submit RPC methods are refused (read-only)",
+   "file": "src/state/rpc.ts",
+   "applied": true,
+   "caughtBy": [
+    "tests/unit/rpc_client.test.ts"
+   ],
+   "missedBy": [],
+   "hole": false
+  },
+  {
+   "id": "accounting_rent_counted_as_cost",
+   "invariant": "a recoverable deposit is never reported as a definitive cost",
+   "file": "src/simulation/probe.ts",
+   "applied": true,
+   "caughtBy": [
+    "tests/integration/circuit_local_program.test.ts"
+   ],
+   "missedBy": [
+    "tests/unit/accounting.test.ts"
+   ],
+   "hole": false
+  },
   {
    "id": "accounting_skip_reconciliation",
    "invariant": "an unexplained native outflow downgrades the status",
@@ -13,6 +96,17 @@
    "applied": true,
    "caughtBy": [
     "tests/unit/accounting.test.ts"
+   ],
+   "missedBy": [],
+   "hole": false
+  },
+  {
+   "id": "snapshot_claim_single_batch",
+   "invariant": "a multi-call fetch is never reported as one atomic snapshot",
+   "file": "src/state/rpc.ts",
+   "applied": true,
+   "caughtBy": [
+    "tests/unit/rpc_client.test.ts"
    ],
    "missedBy": [],
    "hole": false

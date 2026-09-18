@@ -48,7 +48,7 @@ Coverage improved while fixing this: raising the listing cap from 5,000 to 25,00
 
 ## Independent audit (2026-09-18, commit 2c78a61) — accepted and being fixed
 
-Seven findings, all reproduced here before touching anything: `docs/sources/audit_2c78a61.md` records what the auditor established, `docs/AUDIT_RESPONSE.md` the disposition of each. Done so far: F1 (reconciled accounting, deposits proven recoverable, close path implemented) plus the unused `minQuoteReserveLamports` filter. In progress on separate files: F2/F7 (staleness gate and sizing inside the capital the ledger will grant), F3/F4/F5 (WebSocket start lifecycle, atomic RPC budget, timeout covering the body), F6 (flag parser).
+Seven findings, all reproduced here before touching anything: `docs/sources/audit_2c78a61.md` records what the auditor established, `docs/AUDIT_RESPONSE.md` the disposition of each. All seven are fixed and each has a regression test: F1 reconciled accounting with proven deposit recovery, F2 staleness re-measured at the decision and again at the simulation, F3 one WebSocket start lifecycle that always settles, F4 atomic budget reservation, F5 timeout covering the response body, F6 explicit flag parser, F7 sizing inside the capacity the ledger will grant with deposits counted. The unused `minQuoteReserveLamports` filter is implemented too. The auditor's own counter-examples were replayed against the fixed code and now behave correctly (table in `docs/AUDIT_RESPONSE.md`). Suite: 278 passing, 2 network tests skipped, 23 Rust host tests, 9 fault injections all caught.
 
 The economic verdict does not change: repairing control defects is not evidence of profit, and the observed run had zero positive evaluations out of 17,676.
 

@@ -1,0 +1,51 @@
+export const meta = {
+  name: 'atomarb-audit-fixes',
+  description: 'Fix the audit findings F2-F7 (transport resilience, scanner staleness/sizing/budget) with reproducing regressions',
+  phases: [{ title: 'Fix', detail: 'two agents on disjoint files' }],
+}
+const ROOT = '/home/rares/trading/sol/atomarb'
+const COMMON = `PROJECT: ${ROOT} (TypeScript, Node 24, ESM, strict TS 5.9, vitest 5). An independent auditor reproduced defects in the code at commit 2c78a61 and published counter-examples. Your job: FIX the ones you own, and add a regression test that FAILS on the old behaviour and passes on the new one. Read the file you are changing in full before editing.
+HARD RULES: read-only research project — never call sendTransaction/sendRawTransaction/sendBundle, never read or create private keys, no Solana RPC calls at all in your work (all your tests must use loopback HTTP/WebSocket servers or fixtures), do not touch files owned by another agent (ownership below), do not run git commit/push, keep 'npx tsc -p tsconfig.json --noEmit' green and your test files passing. Style: bigint for amounts, explicit reject codes, comments cite the reason. Tests must be deterministic and must not sleep more than ~3 s in total.
+When done, report exactly what you changed, the test names that reproduce each defect, and the command + output summary you ran.`
+const RESULT = { type: 'object', properties: {
+  agent: { type: 'string' }, status: { type: 'string', enum: ['DONE', 'PARTIAL', 'BLOCKED'] },
+  fixes: { type: 'array', items: { type: 'object', properties: { finding: { type: 'string' }, file: { type: 'string' }, change: { type: 'string' }, regression_test: { type: 'string' }, fails_before_fix: { type: 'boolean' } }, required: ['finding','file','change','regression_test','fails_before_fix'] } },
+  tests: { type: 'object', properties: { command: { type: 'string' }, passed: { type: 'integer' }, failed: { type: 'integer' } }, required: ['command','passed','failed'] },
+  notes_for_integrator: { type: 'string' }, blockers: { type: 'array', items: { type: 'string' } },
+}, required: ['agent','status','fixes','tests','notes_for_integrator','blockers'] }
+
+const TRANSPORT = `${COMMON}
+
+YOUR AGENT: transport. OWNED FILES: ${ROOT}/src/state/rpc.ts, ${ROOT}/src/state/wss.ts, ${ROOT}/tests/unit/rpc_client.test.ts, ${ROOT}/tests/unit/wss_manager.test.ts. Do NOT touch anything else.
+
+FINDING F3 (P1) — src/state/wss.ts, WssManager.connect(): the promise returned by start() resolves only in the 'open' handler of the FIRST connect attempt. If the first handshake fails (server answers HTTP 503 and closes), the 'close' handler schedules a NEW connect() whose promise nobody awaits, so start() never settles and the caller (src/cli/shadow.ts: 'await wss.start()') hangs forever and never reaches its STOP/deadline loop. Auditor's reproduction: first upgrade gets 503, second succeeds -> serverConnections 2, successfulOpens 1, startResolved FALSE after 2 s.
+Fix: one lifecycle for start/retry/stop. start() must settle when a connection opens (any attempt), and must also settle (reject or resolve with a status) when stop() is called or an optional timeout elapses; never leave an unsettled promise behind. Keep the existing behaviour that survives later disconnects (reconnect + GAP marking + resubscribe) and keep stats. Also fix the related defect the auditor noted: in src/cli/shadow.ts the 'dirty' set only shortens the sleep, and 'dirty.delete(token)' can drop a notification that arrived while the route was being processed — you do NOT own shadow.ts, so instead expose what the scanner needs (e.g. a monotonically increasing per-key revision or a drainDirty() that returns and clears atomically) and describe it in notes_for_integrator.
+Regression tests (tests/unit/wss_manager.test.ts): (a) first handshake rejected with 503, second accepted -> start() resolves within ~3 s and notifications flow; (b) stop() while connecting settles start() instead of hanging; (c) the existing dedup/reconnect/gap test keeps passing.
+
+FINDING F4 (P2) — src/state/rpc.ts, RpcClient.acquire(): the budget is checked ('if (this.usage.total >= maxTotalHttpRequests) throw') BEFORE the concurrency wait and the token-bucket sleep, while usage.total is incremented later in call(). Eight concurrent calls with maxTotalHttpRequests = 1 and maxConcurrentRequests = 1 therefore all pass the check and all eight HTTP requests are sent. Auditor's reproduction: budget 1 -> 8 HTTP requests received, 8 successes, usage.total 8.
+Fix: reserve one budget unit atomically (no await between the check and the reservation), and make retries consume the same budget. On exhaustion throw RpcBudgetExhausted and release nothing that was not reserved. Regression test: the auditor's exact scenario must end with at most 1 HTTP request received and the rest rejected with RpcBudgetExhausted.
+
+FINDING F5 (P2) — src/state/rpc.ts: clearTimeout(timer) runs in the finally of the fetch call, i.e. as soon as the RESPONSE HEADERS arrive; 'await res.json()' then runs with no timeout. Auditor's reproduction: requestTimeoutMs 50, body delayed 300 ms -> the call SUCCEEDS after ~310 ms, usage.errors 0, and the recorded latency is ~9 ms (headers only) instead of ~310 ms. A body that never ends hangs the scanner forever.
+Fix: the abort signal must cover header AND body; record the full duration (start to parsed body) in usage.byMethod[].ms; a stalled body must surface as a timeout error and be retried like other transient failures. Regression tests: (a) slow body beyond the timeout -> the call rejects and usage.errors increases; (b) a normal call records a latency that includes the body; (c) the existing 429/timeout/budget/submit-guard tests keep passing.
+Return the structured result.`
+
+const SCANNER = `${COMMON}
+
+YOUR AGENT: scanner. OWNED FILES: ${ROOT}/src/cli/shadow.ts, ${ROOT}/src/accounting/capital.ts, ${ROOT}/scripts/route_gaps.ts, ${ROOT}/tests/unit/capital.test.ts, and a NEW file ${ROOT}/tests/unit/shadow_policy.test.ts. Do NOT touch src/accounting/pnl.ts, src/simulation/probe.ts, src/state/*.ts (another agent is editing those). Note: externalCosts() in src/accounting/pnl.ts keeps its current signature; after the integrator's fix its 'costs'/'total' cover only DEFINITIVE costs (network base fee, priority fee, tip) and 'locked' carries recoverable account deposits (rent). Use 'total' for the fee budget and 'total + sum(locked)' where the capital that must actually be available is meant.
+
+FINDING F2 (P1) — src/cli/shadow.ts: 'stateAgeMs' is computed ONCE right after the snapshot (line ~96) and then reused as the staleness gate much later (line ~129), after quoting, sizing, capital reservation and a getLatestBlockhash round trip. It therefore does not measure snapshot -> decision -> simulation at all, and the run report's 'state age at decision p50 = 3 ms' is measuring the wrong instant.
+Fix: recompute the age from the snapshot's receivedMonoMs at the moments that matter — right before the decision is recorded, and again right before the simulation is issued — and gate on the LATEST value; record the separate stages (receive -> quote done -> build done -> simulate issued) in the latency histogram instead of one number; if the age exceeds config.execution.stalenessMaxMs at the simulation gate, count it as stale and skip (re-quote on the next poll). Regression test in tests/unit/shadow_policy.test.ts: a pure helper (extract one, e.g. 'stalenessGate(receivedMonoMs, nowMonoMs, maxMs)' and a small 'DecisionClock' type) where an injected delay after the snapshot makes the decision stale even though the first measurement was fresh.
+
+FINDING F7 (P2) — src/cli/shadow.ts + src/accounting/capital.ts: sizeCircuit() searches up to config.sizing.maxCapitalLamports while the ledger only allows 20 % of capital per episode AND counts the fee inside that cap, so the chosen size is routinely rejected with EPISODE_CAP and the scanner then gives up instead of trying a smaller, still-positive size. The reservation also ignores the capital needed to CREATE accounts (recoverable deposits), so it under-reserves. Auditor's synthetic-reserve reproduction: capital 0.1 SOL, selected 0.1 SOL -> EPISODE_CAP, while 0.01 SOL is positive in the same quote and reserves fine.
+Fix: size within the budget the ledger will actually grant (ledger.budget() minus the fee budget and minus the deposits the circuit needs), i.e. pass an effective cap into sizeCircuit; keep the capital protections intact (do not raise the caps to make it pass); if the best size is still refused, retry with the largest size the ledger accepts and record why the first choice was refused. Add the deposit requirement to CapitalLedger.reserve (a new field, e.g. 'depositLamports', counted in the locked amount). Regression tests in tests/unit/capital.test.ts and shadow_policy.test.ts covering: the auditor's scenario now selects the smaller size and reserves it; the caps still refuse an oversized episode; deposits are part of what is locked and are released on settle.
+
+FINDING F6 (P2) — scripts/route_gaps.ts line 17: 'Number(process.argv[process.argv.indexOf('--max-requests') + 1] || 120)' — with the flag absent indexOf() returns -1, so argv[0] (the node binary path) is parsed and the budget becomes NaN, which disables the limit silently ('usage >= NaN' is always false).
+Fix: a small explicit flag parser (also used for any other numeric flag in that script): missing flag -> documented default, present flag -> must be a finite positive integer or the script exits with a clear message; pass the value to the RpcClient budget. Add a unit test for the parser (put it in tests/unit/shadow_policy.test.ts if the parser is exported from the script, otherwise extract the parser into ${ROOT}/src/util/flags.ts — you own that new file — and test it there).
+Return the structured result.`
+
+phase('Fix')
+const out = await parallel([
+  () => agent(TRANSPORT, { label: 'fix:transport', phase: 'Fix', schema: RESULT, model: 'opus' }),
+  () => agent(SCANNER, { label: 'fix:scanner', phase: 'Fix', schema: RESULT, model: 'opus' }),
+])
+return { fixes: out.filter(Boolean) }
