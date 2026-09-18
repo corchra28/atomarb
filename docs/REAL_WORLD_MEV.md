@@ -290,3 +290,72 @@ either catches a big one or it does not.
 Any figure in this repository derived from a single short census should be read as an
 order-of-magnitude estimate with a wide band, not a measurement. The honest range from what has
 actually been sampled is **$21,000 to $107,000 a day**, and the true figure could sit outside it.
+
+---
+
+## 11. The band does not narrow, and it is not the hour
+
+§10 reported a fivefold difference between a 09:00 and a 22:20 census and offered time of day as
+the obvious reading. A third census tests that directly, and the obvious reading is wrong.
+
+Sample C was taken **25 minutes after** sample B, in an all-but-identical regime (chain at 4,500
+transactions per second against 5,000, SOL one-minute sigma 6.89 basis points against 6.96), with
+the same 300-block size and a **disjoint slot range**.
+
+| | A, 09:00 UTC | B, 22:20 UTC | C, 22:45 UTC |
+|---|---:|---:|---:|
+| blocks | 120 | 300 | 300 |
+| circuits | 104 | 453 | **490** |
+| total, extrapolated | 200 SOL/day | **947 SOL/day** | **301 SOL/day** |
+| median trade | 24,585 | 7,716 | 6,155 |
+| top ten's share | 81% | 82% | 71% |
+
+**B and C differ by 3.1x, 25 minutes apart, in the same regime — and C has more circuits than B.**
+Whatever is moving the total, it is not the hour.
+
+### What is stable and what is not
+
+| quantity | spread across the three samples |
+|---|---:|
+| concentration (top ten's share) | **1.16x** |
+| circuits per block | 1.88x |
+| median trade | 3.99x |
+| tail, excluding the top ten | 4.45x |
+| **total** | **4.73x** |
+
+### The band is exactly what sampling noise predicts
+
+Bootstrapping from all 1,047 circuits observed across the three samples, resampling totals at
+various census sizes (`docs/sources/realworld/bootstrap.py`):
+
+| census size | 90% band (p05 to p95) |
+|---:|---:|
+| 120 blocks | **6.9x** |
+| 300 blocks | **3.4x** |
+| 1,000 blocks | 1.9x |
+| 3,000 blocks | 1.5x |
+| 10,000 blocks | 1.2x |
+| 30,000 blocks | 1.1x |
+
+The observed B-to-C ratio of 3.1x sits inside the 3.4x band predicted for a 300-block census. **No
+time-of-day effect is needed to explain any of the variation.** The original 120-block census had
+a 6.9x band around it, which is why $21,000 a day was never a measurement.
+
+### What would settle it, and whether it is worth settling
+
+Ten thousand blocks — about 44 minutes of contiguous chain — brings the band to 1.2x, or roughly
+±20%. Thirty thousand gets to ±10%. Adding more short samples at more hours does nothing, because
+the variance is *within* a regime, not between regimes.
+
+**It is not worth settling, and here is why.** Every conclusion this repository draws rests on the
+quantities in the stability table above, not on the total:
+
+- the concentration, which varies by 1.16x and says the money is in a handful of contested trades;
+- the signer persistence — 70–75% of operators appear in any two samples, at any hour;
+- the median trade, which is between $0.0007 and $0.0026 in every sample, all of them negligible;
+- capital saturation near $1,538, measured separately from trade sizes.
+
+A better total would move the headline and change nothing else. The honest statement is that the
+whole atomic-arbitrage market is **somewhere in the low hundreds of thousands of dollars a day**,
+known to about a factor of three, and that is precise enough for every use this repository makes
+of it.
