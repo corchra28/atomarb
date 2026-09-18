@@ -1,5 +1,20 @@
 # What the winners actually do — an on-chain census
 
+> **Read this first.** This document is chronological: it records what was measured when, including
+> the figures that were later found wrong. **The current numbers are in §12**, from a 3,000-block
+> census examining 3.8 million transactions:
+>
+> | | |
+> |---|---|
+> | Whole atomic-arbitrage market | **~$124,000 a day** (1,102 SOL) |
+> | Median winning trade | **$0.00075** |
+> | Share taken by ten trades out of 4,548 | **65%** |
+> | Distinct operators, and how many persist between windows | **156**, 91–100% |
+>
+> The **$21,000 a day** that appears in §2 and §5 below came from a 120-block census whose 90%
+> band spans **thirtyfold**. It is left in place because the record of what was believed, and how
+> it was corrected, is the more useful artefact — but it is not the answer.
+
 Two audits in this repository returned `NO_VERIFIED_EDGE`. Both asked "can I find a gap?" That is the wrong question, and it is the question a beginner asks. The question a practitioner asks is **"who is taking the money right now, how much, and through what?"**
 
 That is answerable directly, because every arbitrage that lands is public. This document answers it by reading blocks.
@@ -40,11 +55,11 @@ Summed across **every searcher on the network**:
 |---|---|
 | Total take-home, 120 blocks | 0.0742 SOL = **$7.84** |
 | Per block | **$0.065** |
-| Extrapolated per day | **~$21,000** |
+| Extrapolated per day | ~$21,000 — **superseded, see §12: ~$124,000** |
 
 That last figure is the entire atomic-arbitrage prize pool on Solana, split between everyone competing for it. It is an order-of-magnitude estimate from 32 seconds of chain time, not a precise number, and it covers **atomic arbitrage only**. Sandwiching, liquidations and just-in-time liquidity are separate categories; §8 measures how much room is left for them and finds it is far less than I assumed when I first wrote this line.
 
-A new entrant with no latency advantage is competing for a share of $21,000 a day against 51 incumbents. The median winning trade pays a quarter of a cent.
+A new entrant with no latency advantage is competing for a share of that against 51 incumbents — 156 of them at the larger sample size — and the median winning trade pays well under a cent.
 
 ## 3. The third answer: never in the shape I built
 
@@ -99,7 +114,7 @@ The engine assumed a flat 9,000 lamports per attempt. More than half of the real
 
 Searchers here bid through the tip, not through the priority fee, so a low priority fee reads as "not bidding" only if you forget to look at the other channel. It is an auction after all.
 
-The three that pay nothing are worth **$167 a day network-wide**, out of $21,000. There is no quiet lane.
+The three that pay nothing are worth **$167 a day network-wide** out of the total. Whatever the total turns out to be, there is no quiet lane.
 
 Compute consumed sits at a median of 138,381 units, so these are short routes: 85 of 104 are two-venue circuits, 35 are three-venue, 3 are four-venue.
 
@@ -110,7 +125,7 @@ Compute consumed sits at a median of 138,381 units, so these are short routes: 8
 The honest summary of all three audits together:
 
 1. **Atomic on-chain arbitrage works and is being done profitably right now.** The previous verdicts were about my implementation and my measurement window, not about the strategy.
-2. **The total prize is about $21,000 a day for everyone combined**, with a median trade worth a quarter of a cent. It is a volume business, not a margin business.
+2. **The total prize is about $124,000 a day for everyone combined** (§12; this line originally said $21,000, from a census ten times shorter), with a median trade worth well under a cent. It is a volume business, not a margin business.
 3. **It is an auction, and you have to be fast enough to enter it.** 101 of 104 winners pay for block position, nearly all through the Jito tip. Latency gets you to the auction; the tip wins it. Competing means a co-located node with a direct block-engine or shred feed, not polling a public RPC every four seconds and not a websocket subscription either.
 4. **The venue pair matters more than anything else in the engine.** Constant-product against constant-product is the one combination that provably does not pay. Concentrated liquidity against anything is 94% of the real winners.
 
@@ -296,6 +311,7 @@ either catches a big one or it does not.
 Any figure in this repository derived from a single short census should be read as an
 order-of-magnitude estimate with a wide band, not a measurement. The honest range from what has
 actually been sampled is **$21,000 to $107,000 a day**, and the true figure could sit outside it.
+**It did:** §12 measures it at about $124,000 from a sample ten times larger.
 
 ---
 
