@@ -66,7 +66,7 @@ Rounding direction is load-bearing at every step and differs by swap direction.
 - [x] Mutation suite — **10 of 10 caught**
 - [x] Close escape 1: `liquidity_net` — the mutation itself was a no-op, not a test gap
 - [x] Close escape 2: a Whirlpool with a Token-2022 mint carrying a 300 bps transfer fee
-- [ ] Verify from a clean clone with no RPC
+- [x] Verify from a clean clone with no RPC — 7 tests green, no network
 - [ ] Adaptive-fee pools (currently refused rather than mis-quoted)
 
 ## Decision: do not port the math
