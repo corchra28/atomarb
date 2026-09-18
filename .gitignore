@@ -16,3 +16,4 @@ programs/**/target/
 *.log
 integrations/**/target/
 integrations/**/Cargo.lock.bak
+integrations/**/examples/target/
