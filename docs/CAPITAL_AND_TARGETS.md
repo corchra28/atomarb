@@ -7,6 +7,13 @@
 
 ## 1. The capital question: it saturates at about $1,500
 
+> **Superseded by §3.** This section rests on 96 transactions from a 120-block census. Remeasured
+> over 641 transactions from a 3,000-block census, the largest deployment observed is **302 SOL
+> ($34,126)**, not $1,538 — twenty-one times higher — and the saturation point is **about 100 SOL
+> (~$11,000)**. The conclusion that more capital buys nothing beyond saturation is unchanged and
+> in fact sharper; only the number moved. The reasoning below is left as the record of how it was
+> first measured.
+
 The census in `docs/REAL_WORLD_MEV.md` recorded 104 verified winning arbitrages but not their trade sizes. This adds that: for 96 of them the transactions were fetched and the largest single wrapped-SOL transfer measured, which for a WSOL circuit is the capital the searcher actually put at risk.
 
 Script: `docs/sources/realworld/capital_per_arb.ts`. Data: `capital_per_arb.json`.
@@ -44,7 +51,7 @@ Trade size is set by the price gap and the depth of the thinner pool, not by the
 
 ### The simulation
 
-Total profit of **every searcher on the network** in the 120-block sample was $7.83, which extrapolates to about **$21,200 a day**. The largest single trade needed $1,538. So:
+Total profit of **every searcher on the network** in the 120-block sample was $7.83, which extrapolates to about **$21,200 a day** (superseded: ~$124,000, see `REAL_WORLD_MEV.md` §12). The largest single trade needed $1,538 (superseded: $34,126). So:
 
 | Capital | 1% capture | 5% capture | 20% capture |
 |---:|---:|---:|---:|

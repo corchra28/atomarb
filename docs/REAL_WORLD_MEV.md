@@ -375,7 +375,7 @@ quantities in the stability table above, not on the total:
 - the concentration, which varies by 1.16x and says the money is in a handful of contested trades;
 - the signer persistence — 70–75% of operators appear in any two samples, at any hour;
 - the median trade, which is between $0.0007 and $0.0026 in every sample, all of them negligible;
-- capital saturation near $1,538, measured separately from trade sizes.
+- capital saturation near 100 SOL, with returns collapsing from ~40 bps to 0.1 bps above it (`CAPITAL_AND_TARGETS.md` §3).
 
 A better total would move the headline and change nothing else. The honest statement is that the
 whole atomic-arbitrage market is **somewhere in the low hundreds of thousands of dollars a day**,
