@@ -122,6 +122,11 @@ pub struct MeteoraDlmmAmm {
 single_program_amm!(MeteoraDlmmAmm, DLMM_PROGRAM, "Meteora DLMM");
 
 impl MeteoraDlmmAmm {
+    /// The pool's bin step in basis points, which sets how far apart adjacent bins are priced.
+    pub fn bin_step(&self) -> u16 {
+        self.bin_step
+    }
+
     fn tracked_indices(&self) -> Vec<i64> {
         let centre = array_index_of(self.active_id as i64);
         (-ARRAYS_PER_SIDE..=ARRAYS_PER_SIDE)
@@ -362,10 +367,11 @@ impl Amm for MeteoraDlmmAmm {
             TOKEN_PROGRAM
         };
 
-        // `swap` account order, from the official IDL. Optional accounts are filled with the
-        // program id, which is how this program spells "absent". The newer `swap2` takes a
-        // `remaining_accounts_info` argument whose encoding in the deployed program does not
-        // match the SDK's IDL, and this adapter has no transfer-hook pools to justify it.
+        // `swap2` account order, from the official IDL. Optional accounts are filled with the
+        // program id, which is how this program spells "absent".
+        //
+        // The older 15-account `swap` is not usable: it pins both token programs to the legacy
+        // SPL Token id and rejects a Token-2022 pool with `InvalidProgramId`.
         let mut account_metas = vec![
             AccountMeta::new(self.key, false),
             AccountMeta::new_readonly(Self::PROGRAM_ID, false), // bin_array_bitmap_extension: none
@@ -380,6 +386,7 @@ impl Amm for MeteoraDlmmAmm {
             AccountMeta::new_readonly(swap_params.token_transfer_authority, true),
             AccountMeta::new_readonly(x_program, false),
             AccountMeta::new_readonly(y_program, false),
+            AccountMeta::new_readonly(MEMO_PROGRAM, false),
             AccountMeta::new_readonly(self.event_authority, false),
             AccountMeta::new_readonly(Self::PROGRAM_ID, false),
         ];
@@ -401,7 +408,7 @@ impl Amm for MeteoraDlmmAmm {
     }
 
     fn get_accounts_len(&self) -> usize {
-        15 + ARRAYS_PER_SIDE as usize + 1
+        16 + ARRAYS_PER_SIDE as usize + 1
     }
 
     fn is_active(&self) -> bool {

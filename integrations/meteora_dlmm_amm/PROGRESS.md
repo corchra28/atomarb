@@ -68,12 +68,14 @@ third-party crate does not advertise. Pools using them may quote wrong, and pari
 - [x] `quote()` via `meteora-dlmm`, including Token-2022
 - [x] `get_swap_and_account_metas` for the native `swap` instruction
 - [x] Dump the program ELF — 2,198,032 bytes computed from the header, not guessed
-- [ ] Probe serviceable swap sizes per pool
-- [x] Parity test: deep pool and a wide-bin pool, both green
-- [ ] Parity test: sizes that cross bins, with the price impact measured to prove they do
-- [ ] Parity test: a pool with a Token-2022 mint carrying a transfer fee
-- [ ] Mutation suite, every mutation verified to actually change behaviour
+- [x] Probe serviceable swap sizes per pool (`examples/probe.rs`)
+- [x] Parity test: deep pool and a wide-bin pool
+- [x] Parity test: sizes that cross bins — 48% measured price impact one way, 6% the other
+- [x] Parity test: a pool with a Token-2022 mint carrying a 300 bps transfer fee
+- [x] Parity test: a swap past the carried bin arrays is refused, not quoted
+- [x] Mutation suite — **10 of 10 caught**
 - [ ] Verify from a clean clone with no RPC
+- [ ] Limit-order pools (`support_limit_order` passed as false; a pool using them would fail parity)
 
 ## Log
 
@@ -92,3 +94,20 @@ third-party crate does not advertise. Pools using them may quote wrong, and pari
   struct has only transfer-hook variants, so bin arrays are plain trailing accounts either way,
   and the simpler 15-account `swap` (disc `f8c69e91e17587c8`) carries no such argument.
 - First two parity tests green on the deep and wide-bin pools.
+- Probed serviceable sizes before writing any more tests, per the Whirlpool lesson. On the
+  bin-step-50 pool, Y to X fills at 8.789 per unit at 1e6 and 4.598 at 2e11 — a 48% move, which
+  no single bin can produce, and the engine reports `bins_crossed: 128` when a larger size runs
+  out of arrays.
+- **Adding a Token-2022 pool caught a real defect.** `swap` rejected it with `InvalidProgramId`
+  (3008): that instruction pins both token programs to the legacy SPL Token id. So `swap2` is
+  required after all, and the earlier decision to fall back to `swap` was only viable because
+  every pool tested until then was plain SPL.
+- That forced solving the `swap2` encoding properly, by reading the bytes of real `swap2`
+  instructions on chain rather than trusting the IDL. The tail is `03000000 0000 0100 0400`:
+  a bare `Vec` of three empty slices, **not** an `Option`. Every earlier attempt failed because
+  it prefixed an Option tag, exactly as the SDK's IDL implies.
+- Mutation suite: **10 of 10 caught**. One mutation was removed rather than left reporting a
+  false gap — zeroing the mint decimals changes nothing, because `decimals_x`/`decimals_y` appear
+  only in the engine's decoder and never in its quote, fee or math code. Verified by grep, not
+  assumed.
+- Final: 4 parity tests over 15 swaps, 1 unit test, 10 of 10 mutations caught.
