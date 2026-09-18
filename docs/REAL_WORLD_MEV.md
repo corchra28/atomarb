@@ -365,3 +365,77 @@ A better total would move the headline and change nothing else. The honest state
 whole atomic-arbitrage market is **somewhere in the low hundreds of thousands of dollars a day**,
 known to about a factor of three, and that is precise enough for every use this repository makes
 of it.
+
+---
+
+## 12. The measurement, done properly, and the correction to §11's own arithmetic
+
+A 3,000-block contiguous census — 13 minutes of chain, **3,804,800 transactions examined**, 4,548
+verified circuits — is the best measurement in this repository.
+
+| | A, 120 blk | B, 300 blk | C, 300 blk | **D, 3,000 blk** |
+|---|---:|---:|---:|---:|
+| circuits | 104 | 453 | 490 | **4,548** |
+| circuits per block | 0.87 | 1.51 | 1.63 | **1.52** |
+| total, extrapolated | 200 SOL/day | 947 | 301 | **1,102 SOL/day** |
+| in dollars | $21,173 | $107,350 | $34,045 | **$124,447** |
+| median trade | 24,585 | 7,716 | 6,155 | **6,621** |
+| top ten's share | 81% | 82% | 71% | **65%** |
+| distinct signers | 44 | 81 | 85 | **156** |
+
+**Best estimate: about 1,100 SOL a day, roughly $124,000.** The largest single arbitrage in the
+window took home 2.37 SOL.
+
+### §11's bootstrap was too optimistic, and by a lot
+
+§11 bootstrapped from the 1,047 circuits then observed and predicted a 1.5x band at 3,000 blocks.
+Resampling from this sample's own distribution instead:
+
+| census size | honest 90% band | chain time |
+|---:|---:|---:|
+| 120 blocks | **30.7x** | 1 min |
+| 300 blocks | **15.2x** | 1 min |
+| 1,000 blocks | 5.0x | 4 min |
+| 3,000 blocks | **2.5x** | 13 min |
+| 10,000 blocks | 1.6x | 44 min |
+| 100,000 blocks | 1.2x | 7.4 hours |
+
+The reason the earlier table was wrong is worth stating: it resampled from short censuses whose
+largest observed trade was 204 million lamports. This one contains a trade of **2.37 billion** —
+eleven times larger. A bootstrap can only reproduce a tail it has already seen, so **every
+bootstrap from a short sample understates the variance of a heavy-tailed sum.**
+
+That also means §11's claim that 10,000 blocks buys ±20% was wrong. It buys about ±27%. Reaching
+±20% takes roughly 100,000 blocks, or **seven and a half hours of contiguous chain**.
+
+So the honest framing of the original number: **$21,000 a day was a 120-block draw from a
+distribution whose 90% band at that size spans thirty-fold.** It was not a low estimate. It was
+not an estimate.
+
+### What ten times the sample size did NOT change
+
+This is the part that carries the conclusions, and it holds:
+
+| | short samples | 3,000 blocks |
+|---|---|---|
+| median trade | $0.0007–$0.0026 | **$0.00075** |
+| circuits per block, evening | 1.51–1.63 | **1.52** |
+| top ten's share | 71–82% | **65%** |
+
+And the signer persistence got *stronger*, not weaker, at scale:
+
+- **91%** of the morning census's signers reappear in this one;
+- **96%** of sample B's;
+- **100%** of sample C's — every operator seen at 22:45 is in the 22:50 window.
+
+156 distinct operators in thirteen minutes of chain, and essentially all of the ones seen earlier
+are among them. This is a closed, stable roster. That is what "latency-gated" looks like from the
+outside: not a crowd that rotates, a fixed set of people who are always there.
+
+### The bottom line, restated with the right number
+
+The market is **about six times larger** than this document originally claimed, and the conclusion
+is unchanged, because it never rested on the total. It rests on a median trade worth three
+quarters of a thousandth of a dollar, sixty-five per cent of the money sitting in ten trades out of
+four and a half thousand, and the same hundred and fifty-odd operators present in every window
+sampled.

@@ -186,7 +186,7 @@ of the fee.
 **The verdict does not change. `NO_VERIFIED_EDGE` stands, and the reason has moved.** It was
 partly a coverage problem; it is now purely the auction. The census already measured what that
 auction costs: 101 of 104 winners pay for block position, the top three trades take 56% of all
-profit, and the whole market is $21,000–107,000 a day.
+profit, and the whole market is about $124,000 a day.
 
 ### A phantom worth recording
 

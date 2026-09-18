@@ -36,7 +36,7 @@ reports — matters when *running* a strategy. It does not matter for answering 
 across these venues", which is a batch measurement.
 
 Worth building later if a live engine is ever justified. The census says it is not:
-$21,000–107,000 a day for the whole market, latency-gated, capital saturating near $1,500.
+about $124,000 a day for the whole market, latency-gated, capital saturating near $1,500.
 
 ## (c) Do the measurement in Rust, against the adapters directly
 

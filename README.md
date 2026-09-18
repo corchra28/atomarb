@@ -11,9 +11,9 @@ Detects, quotes exactly, builds and **simulates** the circuit `WSOL -> TOKEN (po
 | Mints with pools on 2+ **different** venues | 10,129 |
 | Circuits priced, all with a concentrated-liquidity leg | 4,046 |
 | Positive gross / positive net | 4 / **0** |
-| Whole atomic-arb market, from two censuses 13 hours apart | **$21,000–107,000 a day** |
+| Whole atomic-arb market, best census (3,000 blocks) | **~$124,000 a day** |
 
-The reason is no longer coverage. It is the auction: 101 of 104 real winners pay for block position, the **top ten trades take 81–82% of all profit in every sample**, 75% of the operators are the same people thirteen hours apart, and the largest capital deployed in any winning trade observed was $1,538 — so more money buys nothing. The market size is a range because a nine-minute census extrapolated to a day is unreliable by about fivefold; see `docs/REAL_WORLD_MEV.md` §10.
+The reason is no longer coverage. It is the auction: 101 of 104 real winners pay for block position, the **top ten trades take 81–82% of all profit in every sample**, 75% of the operators are the same people thirteen hours apart, and the largest capital deployed in any winning trade observed was $1,538 — so more money buys nothing. The market-size figure carries a 2.5x band even at 3,000 blocks, and the repository's original $21,000 came from a 120-block census whose band spans **thirtyfold**; see `docs/REAL_WORLD_MEV.md` §12.
 
 ## The three Rust adapters
 
