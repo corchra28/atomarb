@@ -1,0 +1,827 @@
+{
+ "summary": {
+  "headSlot": 448056249,
+  "blocksRead": 25,
+  "txTotal": 28708,
+  "txSuccess": 23905,
+  "funnel": {
+   "touches2PlusVenues": 948,
+   "ofWhichCircuitClosed": 754,
+   "ofWhichProfitable": 39
+  },
+  "arbsPerBlock": 1.6,
+  "shareOfSuccessfulTx": 0.1631,
+  "netLamports": {
+   "p10": 412,
+   "p25": 3179,
+   "p50": 17667,
+   "p75": 175134,
+   "p90": 1617274,
+   "p99": 6056431,
+   "max": 6056431,
+   "sum": 18982327
+  },
+  "netUsd": {
+   "p50": 0.0019,
+   "p90": 0.171,
+   "max": 0.64,
+   "totalPerBlock": 0.08
+  },
+  "tipLamports": {
+   "p50": 1000,
+   "p90": 31061,
+   "max": 152316
+  },
+  "tippingShare": 59,
+  "tipAsShareOfGross": 6.7,
+  "belowRepoFeeAssumption9000": 14,
+  "venueHits": {
+   "Meteora DLMM": 19,
+   "Orca Whirlpool": 15,
+   "Meteora DAMM v2": 14,
+   "Tessera V": 13,
+   "Meteora Dynamic AMM": 8,
+   "PumpSwap AMM": 7,
+   "Raydium CLMM": 6,
+   "ZeroFi": 3,
+   "Raydium AMM v4": 2,
+   "Raydium CPMM": 1
+  },
+  "topTwoVenuePairs": {
+   "Meteora DAMM v2 + Meteora DLMM": 5,
+   "Meteora DLMM + Tessera V": 5,
+   "Meteora DAMM v2 + PumpSwap AMM": 4,
+   "Orca Whirlpool + Tessera V": 3,
+   "Meteora DLMM + Orca Whirlpool": 2,
+   "Raydium CLMM + Tessera V": 2,
+   "Meteora DAMM v2 + Meteora Dynamic AMM": 2,
+   "Orca Whirlpool + Raydium CLMM": 2,
+   "Meteora DLMM + ZeroFi": 1,
+   "Meteora DLMM + Meteora Dynamic AMM": 1,
+   "Meteora Dynamic AMM + Orca Whirlpool": 1,
+   "Meteora DLMM + PumpSwap AMM": 1,
+   "Orca Whirlpool + ZeroFi": 1
+  },
+  "insideEngineCount": 0,
+  "viaAggregator": 22,
+  "distinctSigners": 23,
+  "topSigners": [
+   {
+    "signer": "MriyaNN8TMp6qRWjfr723PK7xgQK7yCt7Kg2v2PQu7X",
+    "trades": 2,
+    "lamports": 7033148,
+    "usd": 0.74
+   },
+   {
+    "signer": "3nMNd89AxwHUa1AFvQGqohRkxFEQsTsgiEyEyqXFHyyH",
+    "trades": 1,
+    "lamports": 5102190,
+    "usd": 0.54
+   },
+   {
+    "signer": "B4RRE8DrRRLAH3d6CAqmSixLdcurwnic1h83rEYmSY4s",
+    "trades": 3,
+    "lamports": 1828444,
+    "usd": 0.19
+   },
+   {
+    "signer": "77777nPhGvFUVAj6uq8MGyLneBt4SMwCScYZDzzztdsa",
+    "trades": 2,
+    "lamports": 1792408,
+    "usd": 0.19
+   },
+   {
+    "signer": "CodeDNrxRVgLyLCYoJDnzLymTyNK3dDUFPLNVC371WbP",
+    "trades": 1,
+    "lamports": 1233146,
+    "usd": 0.13
+   },
+   {
+    "signer": "C2wezAHikMgfvXJRqPuDvS7KZwLvKRr6xNR3U431GWas",
+    "trades": 7,
+    "lamports": 765865,
+    "usd": 0.08
+   },
+   {
+    "signer": "FtFtF8iamFC3gCv5VYUTBd1G4r1XEc1TbcHyuy6hkJPQ",
+    "trades": 1,
+    "lamports": 447418,
+    "usd": 0.05
+   },
+   {
+    "signer": "DcQNaByvstRZCERvb9UJHgHiQe8YX2FMdPptM86psQyz",
+    "trades": 1,
+    "lamports": 446126,
+    "usd": 0.05
+   },
+   {
+    "signer": "7HsyYYLEP5nRMcSfkkbe1zYCW5ps951q33kPfvqr3jBL",
+    "trades": 1,
+    "lamports": 60132,
+    "usd": 0.01
+   },
+   {
+    "signer": "BSfQT2AmdxQfpsGQANrcYEUcwta5PWuTfBkHxqsZ3Gz8",
+    "trades": 1,
+    "lamports": 50652,
+    "usd": 0.01
+   },
+   {
+    "signer": "NALUnJA2AJUYa6xJL1HsorEeFgxxDsfUgYBCX8Pp2zD",
+    "trades": 2,
+    "lamports": 44923,
+    "usd": 0
+   },
+   {
+    "signer": "MenuxY5yMzJkeKZTvDTcovjh4fuJHMHhJyjJ5v5LzG6",
+    "trades": 1,
+    "lamports": 44567,
+    "usd": 0
+   }
+  ],
+  "venueCountHistogram": {
+   "2": 30,
+   "3": 8,
+   "4": 1
+  },
+  "computeUnits": {
+   "p50": 171774,
+   "p90": 262520
+  }
+ },
+ "arbs": [
+  {
+   "slot": 448056209,
+   "signature": "3Hg6aq9JvMDGG8kHNBCssM4mMYq1X7Ky9RxnidhpKqwotgGLYNCVifrYMDiRjwEY62HR6Pn18F2reS57M8ogjEas",
+   "signer": "81RwTUf7ZvM5GpeG5q5aGemnxPQLzKAXEF6qPDzNQKDn",
+   "netLamports": 187,
+   "feeLamports": 5000,
+   "tipLamports": 1000,
+   "grossLamports": 6187,
+   "venues": [
+    "PumpSwap AMM",
+    "Meteora DAMM v2"
+   ],
+   "venueCount": 2,
+   "viaAggregator": null,
+   "computeUnits": 191999,
+   "insideEngine": false
+  },
+  {
+   "slot": 448056208,
+   "signature": "3yMEuCoPzYzNVCM4rCtrpaH6hvDV4ccQhix9CrVAabWP1x1TJe8yj9ePbi2DPRcLeuMVyravsYbmcCTNeJvv4ak6",
+   "signer": "R32xAccFis3YzBzGwZ1C4QkGiehLxSao7gDmErA3kjk",
+   "netLamports": 166,
+   "feeLamports": 8765,
+   "tipLamports": 9525,
+   "grossLamports": 18456,
+   "venues": [
+    "PumpSwap AMM",
+    "Meteora DAMM v2"
+   ],
+   "venueCount": 2,
+   "viaAggregator": null,
+   "computeUnits": 136096,
+   "insideEngine": false
+  },
+  {
+   "slot": 448056206,
+   "signature": "4NF5ZdHkQhHt8sciLaMcxMWHwxti9NZKy3k36uFJJTTr3hku2uEyPaKMdhfhNonkU5ApftUCwjpRuwMH1geg8uhz",
+   "signer": "7HsyYYLEP5nRMcSfkkbe1zYCW5ps951q33kPfvqr3jBL",
+   "netLamports": 60132,
+   "feeLamports": 5000,
+   "tipLamports": 9561,
+   "grossLamports": 74693,
+   "venues": [
+    "Meteora DLMM",
+    "Meteora DAMM v2"
+   ],
+   "venueCount": 2,
+   "viaAggregator": "Jupiter v6",
+   "computeUnits": 116356,
+   "insideEngine": false
+  },
+  {
+   "slot": 448056205,
+   "signature": "2MuZs2Y1qsBWYD35K8WhW5qs3G91CgCF3ffZwDT2MaDeNAmnyJNyxxAwj23cGJLLrBbKsnNHm82H13vuSHqXLj8j",
+   "signer": "FREAKwChR4Vbs41nvAg3MW92tqzbPe45nn5cRDgfJ6dh",
+   "netLamports": 2329,
+   "feeLamports": 5181,
+   "tipLamports": 1000,
+   "grossLamports": 8510,
+   "venues": [
+    "Meteora DAMM v2",
+    "PumpSwap AMM"
+   ],
+   "venueCount": 2,
+   "viaAggregator": null,
+   "computeUnits": 107954,
+   "insideEngine": false
+  },
+  {
+   "slot": 448056205,
+   "signature": "3kCuFYfXxNSADTd5Te9gXR1kW3MeiQxHBUvvjkEhPyXXnJBNaq6s9JRAFZkYzCPyWTbbrWZkJ6s52myZnCNmBMRQ",
+   "signer": "HuTshmtwcQkWBLzgW3m4uwcmik7Lmz4YFpYcTqMJpXiP",
+   "netLamports": 20400,
+   "feeLamports": 5100,
+   "tipLamports": 0,
+   "grossLamports": 25500,
+   "venues": [
+    "Meteora DLMM",
+    "Tessera V"
+   ],
+   "venueCount": 2,
+   "viaAggregator": null,
+   "computeUnits": 139158,
+   "insideEngine": false
+  },
+  {
+   "slot": 448056205,
+   "signature": "jF1V9vvD7Qyugq9EezcJJGdEuuLPRvSWkGhdUHqRpvzxADqfkBJssvd9AtFdniRbAR1e1J3ydyQTqQQbJmAvtho",
+   "signer": "77777nPhGvFUVAj6uq8MGyLneBt4SMwCScYZDzzztdsa",
+   "netLamports": 175134,
+   "feeLamports": 5544,
+   "tipLamports": 0,
+   "grossLamports": 180678,
+   "venues": [
+    "Meteora DLMM",
+    "Tessera V"
+   ],
+   "venueCount": 2,
+   "viaAggregator": "Jupiter v6",
+   "computeUnits": 202288,
+   "insideEngine": false
+  },
+  {
+   "slot": 448056205,
+   "signature": "4xwS4vJ13WvLPuQ3iwa3jCf2zMpGn4gMo94hQWXxYREpEU7xcBhCZngkSyXbJDvSqSjw3WTyxvUPbjFCcUoQqKen",
+   "signer": "B4RRE8DrRRLAH3d6CAqmSixLdcurwnic1h83rEYmSY4s",
+   "netLamports": 1801422,
+   "feeLamports": 5000,
+   "tipLamports": 0,
+   "grossLamports": 1806422,
+   "venues": [
+    "Meteora DLMM",
+    "Meteora DAMM v2"
+   ],
+   "venueCount": 2,
+   "viaAggregator": "Jupiter v6",
+   "computeUnits": 118409,
+   "insideEngine": false
+  },
+  {
+   "slot": 448056205,
+   "signature": "5KHK9z2tzb2VRks4RRL5S3gT8npeMmCFu8HNhwZBsvuFPhH1YByfWGPn7AJESPCZPJWiNn2u4hxtrQNmwP6mejgh",
+   "signer": "HuTshmtwcQkWBLzgW3m4uwcmik7Lmz4YFpYcTqMJpXiP",
+   "netLamports": 15421,
+   "feeLamports": 7696,
+   "tipLamports": 0,
+   "grossLamports": 23117,
+   "venues": [
+    "Meteora DLMM",
+    "Meteora DAMM v2"
+   ],
+   "venueCount": 2,
+   "viaAggregator": null,
+   "computeUnits": 112515,
+   "insideEngine": false
+  },
+  {
+   "slot": 448056204,
+   "signature": "2XoM2FVwj2F8aT9mF2TtVbTKRYda4RctWeM7XgJQFZtA8Pw9sbixTA8i8EFiXZTX88WaRx2XtMfYvZP776FdHrsJ",
+   "signer": "3nMNd89AxwHUa1AFvQGqohRkxFEQsTsgiEyEyqXFHyyH",
+   "netLamports": 5102190,
+   "feeLamports": 5000,
+   "tipLamports": 91451,
+   "grossLamports": 5198641,
+   "venues": [
+    "Raydium CLMM",
+    "Meteora DAMM v2",
+    "PumpSwap AMM",
+    "Raydium CPMM"
+   ],
+   "venueCount": 4,
+   "viaAggregator": null,
+   "computeUnits": 277182,
+   "insideEngine": false
+  },
+  {
+   "slot": 448056204,
+   "signature": "4wRD8R1bCgx4hoj3s3d9YtzxpBmX5UyoYjzHCq9f778EtmsAFYDShVfo1M8AkoJmG1tXbZ7uuvkrCz3it1qdgxim",
+   "signer": "C2wezAHikMgfvXJRqPuDvS7KZwLvKRr6xNR3U431GWas",
+   "netLamports": 16697,
+   "feeLamports": 5000,
+   "tipLamports": 1000,
+   "grossLamports": 22697,
+   "venues": [
+    "Meteora DLMM",
+    "ZeroFi"
+   ],
+   "venueCount": 2,
+   "viaAggregator": "Jupiter v6",
+   "computeUnits": 149476,
+   "insideEngine": false
+  },
+  {
+   "slot": 448056204,
+   "signature": "3sw726DS6hYMFXpEUEhsHtFCWJcXz2oxWCeGvAU1dnJWdED8A2t1hywFWfYgargiDDsjyytYjNdJ8EnLML48tyEm",
+   "signer": "81RwTUf7ZvM5GpeG5q5aGemnxPQLzKAXEF6qPDzNQKDn",
+   "netLamports": 3898,
+   "feeLamports": 5000,
+   "tipLamports": 1000,
+   "grossLamports": 9898,
+   "venues": [
+    "PumpSwap AMM",
+    "Meteora DAMM v2"
+   ],
+   "venueCount": 2,
+   "viaAggregator": null,
+   "computeUnits": 171774,
+   "insideEngine": false
+  },
+  {
+   "slot": 448056204,
+   "signature": "3FFqrVdRResaNgV27kUqTF8jgijtcdbTKZBmd9FBSNYXNLHZ4ANyhEahuYU6yJUxVbPmv2vEMSZ5THubUzG8gkUv",
+   "signer": "GHigB15jr7wZ8GitjD4Hf5naqyUJfMbKa1n1PmSiBhUc",
+   "netLamports": 11825,
+   "feeLamports": 5000,
+   "tipLamports": 1000,
+   "grossLamports": 17825,
+   "venues": [
+    "Meteora DLMM",
+    "Orca Whirlpool"
+   ],
+   "venueCount": 2,
+   "viaAggregator": null,
+   "computeUnits": 226978,
+   "insideEngine": false
+  },
+  {
+   "slot": 448056203,
+   "signature": "2b4hLqh5CoiaA1DhGTjPmDxz1M31vboRi1xEkyBogaHmjRjd1T7eJQRdwXxKgEAJDV3rbi28pCmkNUiGwiaCtmUx",
+   "signer": "C2wezAHikMgfvXJRqPuDvS7KZwLvKRr6xNR3U431GWas",
+   "netLamports": 11360,
+   "feeLamports": 5000,
+   "tipLamports": 1000,
+   "grossLamports": 17360,
+   "venues": [
+    "Raydium CLMM",
+    "Tessera V"
+   ],
+   "venueCount": 2,
+   "viaAggregator": "Jupiter v6",
+   "computeUnits": 242244,
+   "insideEngine": false
+  },
+  {
+   "slot": 448056203,
+   "signature": "32mb72LRbqfraRqyFGjQqSCJbjG4Kks796BdwR3U2u9NSJ5sLrcCFxnjzQprpw2j1LCkhh7F23e4LwFbjvc1v13h",
+   "signer": "C2wezAHikMgfvXJRqPuDvS7KZwLvKRr6xNR3U431GWas",
+   "netLamports": 155433,
+   "feeLamports": 5000,
+   "tipLamports": 26116,
+   "grossLamports": 186549,
+   "venues": [
+    "Meteora DLMM",
+    "Orca Whirlpool",
+    "ZeroFi"
+   ],
+   "venueCount": 3,
+   "viaAggregator": "Jupiter v6",
+   "computeUnits": 130532,
+   "insideEngine": false
+  },
+  {
+   "slot": 448056203,
+   "signature": "39DyWb6MzwHAWguviKAZUJGocZA2qQCDGnkqK8ViKBMP1nforp2fnH213qGYZCmfEvvA9gyox9hTjH9bmdNJ8QGd",
+   "signer": "B4RRE8DrRRLAH3d6CAqmSixLdcurwnic1h83rEYmSY4s",
+   "netLamports": 18078,
+   "feeLamports": 5200,
+   "tipLamports": 0,
+   "grossLamports": 23278,
+   "venues": [
+    "Meteora DLMM",
+    "Meteora DAMM v2"
+   ],
+   "venueCount": 2,
+   "viaAggregator": "Jupiter v6",
+   "computeUnits": 101450,
+   "insideEngine": false
+  },
+  {
+   "slot": 448056202,
+   "signature": "YNJ8fVf4v189mpmMZq9Fi5Brh3dZZ1Aj7cPhtTdjjyWkm1nRrZzaCPzbRJANiGVyW3A1R8NKag8hMR7sjDnG4wq",
+   "signer": "C2wezAHikMgfvXJRqPuDvS7KZwLvKRr6xNR3U431GWas",
+   "netLamports": 197,
+   "feeLamports": 5000,
+   "tipLamports": 1000,
+   "grossLamports": 6197,
+   "venues": [
+    "Orca Whirlpool",
+    "Raydium CLMM",
+    "Tessera V"
+   ],
+   "venueCount": 3,
+   "viaAggregator": "Jupiter v6",
+   "computeUnits": 188130,
+   "insideEngine": false
+  },
+  {
+   "slot": 448056201,
+   "signature": "4sEZB35SxJXGADRwLeFkykCvDSciwNKPMMFgn4vMyRrSBNj2kqkvBRchwbbTCMqvbsCMJzwZRUchNZkyiej8fmGP",
+   "signer": "CGzAce3JG3TchTRQRv6dvbMCYxzCiRhRQ5vXA9otpChF",
+   "netLamports": 657,
+   "feeLamports": 5000,
+   "tipLamports": 1000,
+   "grossLamports": 6657,
+   "venues": [
+    "Meteora DLMM",
+    "Meteora Dynamic AMM"
+   ],
+   "venueCount": 2,
+   "viaAggregator": "Jupiter v6",
+   "computeUnits": 131257,
+   "insideEngine": false
+  },
+  {
+   "slot": 448056201,
+   "signature": "3kocM62WTe3yAJLyCVDjqEY6TiwtoRrhvKp964CsrE38YuFKZ8u6n3fyd6D1dTuyBsT8ZX8PAxSevEmfMDCVsG9",
+   "signer": "DcQNaByvstRZCERvb9UJHgHiQe8YX2FMdPptM86psQyz",
+   "netLamports": 446126,
+   "feeLamports": 5335,
+   "tipLamports": 0,
+   "grossLamports": 451461,
+   "venues": [
+    "Meteora DLMM",
+    "Tessera V"
+   ],
+   "venueCount": 2,
+   "viaAggregator": null,
+   "computeUnits": 180219,
+   "insideEngine": false
+  },
+  {
+   "slot": 448056201,
+   "signature": "skQx8uunB8JpohKv4Nt5oySN6BvvsdYvrtPEprLGpsrhgEzaC4zhVtybDQxHpbdMSiJWbkbxt7JgniLre8by9bs",
+   "signer": "GxDC9e7SP9mzhDo4re5HbpLa2RW7gB9DtmThx4i4pXSq",
+   "netLamports": 1604,
+   "feeLamports": 5000,
+   "tipLamports": 0,
+   "grossLamports": 6604,
+   "venues": [
+    "Meteora DAMM v2",
+    "PumpSwap AMM",
+    "Meteora Dynamic AMM"
+   ],
+   "venueCount": 3,
+   "viaAggregator": "Jupiter v6",
+   "computeUnits": 275497,
+   "insideEngine": false
+  },
+  {
+   "slot": 448056201,
+   "signature": "6VkZBfEct58PpaMfYJAqyA1txRvW7xaRPmBRo7NZsgKbsLfCSpV7nffzJxMfQPEYshS1LNFERFN8fZD2HSNsQGZ",
+   "signer": "NALUnJA2AJUYa6xJL1HsorEeFgxxDsfUgYBCX8Pp2zD",
+   "netLamports": 43850,
+   "feeLamports": 5000,
+   "tipLamports": 12741,
+   "grossLamports": 61591,
+   "venues": [
+    "Tessera V",
+    "Raydium CLMM"
+   ],
+   "venueCount": 2,
+   "viaAggregator": "Jupiter v6",
+   "computeUnits": 271050,
+   "insideEngine": false
+  },
+  {
+   "slot": 448056201,
+   "signature": "nKV3xcsUQnvfKxWRTNsacQe17WZSrWnx5XSrPh5uiNMv3H37yHgyBrPwirbvsAiH6zE92BbZABuxQ8Q7ZWoUfVW",
+   "signer": "CGzAce3JG3TchTRQRv6dvbMCYxzCiRhRQ5vXA9otpChF",
+   "netLamports": 26402,
+   "feeLamports": 5000,
+   "tipLamports": 1817,
+   "grossLamports": 33219,
+   "venues": [
+    "Meteora DLMM",
+    "Tessera V",
+    "Orca Whirlpool"
+   ],
+   "venueCount": 3,
+   "viaAggregator": "Jupiter v6",
+   "computeUnits": 173702,
+   "insideEngine": false
+  },
+  {
+   "slot": 448056201,
+   "signature": "2uc2uXdnA8Tk17FN9aAPiaxRrZwwNaBbZBNTSVggSrNZvMSTG6mmaFKwyzsrry1APhxJht5H725k9RDeTxGN8oTd",
+   "signer": "B4RRE8DrRRLAH3d6CAqmSixLdcurwnic1h83rEYmSY4s",
+   "netLamports": 8944,
+   "feeLamports": 5200,
+   "tipLamports": 0,
+   "grossLamports": 14144,
+   "venues": [
+    "Meteora DLMM",
+    "Meteora DAMM v2"
+   ],
+   "venueCount": 2,
+   "viaAggregator": "Jupiter v6",
+   "computeUnits": 106984,
+   "insideEngine": false
+  },
+  {
+   "slot": 448056201,
+   "signature": "QtL7uKQ7nuWxjHKa9Mbeuf3j5tyTaYuqy8uQYUvKqYmzsmGS9NQm7DgJ9VNFf3Q1e6tgxzt6SRGwqKTvvZoW2SL",
+   "signer": "freeupq4fM9nSdZ5Q52AjSUp5NQ1UXC3y3y9rZVEByC",
+   "netLamports": 3179,
+   "feeLamports": 5000,
+   "tipLamports": 3884,
+   "grossLamports": 12063,
+   "venues": [
+    "Orca Whirlpool",
+    "Raydium AMM v4",
+    "Meteora Dynamic AMM"
+   ],
+   "venueCount": 3,
+   "viaAggregator": null,
+   "computeUnits": 134200,
+   "insideEngine": false
+  },
+  {
+   "slot": 448056200,
+   "signature": "2LCNzd2EmmFDfTGSknCnVrSUnVAtgNWuX6FoGTFdZF8QTz5VdNn6B73MQw2Ae4re4FAVKJ8JYiv2VpKDHbjfm15R",
+   "signer": "MriyaNN8TMp6qRWjfr723PK7xgQK7yCt7Kg2v2PQu7X",
+   "netLamports": 6056431,
+   "feeLamports": 30224,
+   "tipLamports": 0,
+   "grossLamports": 6086655,
+   "venues": [
+    "Meteora DLMM",
+    "Meteora DAMM v2",
+    "Meteora Dynamic AMM"
+   ],
+   "venueCount": 3,
+   "viaAggregator": null,
+   "computeUnits": 175164,
+   "insideEngine": false
+  },
+  {
+   "slot": 448056200,
+   "signature": "55cCzzMxDLR9NkptyWZCv8P3JY6pkuuqysWUN9ND9A9fA49cvU2hdDes2d58aypGHonP3AhjVFWUFK1Vth4stmiW",
+   "signer": "MriyaNN8TMp6qRWjfr723PK7xgQK7yCt7Kg2v2PQu7X",
+   "netLamports": 976717,
+   "feeLamports": 27596,
+   "tipLamports": 0,
+   "grossLamports": 1004313,
+   "venues": [
+    "Meteora DAMM v2",
+    "Meteora Dynamic AMM"
+   ],
+   "venueCount": 2,
+   "viaAggregator": null,
+   "computeUnits": 151677,
+   "insideEngine": false
+  },
+  {
+   "slot": 448056200,
+   "signature": "2QBJWsVPbyxEhdkJ8ZMreLMGnQF5QKsUd6wLYXbUhzSnxk6DzSUFnygNwTjFBsLEFvJxCLWYpCAMKfotLnGfzfB2",
+   "signer": "R32xAccFis3YzBzGwZ1C4QkGiehLxSao7gDmErA3kjk",
+   "netLamports": 23925,
+   "feeLamports": 5000,
+   "tipLamports": 31061,
+   "grossLamports": 59986,
+   "venues": [
+    "Orca Whirlpool",
+    "Meteora Dynamic AMM"
+   ],
+   "venueCount": 2,
+   "viaAggregator": null,
+   "computeUnits": 133308,
+   "insideEngine": false
+  },
+  {
+   "slot": 448056200,
+   "signature": "UFkFsfm3K5beQgCHkWk2zjghow8jwdo3WcibUCQD1jd3ESksdPL5fzh3kjGgE9kZnTGxtM3eP9SKVDLY5jDWjPV",
+   "signer": "MenuxY5yMzJkeKZTvDTcovjh4fuJHMHhJyjJ5v5LzG6",
+   "netLamports": 44567,
+   "feeLamports": 5000,
+   "tipLamports": 3044,
+   "grossLamports": 52611,
+   "venues": [
+    "Meteora DLMM",
+    "PumpSwap AMM"
+   ],
+   "venueCount": 2,
+   "viaAggregator": "Jupiter v6",
+   "computeUnits": 185037,
+   "insideEngine": false
+  },
+  {
+   "slot": 448056200,
+   "signature": "Y5z8ExgxnS42XTixh8vmNZSPD7H7b5NSpzPbfb1UZs8Gb2vZA6GVj9PqGRqoyfGbQCez1ZdxvYu5gn9FK2eSEDa",
+   "signer": "BSfQT2AmdxQfpsGQANrcYEUcwta5PWuTfBkHxqsZ3Gz8",
+   "netLamports": 50652,
+   "feeLamports": 10000,
+   "tipLamports": 0,
+   "grossLamports": 60652,
+   "venues": [
+    "Meteora DAMM v2",
+    "Meteora Dynamic AMM"
+   ],
+   "venueCount": 2,
+   "viaAggregator": null,
+   "computeUnits": 165471,
+   "insideEngine": false
+  },
+  {
+   "slot": 448056198,
+   "signature": "2rCPE2M6ENW2eG1LcevWeFoEgSNhnHKQkbvC4zBArinZ4zeW9cwLokc11iGe5zYgWu3KyzZHPt1YjiuHPipfKYSp",
+   "signer": "CodeDNrxRVgLyLCYoJDnzLymTyNK3dDUFPLNVC371WbP",
+   "netLamports": 1233146,
+   "feeLamports": 12102,
+   "tipLamports": 0,
+   "grossLamports": 1245248,
+   "venues": [
+    "Tessera V",
+    "Orca Whirlpool"
+   ],
+   "venueCount": 2,
+   "viaAggregator": "Jupiter v6",
+   "computeUnits": 211967,
+   "insideEngine": false
+  },
+  {
+   "slot": 448056198,
+   "signature": "5Ddnv1qVYWtEs4woFtDMBHgenfCg4kuxQAMHa1nHm9giQh6DA5XutZwfqjHbmrzCEWrWuuotmQbNWcv31sodeGCZ",
+   "signer": "C2wezAHikMgfvXJRqPuDvS7KZwLvKRr6xNR3U431GWas",
+   "netLamports": 17667,
+   "feeLamports": 5000,
+   "tipLamports": 1000,
+   "grossLamports": 23667,
+   "venues": [
+    "Orca Whirlpool",
+    "Tessera V"
+   ],
+   "venueCount": 2,
+   "viaAggregator": "Jupiter v6",
+   "computeUnits": 184674,
+   "insideEngine": false
+  },
+  {
+   "slot": 448056196,
+   "signature": "29bnrWgQDdEME99hsBBjfgRQG7Q3vAhxMcPf558txcbPmj5bDk83pk5fSaMVz3uc1JXL6gbqmv5tQDppuxhgRLBh",
+   "signer": "78Bo7xxGWBEvqbh3VMKvkFG4Z63cXKSJ2LCEXAanhN7a",
+   "netLamports": 412,
+   "feeLamports": 5000,
+   "tipLamports": 1000,
+   "grossLamports": 6412,
+   "venues": [
+    "Orca Whirlpool",
+    "Raydium AMM v4",
+    "Meteora Dynamic AMM"
+   ],
+   "venueCount": 3,
+   "viaAggregator": null,
+   "computeUnits": 144371,
+   "insideEngine": false
+  },
+  {
+   "slot": 448056194,
+   "signature": "4kHXtmM3snL3o3vJze15Zi7wmmyYH1WYWaAoDfLmCVbeKN49J4wyyxzqXKpnLM3mqmryLXCA8xJxzqBqT6nWa5YT",
+   "signer": "UUAhspPgUdGuXUnokmxERH1VvNGNh1ouN3mfcbfV8yd",
+   "netLamports": 3294,
+   "feeLamports": 5000,
+   "tipLamports": 83852,
+   "grossLamports": 92146,
+   "venues": [
+    "Meteora DLMM",
+    "Tessera V"
+   ],
+   "venueCount": 2,
+   "viaAggregator": "Jupiter v6",
+   "computeUnits": 201469,
+   "insideEngine": false
+  },
+  {
+   "slot": 448056192,
+   "signature": "vFJ3dxbMdet2gzWaUeJtRQfHcH2ShujtThkSqxHYHf5iAa44jS1t64K1RCmnXgNAku6JA6yuDbsVejq1X9p2F3A",
+   "signer": "78Bo7xxGWBEvqbh3VMKvkFG4Z63cXKSJ2LCEXAanhN7a",
+   "netLamports": 13901,
+   "feeLamports": 15001,
+   "tipLamports": 0,
+   "grossLamports": 28902,
+   "venues": [
+    "Meteora DLMM",
+    "Orca Whirlpool"
+   ],
+   "venueCount": 2,
+   "viaAggregator": null,
+   "computeUnits": 121313,
+   "insideEngine": false
+  },
+  {
+   "slot": 448056191,
+   "signature": "59jr7HkwweCWJ4QeLLJYncgazUZpxnCCfk7A6ZGabyg3WcQyGCiskNPQ3hGhj9vsxUz8v77eeqbMkDSmVr45g2sU",
+   "signer": "C2wezAHikMgfvXJRqPuDvS7KZwLvKRr6xNR3U431GWas",
+   "netLamports": 1511,
+   "feeLamports": 5000,
+   "tipLamports": 1000,
+   "grossLamports": 7511,
+   "venues": [
+    "Orca Whirlpool",
+    "Raydium CLMM"
+   ],
+   "venueCount": 2,
+   "viaAggregator": "Jupiter v6",
+   "computeUnits": 122472,
+   "insideEngine": false
+  },
+  {
+   "slot": 448056191,
+   "signature": "54MLiWAA2a6vzFS6CQofjRo1F1tw7F73roVGJJLQP1hKyWsNn62t1W6HZZCfm1uRJq2PNNEKEZ3Azfk5FCKKNyM",
+   "signer": "NALUnJA2AJUYa6xJL1HsorEeFgxxDsfUgYBCX8Pp2zD",
+   "netLamports": 1073,
+   "feeLamports": 5000,
+   "tipLamports": 8222,
+   "grossLamports": 14295,
+   "venues": [
+    "Orca Whirlpool",
+    "Meteora DLMM",
+    "Tessera V"
+   ],
+   "venueCount": 3,
+   "viaAggregator": "Jupiter v6",
+   "computeUnits": 262520,
+   "insideEngine": false
+  },
+  {
+   "slot": 448056190,
+   "signature": "4mjt5jna3KfzgHW5tetLTNXuv4BG3w9yM7qyo5Ry1U8xacVP3fqBDuAUMopbUdsyr2a6vmuFrQzvX3p2ZpoqHJWF",
+   "signer": "FtFtF8iamFC3gCv5VYUTBd1G4r1XEc1TbcHyuy6hkJPQ",
+   "netLamports": 447418,
+   "feeLamports": 10073,
+   "tipLamports": 0,
+   "grossLamports": 457491,
+   "venues": [
+    "Meteora DLMM",
+    "Tessera V"
+   ],
+   "venueCount": 2,
+   "viaAggregator": "Jupiter v6",
+   "computeUnits": 194576,
+   "insideEngine": false
+  },
+  {
+   "slot": 448056190,
+   "signature": "2Eb31ktZNfeuZUFFjHvwNkfxKpp6aWQV4hxAvSE3wG4JSMtSTTjWEMHNgxZyqyQzdA5PKws6gDBwS8btLrV2B4fT",
+   "signer": "LBH6ZtbU8R7zTZPmKAb7V79dnETFpmXGoxzP1LUZptq",
+   "netLamports": 5708,
+   "feeLamports": 5000,
+   "tipLamports": 0,
+   "grossLamports": 10708,
+   "venues": [
+    "Orca Whirlpool",
+    "Raydium CLMM"
+   ],
+   "venueCount": 2,
+   "viaAggregator": null,
+   "computeUnits": 252357,
+   "insideEngine": false
+  },
+  {
+   "slot": 448056190,
+   "signature": "PNG2HtdCSHYmdD5B4LdpReHkfdADBoMtJCxVtDSQpANzvFDm8DJU6zDFn9WeDuBA3cCXcg5wMWZfiFDX7j79daW",
+   "signer": "C2wezAHikMgfvXJRqPuDvS7KZwLvKRr6xNR3U431GWas",
+   "netLamports": 563000,
+   "feeLamports": 5000,
+   "tipLamports": 152316,
+   "grossLamports": 720316,
+   "venues": [
+    "Orca Whirlpool",
+    "ZeroFi"
+   ],
+   "venueCount": 2,
+   "viaAggregator": "Jupiter v6",
+   "computeUnits": 124395,
+   "insideEngine": false
+  },
+  {
+   "slot": 448056190,
+   "signature": "5DeAuE1z5UqZ7kL4HS3cEtAYJnhYA2cHYbQoNT5JdmUDpejHaoomj98rBiwkZ2atEoNBx843iVKhrA7ZPE6KErtD",
+   "signer": "77777nPhGvFUVAj6uq8MGyLneBt4SMwCScYZDzzztdsa",
+   "netLamports": 1617274,
+   "feeLamports": 7116,
+   "tipLamports": 0,
+   "grossLamports": 1624390,
+   "venues": [
+    "Tessera V",
+    "Orca Whirlpool"
+   ],
+   "venueCount": 2,
+   "viaAggregator": "Jupiter v6",
+   "computeUnits": 218886,
+   "insideEngine": false
+  }
+ ]
+}

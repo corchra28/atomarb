@@ -119,3 +119,31 @@ The headline is a correction of my own first measurement. Quoting the DEX leg in
 Two DEX–DEX blockers genuinely disappear here: the taker fee is 5 bps against a 275 bps median round-trip pool fee, and the withdrawal fee is about $0.50 flat, which is 0.5 bps at a $10k clip. The strategy still loses, because the cycle is not atomic and the unhedged variance over the transfer window exceeds the entire edge budget.
 
 One finding from that audit applies directly to this engine: across 244 hops that Jupiter actually routed, the two adapters here (Raydium CP and PumpSwap) covered **2.05 %**, and exactly 1 leg of 80 routed entirely inside them. Real flow is dominated by proprietary market-maker venues — Scorch, HumidiFi, BisonFi, TesseraV — with no public pool state to read. That reorders item 3 in the list above: the gap in coverage is not another constant-product adapter, it is a venue class this engine cannot see at all.
+
+## Who is actually winning, measured on-chain (2026-09-18)
+
+The two audits above both asked "can I find a gap?" An on-chain census asks the practitioner's question instead — who is taking the money right now, and through what. Full result in `docs/REAL_WORLD_MEV.md`.
+
+Reading 120 blocks and isolating transactions that close a circuit (all non-SOL token balances return to their start, only SOL rises) finds **104 verified profitable atomic arbitrages** among 135,552 transactions, from 51 distinct signers. So the strategy works. `NO_VERIFIED_EDGE` was a correct statement about this implementation, not about the strategy, and that distinction was not drawn clearly enough above.
+
+Three measured facts reorder everything in the "next decisive test" list:
+
+| | |
+|---|---|
+| arbitrages using only Raydium CPMM + PumpSwap, the two adapters here | **0 of 104** |
+| touching at least one of the two | 45 of 104 |
+| including at least one concentrated-liquidity venue | **98 of 104** |
+| paying only the 5,000-lamport base fee, no priority fee, no tip | 58 of 104 |
+| real winning trades whose entire profit is below the assumed 9,000-lamport cost | 43 of 123 |
+| median take-home per trade | 24,585 lamports, about $0.0026 |
+| total take-home across every searcher, per block | about $0.065, roughly $21,000 a day network-wide |
+
+The engine was built on the one venue combination that never appears among the winners. Constant-product against constant-product tracks too closely to diverge past its own fees, which is exactly what the whole-chain radar found. The divergence lives between a concentrated-liquidity pool, which prices in ticks and can sit stale inside a range, and a continuous curve.
+
+Revised order for the next decisive test:
+
+1. **Add an Orca Whirlpool or Meteora DLMM adapter** and pair it against the existing two. This moves the engine from a combination appearing in 0 of 104 winners to combinations appearing in 45.
+2. **Drop the flat 9,000-lamport fee assumption.** A majority of real winners pay 5,000 and no tip; the old floor sat above the entire profit of a third of the real opportunity set.
+3. **Replace polling with a direct feed.** A majority of winners pay nothing for position, so this is won on being first, not on bidding.
+
+Even with all three done, the addressable prize is a fraction of $21,000 a day against 51 incumbents with existing infrastructure. The engineering is tractable; the economics of entering are the real blocker. That is a more useful conclusion than "no edge exists" and it is what the data supports.
