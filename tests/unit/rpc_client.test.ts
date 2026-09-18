@@ -1,25 +1,32 @@
 import { describe, it, expect, beforeAll, afterAll } from 'vitest'
 import { createServer, type Server } from 'node:http'
 import { PublicKey } from '@solana/web3.js'
-import { RpcClient, RpcBudgetExhausted } from '../../src/state/rpc.js'
+import { RpcClient, RpcBudgetExhausted, RpcTimeout } from '../../src/state/rpc.js'
 /** Local JSON-RPC stub: scripted responses per method, counts requests, can emit 429 / delays. */
 let server: Server; let url = ''
 const calls: { method: string; params: unknown }[] = []
-let script: ((method: string, params: unknown, n: number) => { status?: number; body?: unknown; delayMs?: number }) = () => ({ body: { jsonrpc: '2.0', id: 1, result: 1 } })
+/** delayMs: nothing is written for that long (headers included). bodyDelayMs: headers are flushed at once, the body only later. */
+let script: ((method: string, params: unknown, n: number) => { status?: number; body?: unknown; delayMs?: number; bodyDelayMs?: number }) = () => ({ body: { jsonrpc: '2.0', id: 1, result: 1 } })
+const pendingTimers: NodeJS.Timeout[] = []
 beforeAll(async () => {
   server = createServer((req, res) => {
     let data = ''; req.on('data', c => { data += c }); req.on('end', () => {
       const j = JSON.parse(data) as { id: number; method: string; params: unknown }
       calls.push({ method: j.method, params: j.params })
       const r = script(j.method, j.params, calls.length)
-      const send = () => { res.statusCode = r.status ?? 200; res.setHeader('content-type', 'application/json'); res.end(JSON.stringify(r.body ?? { jsonrpc: '2.0', id: j.id, result: null })) }
-      if (r.delayMs) setTimeout(send, r.delayMs); else send()
+      const payload = () => JSON.stringify(r.body ?? { jsonrpc: '2.0', id: j.id, result: null })
+      const send = () => { res.statusCode = r.status ?? 200; res.setHeader('content-type', 'application/json'); res.end(payload()) }
+      if (r.bodyDelayMs !== undefined) {
+        res.statusCode = r.status ?? 200; res.setHeader('content-type', 'application/json'); res.flushHeaders()   // headers now, body later
+        pendingTimers.push(setTimeout(() => { if (!res.writableEnded) res.end(payload()) }, r.bodyDelayMs))
+      } else if (r.delayMs) pendingTimers.push(setTimeout(send, r.delayMs))
+      else send()
     })
   })
   await new Promise<void>(r => server.listen(0, '127.0.0.1', () => r()))
   const a = server.address() as { port: number }; url = `http://127.0.0.1:${a.port}`
 })
-afterAll(() => server.close())
+afterAll(() => { for (const t of pendingTimers) clearTimeout(t); server.closeAllConnections?.(); server.close() })
 const limits = { maxRequestsPerSecond: 50, maxConcurrentRequests: 2, maxTotalHttpRequests: 20, requestTimeoutMs: 300, backoff: { baseMs: 10, maxMs: 50, jitter: 0 } }
 describe('RpcClient', () => {
   it('forbids submit methods before any network call', async () => {
@@ -65,5 +72,43 @@ describe('RpcClient', () => {
     const c = new RpcClient(url, { ...limits, maxRequestsPerSecond: 5 }, 'confirmed')
     const t0 = Date.now(); for (let i = 0; i < 9; i++) await c.call('getSlot', [])
     expect(Date.now() - t0).toBeGreaterThanOrEqual(600)
+  })
+  // F4 regression: the budget was checked before the concurrency wait and the token-bucket sleep, while usage.total was
+  // incremented only after them, so every concurrent caller read the same pre-increment total and all requests went out.
+  it('F4: reserves the HTTP budget atomically - 8 concurrent calls with budget 1 send exactly 1 request', async () => {
+    script = () => ({ body: { jsonrpc: '2.0', id: 1, result: 42 } })
+    const before = calls.length
+    const c = new RpcClient(url, { ...limits, maxTotalHttpRequests: 1, maxConcurrentRequests: 1 }, 'confirmed')
+    const settled = await Promise.allSettled(Array.from({ length: 8 }, () => c.call<number>('getSlot', [])))
+    const ok = settled.filter(s => s.status === 'fulfilled')
+    const rejected = settled.filter(s => s.status === 'rejected') as PromiseRejectedResult[]
+    expect(ok).toHaveLength(1)
+    expect(rejected).toHaveLength(7)
+    for (const r of rejected) { expect(r.reason).toBeInstanceOf(RpcBudgetExhausted); expect((r.reason as Error).message).toMatch(/RPC_BUDGET_EXHAUSTED/) }
+    expect(calls.length - before).toBe(1)          // the auditor saw 8 HTTP requests here
+    expect(c.usage.total).toBe(1)                  // ... and usage.total 8
+    expect(c.usage.byMethod['getSlot']!.count).toBe(1)
+  })
+  // F5 regression: clearTimeout ran as soon as the response HEADERS arrived, so `await res.json()` was unbounded.
+  it('F5: a response body that stalls past the timeout rejects and is counted as an error', async () => {
+    script = () => ({ bodyDelayMs: 300, body: { jsonrpc: '2.0', id: 1, result: 1 } })   // headers immediately, body only after 300ms
+    const c = new RpcClient(url, { ...limits, requestTimeoutMs: 50 }, 'confirmed')
+    const t0 = Date.now()
+    await expect(c.call('getSlot', [])).rejects.toThrow(RpcTimeout)   // the auditor's old run SUCCEEDED here, after ~310ms
+    const elapsed = Date.now() - t0
+    expect(elapsed).toBeLessThan(2500)
+    expect(c.usage.errors).toBe(5)                 // one per attempt; the auditor saw 0
+    expect(c.usage.total).toBe(5); expect(c.usage.retries).toBe(4)
+    const ms = c.usage.byMethod['getSlot']!.ms
+    expect(ms).toHaveLength(5)
+    for (const d of ms) expect(d).toBeGreaterThanOrEqual(40)   // full attempt duration, not the ~9ms of the headers
+  })
+  it('F5: the recorded latency covers the response body, not just the headers', async () => {
+    script = () => ({ bodyDelayMs: 120, body: { jsonrpc: '2.0', id: 1, result: 7 } })
+    const c = new RpcClient(url, { ...limits, requestTimeoutMs: 1000 }, 'confirmed')
+    expect(await c.call<number>('getSlot', [])).toBe(7)
+    const ms = c.usage.byMethod['getSlot']!.ms
+    expect(ms).toHaveLength(1); expect(ms[0]!).toBeGreaterThanOrEqual(100)
+    expect(c.usage.errors).toBe(0)
   })
 })

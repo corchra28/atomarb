@@ -6,6 +6,11 @@ import type { JsonlLogger } from '../telemetry/log.js'
 export interface RpcLimits { maxRequestsPerSecond: number; maxConcurrentRequests: number; maxTotalHttpRequests: number; requestTimeoutMs: number; backoff: { baseMs: number; maxMs: number; jitter: number } }
 export class RpcBudgetExhausted extends Error { constructor(n: number) { super(`RPC_BUDGET_EXHAUSTED after ${n} requests`); this.name = 'RpcBudgetExhausted' } }
 export class RpcError extends Error { constructor(msg: string, readonly code?: number, readonly data?: unknown) { super(msg); this.name = 'RpcError' } }
+/** The request timeout covers headers AND body; `phase` says where it fired. Always retried like any other transient failure. */
+export class RpcTimeout extends RpcError {
+  readonly retryable = true
+  constructor(readonly phase: 'headers' | 'body', readonly timeoutMs: number) { super(`RPC_TIMEOUT: no ${phase} within ${timeoutMs}ms`); this.name = 'RpcTimeout' }
+}
 
 interface JsonRpcResponse<T> { jsonrpc: '2.0'; id: number; result?: T; error?: { code: number; message: string; data?: unknown } }
 export interface RpcContext { slot: number; apiVersion?: string }
@@ -23,8 +28,16 @@ export class RpcClient {
     this.tokens = limits.maxRequestsPerSecond
   }
   private static readonly FORBIDDEN = new Set(['sendTransaction', 'sendRawTransaction', 'sendBundle', 'requestAirdrop'])
-  private async acquire(): Promise<void> {
+  /**
+   * Reserves ONE budget unit, then a concurrency slot, then a rate-limit token. The budget check and the reservation
+   * (usage.total++) run in the same synchronous step on purpose (F4): with an await in between — the concurrency wait
+   * or the token-bucket sleep — N concurrent callers all read the same pre-increment total, all pass a budget of 1 and
+   * all N requests get sent. Every attempt reserves, so retries consume the same budget as first attempts.
+   * Throws before taking any slot, so an exhausted budget releases nothing it never reserved.
+   */
+  private async acquire(stat: { count: number }): Promise<void> {
     if (this.usage.total >= this.limits.maxTotalHttpRequests) throw new RpcBudgetExhausted(this.usage.total)
+    this.usage.total++; stat.count++
     while (this.inflight >= this.limits.maxConcurrentRequests) await new Promise<void>(r => this.waiters.push(r))
     this.inflight++
     // token bucket
@@ -36,33 +49,49 @@ export class RpcClient {
     }
   }
   private release(): void { this.inflight--; const w = this.waiters.shift(); if (w) w() }
+  /**
+   * One HTTP attempt, fully covered by the abort signal (F5): fetch() only rejects on the *headers*, so clearing the
+   * timer once the headers arrive leaves `res.json()` running unbounded — a stalled body then hangs the caller forever
+   * and the recorded latency is the header time, not the real one. The timer is therefore cleared only after the body
+   * is parsed, and the duration pushed to usage.byMethod[].ms spans start -> parsed body for every attempt.
+   */
+  private async attempt<T>(method: string, params: unknown[], stat: { ms: number[] }): Promise<JsonRpcResponse<T>> {
+    const t0 = monoMs()
+    const ctrl = new AbortController(); let timedOut = false
+    const timer = setTimeout(() => { timedOut = true; ctrl.abort() }, this.limits.requestTimeoutMs)
+    try {
+      let res: Response
+      try {
+        res = await fetch(this.url, { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify({ jsonrpc: '2.0', id: this.nextId++, method, params }), signal: ctrl.signal })
+      } catch (e) { throw timedOut ? new RpcTimeout('headers', this.limits.requestTimeoutMs) : e }
+      if (res.status === 429 || res.status >= 500) {
+        void res.body?.cancel().catch(() => {})   // the body of an error response is never read: free the socket instead of leaking it
+        throw new RpcError(`HTTP ${res.status}`, res.status)
+      }
+      try { return (await res.json()) as JsonRpcResponse<T> }
+      catch (e) { throw timedOut ? new RpcTimeout('body', this.limits.requestTimeoutMs) : e }
+    } finally { clearTimeout(timer); stat.ms.push(monoMs() - t0) }
+  }
   async call<T>(method: string, params: unknown[]): Promise<T> {
     if (RpcClient.FORBIDDEN.has(method)) throw new Error(`LIVE_NOT_AUTHORIZED: ${method} is forbidden in this project`)
     const stat = (this.usage.byMethod[method] ??= { count: 0, errors: 0, ms: [] })
     let attempt = 0
     for (;;) {
-      await this.acquire()
-      const t0 = monoMs(); this.usage.total++; stat.count++
+      await this.acquire(stat)
       try {
-        const ctrl = new AbortController(); const timer = setTimeout(() => ctrl.abort(), this.limits.requestTimeoutMs)
-        let res: Response
-        try {
-          res = await fetch(this.url, { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify({ jsonrpc: '2.0', id: this.nextId++, method, params }), signal: ctrl.signal })
-        } finally { clearTimeout(timer) }
-        const dt = monoMs() - t0; stat.ms.push(dt)
-        if (res.status === 429 || res.status >= 500) throw new RpcError(`HTTP ${res.status}`, res.status)
-        const body = (await res.json()) as JsonRpcResponse<T>
+        const body = await this.attempt<T>(method, params, stat)
         if (body.error) {
           const retryable = body.error.code === -32005 || body.error.code === -32004 || body.error.code === -32014 // node unhealthy / block not available / slot skipped
           const err = new RpcError(`${method}: ${body.error.message}`, body.error.code, body.error.data)
-          if (!retryable) { stat.errors++; this.usage.errors++; throw err }
+          if (!retryable) throw err   // counted once, in the catch below
           throw Object.assign(err, { retryable: true })
         }
         return body.result as T
       } catch (e) {
         const err = e as Error & { code?: number; retryable?: boolean; name?: string }
-        const transient = err.retryable === true || err.name === 'AbortError' || err.code === 429 || (typeof err.code === 'number' && err.code >= 500) || /fetch failed|ECONNRESET|ETIMEDOUT/i.test(err.message)
-        stat.errors++; this.usage.errors++
+        // RpcTimeout (headers or body) carries retryable=true; AbortError is the raw form if one ever escapes
+        const transient = err.retryable === true || err.name === 'AbortError' || err.name === 'RpcTimeout' || err.code === 429 || (typeof err.code === 'number' && err.code >= 500) || /fetch failed|ECONNRESET|ETIMEDOUT/i.test(err.message)
+        stat.errors++; this.usage.errors++   // exactly one error per failed attempt (the JSON-RPC branch no longer double-counts)
         if (!transient || attempt >= 4) throw err
         attempt++; this.usage.retries++
         const base = Math.min(this.limits.backoff.maxMs, this.limits.backoff.baseMs * 2 ** attempt)
