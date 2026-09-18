@@ -2,6 +2,7 @@
  * Capital ledger for prospective (shadow) probes. Enforces, simultaneously: a per-episode cap, an aggregate open cap, an untouched operating reserve,
  * a concurrency limit, and account conflicts (two pending probes may not touch the same pool or the same intermediate mint).
  * Money is reserved at the decision and released only at settlement; a settled profit is credited ONLY then. A failed attempt costs its network fee.
+ * What is locked = amountIn + fee budget (definitive) + account deposits (recoverable); the deposits are released untouched at settlement.
  * Hypothetical mode (`hypothetical: true`) is the default: settlements never change the capital, they are recorded as independent hypothetical interventions.
  */
 import { jsonReplacer } from '../util/bigint.js'
@@ -87,9 +88,9 @@ export class CapitalLedger {
     if (need > this.frac(this.cfg.maxEpisodeFrac)) return this.reject('EPISODE_CAP', `need ${need} (amountIn ${p.amountIn} + fee ${p.feeBudget} + deposit ${deposit}) > episode cap ${this.frac(this.cfg.maxEpisodeFrac)}`, budget)
     if (this.lockedAmount + need > this.frac(this.cfg.maxAggregateOpenFrac)) return this.reject('AGGREGATE_CAP', `locked ${this.lockedAmount} + ${need} > ${this.frac(this.cfg.maxAggregateOpenFrac)}`, budget)
     if (this.lockedAmount + need > this.capital - this.frac(this.cfg.reserveFrac)) return this.reject('RESERVE_FLOOR', `would touch the ${this.cfg.reserveFrac} reserve`, budget)
-    const position: PendingPosition = { id: p.id, amountIn: p.amountIn, feeBudget: p.feeBudget, pools: [...p.pools], mint: p.mint, openedUtc: p.utc }
+    const position: PendingPosition = { id: p.id, amountIn: p.amountIn, feeBudget: p.feeBudget, depositLamports: deposit, pools: [...p.pools], mint: p.mint, openedUtc: p.utc }
     this.pending.set(p.id, position); this.lockedAmount += need; this.stats.reserved++
-    this.journal.push({ event: 'reserve', id: p.id, amountIn: p.amountIn, feeBudget: p.feeBudget, locked: this.lockedAmount, capital: this.capital, utc: p.utc })
+    this.journal.push({ event: 'reserve', id: p.id, amountIn: p.amountIn, feeBudget: p.feeBudget, depositLamports: deposit, locked: this.lockedAmount, capital: this.capital, utc: p.utc })
     return { ok: true, position }
   }
   private reject(code: Exclude<ReserveResult['ok'] extends true ? never : ReserveResult, { ok: true }>['code'], detail: string, budget: bigint): ReserveResult {
@@ -100,14 +101,14 @@ export class CapitalLedger {
   settle(o: SettleOutcome & { utc: string }): { ok: boolean; capital: bigint; locked: bigint } {
     const p = this.pending.get(o.id)
     if (!p) throw new Error(`SETTLE_UNKNOWN_POSITION ${o.id}`)
-    this.pending.delete(o.id); this.lockedAmount -= p.amountIn + p.feeBudget
+    this.pending.delete(o.id); this.lockedAmount -= p.amountIn + p.feeBudget + p.depositLamports   // the deposit is recoverable: it is released, never charged
     if (this.lockedAmount < 0n) throw new Error('LEDGER_INVARIANT: negative locked')
     this.stats.settled++; this.stats.feesPaid += o.feePaid
     if (o.status === 'FILLED') this.stats.filled++; else if (o.status === 'REVERTED') this.stats.reverted++; else this.stats.notLanded++
     const hypothetical = this.cfg.hypothetical !== false
     if (hypothetical) this.stats.hypotheticalPnl += o.realisedPnl - o.feePaid
     else this.capital += (o.status === 'FILLED' ? o.realisedPnl : 0n) - o.feePaid
-    this.journal.push({ event: 'settle', id: o.id, status: o.status, realisedPnl: o.realisedPnl, feePaid: o.feePaid, hypothetical, capital: this.capital, locked: this.lockedAmount, utc: o.utc })
+    this.journal.push({ event: 'settle', id: o.id, status: o.status, realisedPnl: o.realisedPnl, feePaid: o.feePaid, depositReleased: p.depositLamports, hypothetical, capital: this.capital, locked: this.lockedAmount, utc: o.utc })
     return { ok: true, capital: this.capital, locked: this.lockedAmount }
   }
   snapshot(): Record<string, unknown> {
