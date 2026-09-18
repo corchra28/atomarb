@@ -85,3 +85,20 @@ export function sizeCircuit(adapters: Record<AdapterId, PoolAdapter>, c: Circuit
   }
   return { best, evaluated, zeroTradeChosen: best === null }
 }
+
+export interface ReserveFilterResult { kept: DecodedPool[]; dropped: { pool: string; adapter: AdapterId; wsolReserve: bigint; reason: string }[] }
+/**
+ * Applies `discovery.minQuoteReserveLamports`, which the configuration declared but nothing consumed (finding of the independent audit).
+ * A pool whose WSOL side is below the threshold cannot absorb a trade worth more than the network fee, so quoting it is wasted work and the
+ * resulting "opportunity" is dust by construction.
+ */
+export function filterByMinQuoteReserve(pools: DecodedPool[], minQuoteReserveLamports: bigint): ReserveFilterResult {
+  const kept: DecodedPool[] = []; const dropped: ReserveFilterResult['dropped'] = []
+  for (const p of pools) {
+    const wsol = p.mintA.mint.equals(WSOL_MINT) ? p.reserveA : (p.mintB.mint.equals(WSOL_MINT) ? p.reserveB : null)
+    if (wsol === null) { dropped.push({ pool: p.address.toBase58(), adapter: p.adapter, wsolReserve: 0n, reason: 'NOT_WSOL_QUOTED' }); continue }
+    if (wsol < minQuoteReserveLamports) { dropped.push({ pool: p.address.toBase58(), adapter: p.adapter, wsolReserve: wsol, reason: `BELOW_MIN_QUOTE_RESERVE (${wsol} < ${minQuoteReserveLamports})` }); continue }
+    kept.push(p)
+  }
+  return { kept, dropped }
+}

@@ -90,3 +90,16 @@ describe('shared pools across routes', () => {
     expect(after.reserveA).not.toBe(p.reserveA)
   })
 })
+
+import { filterByMinQuoteReserve } from '../../src/routing/circuit.js'
+describe('minimum quote reserve filter (audit: configured but unused)', () => {
+  it('drops pools whose WSOL side cannot absorb more than the network fee, and says why', () => {
+    const t = Keypair.generate().publicKey
+    const thin = mockPool('pumpswap', t, 3_000_000n, 1_000_000n, 30)        // 0.003 SOL — the median route of the published sweep
+    const deep = mockPool('raydium_cpmm', t, 50n * SOL, 1_000_000n, 25)
+    const r = filterByMinQuoteReserve([thin, deep], 1_000_000_000n)
+    expect(r.kept.map(p => p.address.toBase58())).toEqual([deep.address.toBase58()])
+    expect(r.dropped[0]!.reason).toMatch(/BELOW_MIN_QUOTE_RESERVE \(3000000 < 1000000000\)/)
+    expect(filterByMinQuoteReserve([thin, deep], 0n).kept).toHaveLength(2)   // threshold 0 keeps everything
+  })
+})
