@@ -85,6 +85,9 @@ See `docs/ARCHITECTURE.md`. Provenance for every external fact: `docs/sources/*.
 | Where does each external fact come from? | `docs/sources/*.md`, `sources.lock.json` |
 | Is DEX-versus-centralised-exchange any different? | `docs/DEX_CEX_AUDIT.md`, raw data in `docs/sources/dexcex/` |
 | Who is actually winning at this on-chain, and with what? | `docs/REAL_WORLD_MEV.md`, raw data in `docs/sources/realworld/` |
+| Does the verdict survive adding concentrated liquidity? | `DECISION.md` (2026-09-19 section), `integrations/gap_scan/` |
+| Why the adapters were built in Rust and not ported to TypeScript | `docs/WIRING_DECISION.md` |
+| How much capital does this need, and what would it earn? | `docs/CAPITAL_AND_TARGETS.md` |
 
 ## What this is not
 Not a bot, not a profit claim. A simulated positive candidate does not enable live trading; a negative window does not prove universal impossibility. Landing rate and competition cost are unknown before live and are not estimated here.

@@ -131,3 +131,45 @@ And 30% a year is not available; this repository rejected three strategies that 
 3. **Risk and economic analysis published openly**, aiming at the service-provider market where Gauntlet bills $2.3M and Aave has an unfilled seat. Slow, but the documented path is public analysis first, funded seat second, and the audits in this repository are already that kind of analysis.
 4. **Audit contests**, as skill-building with occasional payment, not as income. Median critical $20,000, design findings mostly out of scope, distribution winner-take-most.
 5. **Not capital strategies.** The arithmetic in §4 closes this permanently at this scale.
+
+---
+
+## 7. Follow-up: the entry move in §6 was taken, three times
+
+§6 ranked "implement the `Amm` trait for one venue and pass the parity harness" as the entry move.
+Three adapters now exist in this repository — Raydium CPMM, Orca Whirlpool, Meteora DLMM — each
+with its quote proven equal to the on-chain program and a mutation suite in which every mutation is
+caught. Two corrections to §1 follow from having actually done it.
+
+### Not every venue publishes usable math, and that changes the job
+
+§1 leaned on Orca publishing `orca_whirlpools_core`. That is true and it made the Whirlpool
+adapter straightforward: the math is the vendor's, and the work is decoding accounts, deriving
+tick arrays and building the instruction.
+
+**Meteora publishes no equivalent.** Its official `commons` crate does expose `quote_exact_in`,
+but it is built on solana-sdk 2.1 and anchor-lang 0.31, which cannot coexist with the solana 3/4
+generation `jupiter-amm-test-kit` and litesvm need. Jupiter's own reference example hits the same
+wall with `spl-token-swap` and says so. The options are then to port the math by hand — about
+3,100 lines of stateful fixed-point arithmetic for DLMM — or to find a dependency-light engine and
+prove it against the chain.
+
+So the honest description of this work is not "wire up the vendor's crate". It is: **the vendor's
+crate is available perhaps half the time, and the rest is reverse engineering with a harness to
+keep you honest.** That is harder, and it is also why the skill is scarce.
+
+### The published interface is not always the deployed one
+
+A concrete example worth carrying into any conversation about this work. Meteora's `swap2`
+instruction takes a `remaining_accounts_info` argument that the official IDL declares as
+`Option<RemainingAccountsInfo>`. Every encoding built from that declaration failed with
+`InstructionDidNotDeserialize`. Reading the bytes of real `swap2` instructions on chain settles
+it: the tail is `03000000 0000 0100 0400`, a bare `Vec` of three empty slices, with no Option tag.
+
+Separately, the older 15-account `swap` instruction pins both token programs to the legacy SPL
+Token id and rejects a Token-2022 pool outright. Neither fact is discoverable from the IDL; both
+were found by the parity suite failing against the real program.
+
+**This is the part that cannot be bluffed and the part worth being paid for.** Anyone can read an
+IDL. Knowing that the IDL is wrong, and having a harness that tells you so before your users find
+out, is the actual job.

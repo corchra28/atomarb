@@ -186,3 +186,43 @@ Across 100 blocks and 14,580 DEX transactions this found **2**, worth $12.96 and
 **That is not a size estimate and must not be read as one.** Two observations cannot support a daily figure, and the detector requires the same signer on both sides, which is the one thing a sandwich bot has every reason not to do. A real measurement needs front and back matched by pool and direction across *different* signers, which this does not attempt. The honest status is UNKNOWN, and the $68,600 a day in total tips is the bound that actually constrains it.
 
 I am not building a sandwich bot. It profits by making an ordinary user's swap fill worse, and the gain is exactly the user's loss. Measuring the market to understand it is one thing; running that particular extraction is another, and it is not work I will do.
+
+---
+
+## 9. What happened when the recommendation in §5 was carried out
+
+§5 ranked "implement an Orca Whirlpool or Meteora DLMM adapter" first, on the grounds that it
+"moves the engine from a combination that appears in 0 of 104 winners to combinations that appear
+in 45 of them". That was done — all three adapters now exist, each with its quote proven equal to
+the on-chain program and a mutation suite that catches every mutation.
+
+The measurement that followed is in `DECISION.md`. The short version: the coverage argument was
+right about coverage and did not change the answer.
+
+| | |
+|---|---:|
+| Pools scanned across the three venues | 362,514 |
+| Mints with WSOL pools on 2+ **different** venues | 10,129 |
+| Circuits priced, every one with a concentrated-liquidity leg | 4,046 |
+| Positive gross | 4, best **1,892 lamports** |
+| Positive net | **0**, at the 9,000-lamport assumption and at the 5,000 base fee alone |
+
+The best gross result is 2.5 times what the constant-product-only radar could find, which is the
+coverage improvement appearing exactly where §5 predicted it would. It is still five times short
+of the fee. `NO_VERIFIED_EDGE` stands, and the reason has moved from coverage to the auction
+measured in §4 and §7.
+
+### A failure mode this document should have warned about
+
+The first run of that scan reported a **371% return** — 0.371 SOL net on 0.1 SOL in — plus six
+smaller net-positive circuits. Running each leg against the real program in LiteSVM returned SPL
+Token error 17, `Account is frozen`, on every one.
+
+They were stale prices on tokens whose accounts are frozen, unarbitraged for the plain reason that
+the swap cannot execute. Jupiter refuses to route either token (`TOKEN_NOT_TRADABLE`) and one
+carries a live freeze authority. A guard rejecting any pool that holds a frozen token account
+removed 24 circuits and took the net-positive count from 7 to 0.
+
+**The counter-intuitive part: the better a scanner's pool coverage, the more of these it finds.**
+Abandoned pools are exactly where large stale prices survive. Any census or scan of this kind
+needs the frozen check before it quotes, or its most exciting results will all be phantoms.
