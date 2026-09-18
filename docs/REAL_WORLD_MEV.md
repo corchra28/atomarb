@@ -240,6 +240,12 @@ needs the frozen check before it quotes, or its most exciting results will all b
 
 ## 10. Correction: $21,000 a day was a low sample
 
+> **Read §11 with this.** This section reports a fivefold difference between a morning and an
+> evening census and leaves time of day as the natural reading. A third census tested that and it
+> is wrong: two samples 25 minutes apart in the same regime differ by 3.1x, which is exactly what
+> sampling noise predicts at this census size. The size correction below stands; the implied
+> explanation does not.
+
 Every conclusion in this document rests on one number, and that number had **one observation**
 behind it: 120 blocks, about 32 seconds of chain, at 09:00 UTC on a Friday. That is a sample of
 one drawn from a heavily skewed distribution, which is exactly the shape where a single sample
