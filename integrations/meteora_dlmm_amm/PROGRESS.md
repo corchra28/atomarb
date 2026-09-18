@@ -74,7 +74,7 @@ third-party crate does not advertise. Pools using them may quote wrong, and pari
 - [x] Parity test: a pool with a Token-2022 mint carrying a 300 bps transfer fee
 - [x] Parity test: a swap past the carried bin arrays is refused, not quoted
 - [x] Mutation suite — **10 of 10 caught**
-- [ ] Verify from a clean clone with no RPC
+- [x] Verify from a clean clone with no RPC — 5 tests green, no network
 - [ ] Limit-order pools (`support_limit_order` passed as false; a pool using them would fail parity)
 
 ## Log
